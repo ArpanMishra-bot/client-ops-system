@@ -20,7 +20,7 @@ export default async function DashboardLayout({
       <div className="md:ml-64">
         <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10 mt-16 md:mt-0">
           <div />
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </header>
         <main className="p-4 md:p-8">
           {children}
