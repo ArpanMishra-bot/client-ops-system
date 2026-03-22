@@ -1,3 +1,5 @@
+import Logo from "@/components/shared/Logo"
+
 export default function AuthLayout({
   children,
 }: {
@@ -5,14 +7,8 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel — Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gray-900 flex-col justify-between p-12">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-gray-900 text-sm font-bold">C</span>
-          </div>
-          <span className="text-white text-lg font-semibold">ClientOps</span>
-        </div>
+        <Logo href="/" size="md" variant="light" />
 
         <div className="space-y-6">
           <div className="space-y-3">
@@ -23,7 +19,6 @@ export default function AuthLayout({
               Manage clients, track leads, deliver projects, and get paid — all from one dashboard.
             </p>
           </div>
-
           <div className="grid grid-cols-2 gap-4 pt-4">
             {[
               { value: "7", label: "Core Modules" },
@@ -52,18 +47,11 @@ export default function AuthLayout({
         </div>
       </div>
 
-      {/* Right Panel — Auth Form */}
       <div className="flex-1 flex flex-col justify-center items-center p-6 bg-gray-50">
-        {/* Mobile Logo */}
-        <div className="lg:hidden flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-            <span className="text-white text-sm font-bold">C</span>
-          </div>
-          <span className="text-gray-900 text-lg font-semibold">ClientOps</span>
+        <div className="lg:hidden mb-8">
+          <Logo href="/" size="md" variant="dark" />
         </div>
-
         {children}
-
         <p className="text-xs text-gray-400 mt-6 text-center">
           Protected by Clerk · Built with Next.js
         </p>

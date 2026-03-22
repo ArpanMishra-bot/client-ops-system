@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Logo from "@/components/shared/Logo"
 import { ArrowRight, Users, TrendingUp, FolderKanban, FileText, Bell, LayoutDashboard } from "lucide-react"
 
 const features = [
@@ -20,12 +21,7 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-gray-900 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xs font-bold">C</span>
-            </div>
-            <span className="text-base font-semibold text-gray-900">ClientOps</span>
-          </div>
+          <Logo href="/" size="md" variant="dark" />
           <div className="flex items-center gap-3">
             <Link href="/sign-in"
               className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-gray-100">
@@ -116,12 +112,7 @@ export default async function LandingPage() {
 
       <footer className="border-t border-gray-100 py-8">
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-gray-900 rounded flex items-center justify-center">
-              <span className="text-white text-xs font-bold">C</span>
-            </div>
-            <span className="text-sm font-medium text-gray-900">ClientOps</span>
-          </div>
+          <Logo href="/" size="sm" variant="dark" />
           <p className="text-xs text-gray-400">Built with Next.js, Prisma, and Clerk</p>
         </div>
       </footer>
