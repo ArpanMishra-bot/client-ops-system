@@ -7,9 +7,9 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen flex">
+      {/* Left Panel — Desktop Only */}
       <div className="hidden lg:flex lg:w-1/2 bg-gray-900 flex-col justify-between p-12">
         <Logo href="/" size="md" variant="light" />
-
         <div className="space-y-6">
           <div className="space-y-3">
             <h1 className="text-4xl font-bold text-white leading-tight">
@@ -33,7 +33,6 @@ export default function AuthLayout({
             ))}
           </div>
         </div>
-
         <div className="space-y-4">
           {[
             { quote: "ClientOps helped me close 3x more deals by keeping my pipeline organized.", author: "Sarah M., Freelance Designer" },
@@ -47,14 +46,18 @@ export default function AuthLayout({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center items-center p-6 bg-gray-50">
-        <div className="lg:hidden mb-8">
-          <Logo href="/" size="md" variant="dark" />
+      {/* Right Panel — Auth Form */}
+      <div className="flex-1 flex flex-col bg-gray-50">
+        <div className="flex-1 flex flex-col items-center justify-center p-6">
+          {/* Logo centered above form — mobile only */}
+          <div className="lg:hidden mb-8 flex flex-col items-center">
+            <Logo href="/" size="lg" variant="dark" />
+          </div>
+          {children}
         </div>
-        {children}
-        <p className="text-xs text-gray-400 mt-6 text-center">
-          Protected by Clerk · Built with Next.js
-        </p>
+        <div className="pb-6 text-center">
+          <p className="text-xs text-gray-400">Protected by Clerk · Built with Next.js</p>
+        </div>
       </div>
     </div>
   )
