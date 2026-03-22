@@ -14,40 +14,21 @@ export default function Logo({
   showText = true,
 }: Props) {
   const sizes = {
-    sm: { icon: 24, text: "text-sm", gap: "gap-2" },
-    md: { icon: 30, text: "text-base", gap: "gap-2.5" },
-    lg: { icon: 38, text: "text-xl", gap: "gap-3" },
+    sm: { box: "w-6 h-6 text-xs rounded-md", text: "text-sm", gap: "gap-2" },
+    md: { box: "w-8 h-8 text-sm rounded-lg", text: "text-base", gap: "gap-2.5" },
+    lg: { box: "w-10 h-10 text-base rounded-xl", text: "text-xl", gap: "gap-3" },
   }
 
   const s = sizes[size]
   const textColor = variant === "dark" ? "text-gray-900" : "text-white"
-  const strokeColor = variant === "dark" ? "#0f172a" : "#ffffff"
-  const accent = "#818cf8"
-
-  const icon = (
-    <svg
-      width={s.icon}
-      height={s.icon}
-      viewBox="0 0 44 44"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Letter C — no background */}
-      <path
-        d="M30 13C27 11 23 11 20 12.5C15.5 14.5 12 18.5 12 22C12 25.5 15.5 29.5 20 31.5C23 33 27 33 30 31"
-        stroke={strokeColor}
-        strokeWidth="3.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Accent dot */}
-      <circle cx="32" cy="22" r="3" fill={accent} />
-    </svg>
-  )
+  const boxBg = variant === "dark" ? "bg-indigo-600" : "bg-white"
+  const boxText = variant === "dark" ? "text-white" : "text-indigo-600"
 
   const content = (
     <div className={`flex items-center ${s.gap}`}>
-      {icon}
+      <div className={`${s.box} ${boxBg} flex items-center justify-center font-bold ${boxText} shrink-0`}>
+        CO
+      </div>
       {showText && (
         <span className={`font-bold ${s.text} ${textColor} tracking-tight`}>
           ClientOps
