@@ -21,14 +21,15 @@ export default function Logo({
 
   const s = sizes[size]
   const textColor = variant === "dark" ? "text-gray-900" : "text-white"
-  const primary = variant === "dark" ? "#0f172a" : "#ffffff"
-  const accent = variant === "dark" ? "#6366f1" : "#818cf8"
+  const outer = variant === "dark" ? "#0f172a" : "rgba(255,255,255,0.15)"
+  const inner = variant === "dark" ? "#6366f1" : "#818cf8"
+  const dot = variant === "dark" ? "#ffffff" : "#ffffff"
 
   const icon = (
     <svg width={s.icon} height={s.icon} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="18" y="3" width="12" height="12" rx="3" transform="rotate(45 18 3)" fill={primary}/>
-      <rect x="18" y="15" width="10" height="10" rx="2.5" transform="rotate(45 18 15)" fill={accent}/>
-      <rect x="18" y="25" width="8" height="8" rx="2" transform="rotate(45 18 25)" fill={primary} opacity="0.3"/>
+      <path d="M18 3L32 10.5V25.5L18 33L4 25.5V10.5L18 3Z" fill={outer}/>
+      <path d="M18 10L25 14V22L18 26L11 22V14L18 10Z" fill={inner}/>
+      <circle cx="18" cy="18" r="3" fill={dot}/>
     </svg>
   )
 
