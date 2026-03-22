@@ -14,21 +14,49 @@ export default function Logo({
   showText = true,
 }: Props) {
   const sizes = {
-    sm: { box: "w-6 h-6 text-xs rounded-md", text: "text-sm", gap: "gap-2" },
-    md: { box: "w-8 h-8 text-sm rounded-lg", text: "text-base", gap: "gap-2.5" },
-    lg: { box: "w-10 h-10 text-base rounded-xl", text: "text-xl", gap: "gap-3" },
+    sm: { icon: 28, text: "text-sm", gap: "gap-2" },
+    md: { icon: 36, text: "text-base", gap: "gap-2.5" },
+    lg: { icon: 44, text: "text-xl", gap: "gap-3" },
   }
 
   const s = sizes[size]
   const textColor = variant === "dark" ? "text-gray-900" : "text-white"
-  const boxBg = variant === "dark" ? "bg-indigo-600" : "bg-white"
-  const boxText = variant === "dark" ? "text-white" : "text-indigo-600"
+  const strokeColor = variant === "dark" ? "#0f172a" : "#ffffff"
+
+  const icon = (
+    <svg
+      width={s.icon}
+      height={s.icon}
+      viewBox="0 0 180 180"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* C */}
+      <path
+        d="M115,50 A45,45 0 1,0 115,130"
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="10"
+        strokeLinecap="round"
+      />
+      {/* O */}
+      <circle
+        cx="100"
+        cy="90"
+        r="32"
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="10"
+        opacity="0.85"
+      />
+      {/* Accent dot */}
+      <circle cx="130" cy="60" r="5" fill="#6366f1" />
+    </svg>
+  )
 
   const content = (
     <div className={`flex items-center ${s.gap}`}>
-      <div className={`${s.box} ${boxBg} flex items-center justify-center font-bold ${boxText} shrink-0`}>
-        CO
-      </div>
+      {icon}
       {showText && (
         <span className={`font-bold ${s.text} ${textColor} tracking-tight`}>
           ClientOps
