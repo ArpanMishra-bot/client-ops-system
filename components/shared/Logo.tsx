@@ -14,43 +14,31 @@ export default function Logo({
   showText = true,
 }: Props) {
   const sizes = {
-    sm: { icon: 28, text: "text-sm", gap: "gap-2" },
-    md: { icon: 36, text: "text-base", gap: "gap-2.5" },
-    lg: { icon: 44, text: "text-xl", gap: "gap-3" },
+    sm: { icon: 26, text: "text-sm", gap: "gap-2" },
+    md: { icon: 32, text: "text-base", gap: "gap-2.5" },
+    lg: { icon: 40, text: "text-xl", gap: "gap-3" },
   }
 
   const s = sizes[size]
   const textColor = variant === "dark" ? "text-gray-900" : "text-white"
-  const strokeColor = variant === "dark" ? "#0f172a" : "#ffffff"
+  const primary = variant === "dark" ? "#0f172a" : "#ffffff"
 
   const icon = (
     <svg
       width={s.icon}
       height={s.icon}
-      viewBox="0 0 180 180"
+      viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* C */}
-      <path
-        d="M115,50 A45,45 0 1,0 115,130"
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth="10"
-        strokeLinecap="round"
-      />
-      {/* O */}
-      <circle
-        cx="100"
-        cy="90"
-        r="32"
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth="10"
-        opacity="0.85"
-      />
-      {/* Accent dot */}
-      <circle cx="130" cy="60" r="5" fill="#6366f1" />
+      {/* Top bar */}
+      <rect x="6" y="6" width="28" height="5" rx="2.5" fill={primary} />
+      {/* Bottom bar */}
+      <rect x="6" y="29" width="28" height="5" rx="2.5" fill={primary} />
+      {/* Left bar */}
+      <rect x="6" y="6" width="5" height="28" rx="2.5" fill={primary} />
+      {/* Middle bar — shorter, accent */}
+      <rect x="6" y="17.5" width="18" height="5" rx="2.5" fill="#6366f1" />
     </svg>
   )
 
