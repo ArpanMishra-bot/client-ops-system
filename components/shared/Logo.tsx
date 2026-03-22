@@ -22,23 +22,13 @@ export default function Logo({
   const s = sizes[size]
   const textColor = variant === "dark" ? "text-gray-900" : "text-white"
   const primary = variant === "dark" ? "#0f172a" : "#ffffff"
+  const accent = variant === "dark" ? "#6366f1" : "#818cf8"
 
   const icon = (
-    <svg
-      width={s.icon}
-      height={s.icon}
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Top bar */}
-      <rect x="6" y="6" width="28" height="5" rx="2.5" fill={primary} />
-      {/* Bottom bar */}
-      <rect x="6" y="29" width="28" height="5" rx="2.5" fill={primary} />
-      {/* Left bar */}
-      <rect x="6" y="6" width="5" height="28" rx="2.5" fill={primary} />
-      {/* Middle bar — shorter, accent */}
-      <rect x="6" y="17.5" width="18" height="5" rx="2.5" fill="#6366f1" />
+    <svg width={s.icon} height={s.icon} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="18" y="3" width="12" height="12" rx="3" transform="rotate(45 18 3)" fill={primary}/>
+      <rect x="18" y="15" width="10" height="10" rx="2.5" transform="rotate(45 18 15)" fill={accent}/>
+      <rect x="18" y="25" width="8" height="8" rx="2" transform="rotate(45 18 25)" fill={primary} opacity="0.3"/>
     </svg>
   )
 
