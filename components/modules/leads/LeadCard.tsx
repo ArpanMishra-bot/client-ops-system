@@ -1,7 +1,10 @@
 "use client"
 
-import type { Lead } from "@/modules/leads/types"
-import { Building, DollarSign } from "lucide-react"
+import { useState } from "react"
+import type { Lead, LeadStatus } from "@/modules/leads/types"
+import { LEAD_STAGES } from "@/modules/leads/types"
+import { updateLeadStatus } from "@/modules/leads/actions"
+import { Building, DollarSign, ChevronRight } from "lucide-react"
 import Link from "next/link"
 
 type Props = {
@@ -17,6 +20,20 @@ const priorityConfig = {
 
 export default function LeadCard({ lead, onDragStart }: Props) {
   const priority = priorityConfig[lead.priority]
+  const [showMove, setShowMove] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  async function handleMove(status: LeadStatus) {
+    setLoading(true)
+    setShowMove(false)
+    try {
+      await updateLeadStatus(lead.id, status)
+    } catch (err) {
+      console.error("Failed to move lead", err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div
@@ -51,6 +68,31 @@ export default function LeadCard({ lead, onDragStart }: Props) {
           </span>
         </div>
       )}
+
+      <div className="mt-2 pt-2 border-t border-gray-50 relative">
+        <button
+          onClick={() => setShowMove(!showMove)}
+          disabled={loading}
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 transition-colors w-full"
+        >
+          <ChevronRight className="h-3 w-3" />
+          <span>{loading ? "Moving..." : "Move to"}</span>
+        </button>
+
+        {showMove && (
+          <div className="absolute left-0 top-7 z-20 bg-white border border-gray-200 rounded-lg shadow-lg py-1 w-40">
+            {LEAD_STAGES.filter((s) => s.status !== lead.status).map((stage) => (
+              <button
+                key={stage.status}
+                onClick={() => handleMove(stage.status)}
+                className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <span className={`font-medium ${stage.color}`}>{stage.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
