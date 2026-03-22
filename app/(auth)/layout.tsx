@@ -45,16 +45,14 @@ export default function AuthLayout({
         </div>
       </div>
 
-      <div className="flex-1 bg-gray-50 flex items-center justify-center p-6">
-        <div className="flex flex-col items-center gap-6">
-          <div className="lg:hidden">
-            <Logo href="/" size="lg" variant="dark" />
-          </div>
-          {children}
-          <p className="text-xs text-gray-400">
-            Protected by Clerk · Built with Next.js
-          </p>
+      <div className="flex-1 bg-gray-50 flex flex-col items-center pt-16 px-6 pb-6 lg:justify-center lg:pt-6">
+        <div className="lg:hidden mb-6">
+          <Logo href="/" size="lg" variant="dark" />
         </div>
+        {children}
+        <p className="text-xs text-gray-400 mt-6">
+          Protected by Clerk · Built with Next.js
+        </p>
       </div>
     </div>
   )
