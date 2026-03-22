@@ -1,3 +1,5 @@
+import { auth } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight, Users, TrendingUp, FolderKanban, FileText, Bell, LayoutDashboard } from "lucide-react"
 
@@ -10,7 +12,10 @@ const features = [
   { icon: Bell, title: "Reminders", description: "Never miss a follow-up. Set reminders for clients, leads, and projects." },
 ]
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await auth()
+  if (userId) redirect("/dashboard")
+
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-100">
@@ -23,7 +28,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/sign-in"
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-gray-100">
               Sign In
             </Link>
             <Link href="/sign-up"
@@ -52,7 +57,7 @@ export default function LandingPage() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link href="/sign-in"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-6 py-3">
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-6 py-3 rounded-lg hover:bg-gray-100">
             Sign in →
           </Link>
         </div>
