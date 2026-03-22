@@ -46,17 +46,17 @@ export default function AuthLayout({
         </div>
       </div>
 
-      {/* Right Panel — Auth Form */}
-      <div className="flex-1 flex flex-col bg-gray-50">
-        <div className="flex-1 flex flex-col items-center justify-center p-6">
-          {/* Logo centered above form — mobile only */}
-          <div className="lg:hidden mb-8 flex flex-col items-center">
+      {/* Right Panel */}
+      <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 p-6">
+        <div className="w-full max-w-sm flex flex-col items-center gap-6">
+          {/* Logo grouped with form */}
+          <div className="lg:hidden">
             <Logo href="/" size="lg" variant="dark" />
           </div>
           {children}
-        </div>
-        <div className="pb-6 text-center">
-          <p className="text-xs text-gray-400">Protected by Clerk · Built with Next.js</p>
+          <p className="text-xs text-gray-400 text-center">
+            Protected by Clerk · Built with Next.js
+          </p>
         </div>
       </div>
     </div>
