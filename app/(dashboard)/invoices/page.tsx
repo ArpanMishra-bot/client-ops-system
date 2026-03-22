@@ -26,22 +26,22 @@ export default async function InvoicesPage() {
           className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
         >
           <Plus className="h-4 w-4" />
-          New Invoice
+          <span className="hidden sm:inline">New Invoice</span>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <p className="text-sm text-gray-500">Total Revenue</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">${totalRevenue.toLocaleString()}</p>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
+          <p className="text-xs text-gray-500">Revenue</p>
+          <p className="text-xl font-semibold text-gray-900 mt-1">${totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <p className="text-sm text-gray-500">Outstanding</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">${outstanding.toLocaleString()}</p>
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
+          <p className="text-xs text-gray-500">Outstanding</p>
+          <p className="text-xl font-semibold text-gray-900 mt-1">${outstanding.toLocaleString()}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <p className="text-sm text-gray-500">Total Invoices</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">{invoices.length}</p>
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
+          <p className="text-xs text-gray-500">Total</p>
+          <p className="text-xl font-semibold text-gray-900 mt-1">{invoices.length}</p>
         </div>
       </div>
 
@@ -51,55 +51,78 @@ export default async function InvoicesPage() {
             <FileText className="h-6 w-6 text-gray-400" />
           </div>
           <h3 className="text-sm font-semibold text-gray-900">No invoices yet</h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-sm">
-            Create your first invoice to start getting paid.
-          </p>
-          <Link
-            href="/invoices/new"
-            className="mt-4 flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-          >
+          <p className="text-sm text-gray-500 mt-1 max-w-sm">Create your first invoice to start getting paid.</p>
+          <Link href="/invoices/new"
+            className="mt-4 flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
             <Plus className="h-4 w-4" />
             Create your first invoice
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {invoices.map((invoice) => {
-                const statusConfig = INVOICE_STATUS_CONFIG[invoice.status]
-                return (
-                  <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{invoice.number}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{invoice.client.name}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">${invoice.total.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{new Date(invoice.dueDate).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
-                        {statusConfig.label}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link href={`/invoices/${invoice.id}`} className="text-sm text-gray-500 hover:text-gray-900 font-medium transition-colors">
-                        View →
-                      </Link>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {invoices.map((invoice) => {
+                  const statusConfig = INVOICE_STATUS_CONFIG[invoice.status]
+                  return (
+                    <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{invoice.number}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{invoice.client.name}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">${invoice.total.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
+                          {statusConfig.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Link href={`/invoices/${invoice.id}`} className="text-sm text-gray-500 hover:text-gray-900 font-medium">View →</Link>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-3">
+            {invoices.map((invoice) => {
+              const statusConfig = INVOICE_STATUS_CONFIG[invoice.status]
+              return (
+                <Link
+                  key={invoice.id}
+                  href={`/invoices/${invoice.id}`}
+                  className="bg-white rounded-xl border border-gray-100 p-4 block hover:shadow-sm transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-gray-900">{invoice.number}</p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusConfig.bg} ${statusConfig.color}`}>
+                      {statusConfig.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">{invoice.client.name}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-base font-semibold text-gray-900">${invoice.total.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400">Due {new Date(invoice.dueDate).toLocaleDateString()}</p>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </>
       )}
     </div>
   )

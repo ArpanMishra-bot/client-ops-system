@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -11,6 +12,8 @@ import {
   FileText,
   Bell,
   Settings,
+  Menu,
+  X,
 } from "lucide-react"
 
 const navItems = [
@@ -25,9 +28,10 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
-  return (
-    <div className="w-64 h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0">
+  const NavContent = () => (
+    <>
       <div className="h-16 flex items-center px-6 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-gray-900 rounded-lg flex items-center justify-center">
@@ -44,6 +48,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileOpen(false)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150",
                 isActive
@@ -60,6 +65,44 @@ export default function Sidebar() {
       <div className="p-3 border-t border-gray-100">
         <p className="text-xs text-gray-400 px-3">Client Ops System v1.0</p>
       </div>
-    </div>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex w-64 h-screen bg-white border-r border-gray-100 flex-col fixed left-0 top-0">
+        <NavContent />
+      </div>
+
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-30">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-gray-900 rounded-lg flex items-center justify-center">
+            <span className="text-white text-xs font-bold">C</span>
+          </div>
+          <span className="text-base font-semibold text-gray-900">ClientOps</span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-20">
+          <div
+            className="absolute inset-0 bg-black/20"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white flex flex-col">
+            <NavContent />
+          </div>
+        </div>
+      )}
+    </>
   )
 }
