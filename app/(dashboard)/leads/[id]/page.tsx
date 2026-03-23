@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { ArrowLeft, Mail, Phone, Building, DollarSign } from "lucide-react"
 import Link from "next/link"
 import { LEAD_STAGES } from "@/modules/leads/types"
+import ConvertToClientButton from "@/components/modules/leads/ConvertToClientButton"
 
 export default async function LeadDetailPage({
   params,
@@ -20,14 +21,27 @@ export default async function LeadDetailPage({
   if (!lead) notFound()
 
   const stage = LEAD_STAGES.find((s) => s.status === lead.status)
+  const isWon = lead.status === "WON"
+  const alreadyConverted = !!lead.convertedToId
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between">
         <Link href="/leads" className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to Leads
         </Link>
+        {isWon && !alreadyConverted && (
+          <ConvertToClientButton leadId={lead.id} />
+        )}
+        {alreadyConverted && (
+          <Link
+            href={`/clients/${lead.convertedToId}`}
+            className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+          >
+            ✓ View Client Profile
+          </Link>
+        )}
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
