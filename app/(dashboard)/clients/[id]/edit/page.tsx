@@ -19,7 +19,7 @@ export default async function EditClientPage({
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-4">
         <Link
-          href={`/clients/${params.id}`}
+          href={`/clients/${id}`}
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
