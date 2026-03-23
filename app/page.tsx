@@ -11,7 +11,7 @@ const features = [
     description: "Real-time overview of your entire business.",
     details: ["Revenue tracking", "Active leads count", "Project progress", "Upcoming reminders"],
     color: "bg-indigo-50",
-    iconColor: "bg-indigo-50 text-indigo-600",
+    iconBg: "#eef2ff", iconText: "#4f46e5",
   },
   {
     icon: Users,
@@ -19,7 +19,7 @@ const features = [
     description: "Keep all your client information organized.",
     details: ["Full contact profiles", "Company details", "Activity history", "Status tracking"],
     color: "bg-blue-50",
-    iconColor: "bg-blue-50 text-blue-600",
+    iconBg: "#eff6ff", iconText: "#2563eb",
   },
   {
     icon: TrendingUp,
@@ -27,7 +27,7 @@ const features = [
     description: "Visual kanban pipeline to track every deal.",
     details: ["7 pipeline stages", "Deal value tracking", "Priority levels", "Drag & drop"],
     color: "bg-purple-50",
-    iconColor: "bg-purple-50 text-purple-600",
+    iconBg: "#faf5ff", iconText: "#9333ea",
   },
   {
     icon: FolderKanban,
@@ -35,7 +35,7 @@ const features = [
     description: "Manage projects with a full task board.",
     details: ["4-stage task board", "Progress tracking", "Budget management", "Due dates"],
     color: "bg-orange-50",
-    iconColor: "bg-orange-50 text-orange-600",
+    iconBg: "#fff7ed", iconText: "#ea580c",
   },
   {
     icon: FileText,
@@ -43,7 +43,7 @@ const features = [
     description: "Create professional invoices and get paid.",
     details: ["Line item builder", "Auto-numbering", "Status tracking", "Payment records"],
     color: "bg-green-50",
-    iconColor: "bg-green-50 text-green-600",
+    iconBg: "#f0fdf4", iconText: "#16a34a",
   },
   {
     icon: Bell,
@@ -51,7 +51,7 @@ const features = [
     description: "Never miss a follow-up or deadline.",
     details: ["Follow-up alerts", "Meeting reminders", "Payment nudges", "Overdue tracking"],
     color: "bg-red-50",
-    iconColor: "bg-red-50 text-red-600",
+    iconBg: "#fef2f2", iconText: "#dc2626",
   },
 ]
 
@@ -247,7 +247,7 @@ export default async function LandingPage() {
             const Icon = feature.icon
             return (
               <div key={feature.title} className={`${feature.color} rounded-xl p-6 hover:shadow-md transition-all hover:-translate-y-0.5`}>
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${feature.iconColor}`}>
+                <div style={{background: feature.iconBg, color: feature.iconText}} className="w-10 h-10 rounded-lg flex items-center justify-center mb-4">
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-sm font-semibold text-gray-900">{feature.title}</h3>
