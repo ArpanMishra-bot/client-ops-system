@@ -113,53 +113,101 @@ export default async function LandingPage() {
           </div>
         </div>
 
-        {/* Dashboard Preview */}
-        <div className="mt-12 bg-gray-900 rounded-2xl p-3 shadow-2xl">
-          <div className="bg-gray-800 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500" />
-              <div className="w-3 h-3 rounded-full bg-green-500" />
-              <div className="flex-1 bg-gray-700 rounded h-5 mx-4" />
+        {/* Dashboard Preview — matching real app style */}
+        <div className="mt-12 rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+          {/* Browser chrome */}
+          <div className="bg-gray-100 border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-400" />
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <div className="w-3 h-3 rounded-full bg-green-400" />
             </div>
-            <div className="flex gap-3">
-              <div className="w-36 bg-gray-700 rounded-lg p-3 space-y-2">
-                {["Dashboard", "Clients", "Leads", "Projects", "Invoices", "Reminders"].map((item) => (
-                  <div key={item} className={`text-xs px-2 py-1.5 rounded ${item === "Dashboard" ? "bg-white text-gray-900 font-medium" : "text-gray-400"}`}>
-                    {item}
+            <div className="flex-1 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200">
+              phenomenal-empanada-101cf6.netlify.app/dashboard
+            </div>
+          </div>
+
+          {/* Dashboard UI — white style matching real app */}
+          <div className="flex bg-gray-50" style={{height: '420px'}}>
+            {/* Sidebar */}
+            <div className="w-56 bg-white border-r border-gray-100 flex flex-col flex-shrink-0">
+              <div className="h-14 flex items-center px-5 border-b border-gray-100">
+                <Logo size="sm" variant="dark" />
+              </div>
+              <nav className="flex-1 px-3 py-3 space-y-0.5">
+                {[
+                  { label: "Dashboard", icon: LayoutDashboard, active: true },
+                  { label: "Clients", icon: Users },
+                  { label: "Leads", icon: TrendingUp },
+                  { label: "Projects", icon: FolderKanban },
+                  { label: "Invoices", icon: FileText },
+                  { label: "Reminders", icon: Bell },
+                ].map((item) => (
+                  <div key={item.label} className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium ${item.active ? "bg-gray-900 text-white" : "text-gray-500"}`}>
+                    <item.icon className="h-3.5 w-3.5 shrink-0" />
+                    {item.label}
                   </div>
                 ))}
+              </nav>
+            </div>
+
+            {/* Main content */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="h-14 bg-white border-b border-gray-100 flex items-center justify-end px-5">
+                <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center">
+                  <span className="text-white text-xs font-semibold">A</span>
+                </div>
               </div>
-              <div className="flex-1 space-y-3">
-                <div className="grid grid-cols-3 gap-2">
-                  {[{ label: "Clients", value: "12" }, { label: "Revenue", value: "$8,400" }, { label: "Projects", value: "5" }].map((stat) => (
-                    <div key={stat.label} className="bg-gray-700 rounded-lg p-3">
-                      <p className="text-xs text-gray-400">{stat.label}</p>
-                      <p className="text-base font-bold text-white mt-1">{stat.value}</p>
+              <div className="flex-1 overflow-hidden p-5">
+                <div className="mb-4">
+                  <p className="text-base font-semibold text-gray-900">Welcome back, Arpan 👋</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Here's what's happening with your business today.</p>
+                </div>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  {[
+                    { label: "Active Clients", value: "12", sub: "Total active clients", icon: Users, color: "bg-blue-50 text-blue-600" },
+                    { label: "Active Leads", value: "8", sub: "In pipeline", icon: TrendingUp, color: "bg-purple-50 text-purple-600" },
+                    { label: "Total Revenue", value: "$8,400", sub: "From paid invoices", icon: FileText, color: "bg-green-50 text-green-600" },
+                  ].map((stat) => (
+                    <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-gray-500">{stat.label}</p>
+                          <p className="text-lg font-semibold text-gray-900 mt-0.5">{stat.value}</p>
+                          <p className="text-xs text-gray-400">{stat.sub}</p>
+                        </div>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.color}`}>
+                          <stat.icon className="h-4 w-4" />
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-gray-700 rounded-lg p-3">
-                    <p className="text-xs text-gray-400 mb-2">Recent Clients</p>
-                    {["Acme Corp", "TechStart", "DesignCo"].map((c) => (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white rounded-xl border border-gray-100 p-3">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Recent Clients</p>
+                    {["Acme Corp", "TechStart", "DesignCo"].map((c, i) => (
                       <div key={c} className="flex items-center gap-2 py-1">
-                        <div className="w-5 h-5 bg-gray-500 rounded-full" />
-                        <p className="text-xs text-gray-300">{c}</p>
+                        <div className="w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">{c[0]}</span>
+                        </div>
+                        <span className="text-xs text-gray-700">{c}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="bg-gray-700 rounded-lg p-3">
-                    <p className="text-xs text-gray-400 mb-2">Pipeline</p>
+                  <div className="bg-white rounded-xl border border-gray-100 p-3">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Pipeline</p>
                     {[
-                      { label: "New", color: "bg-blue-500", width: "w-3/4" },
-                      { label: "Qualified", color: "bg-yellow-500", width: "w-1/2" },
-                      { label: "Won", color: "bg-green-500", width: "w-1/4" },
-                    ].map((item) => (
-                      <div key={item.label} className="flex items-center gap-2 py-1">
-                        <p className="text-xs text-gray-400 w-16">{item.label}</p>
-                        <div className="flex-1 bg-gray-600 rounded-full h-1.5">
-                          <div className={`${item.color} ${item.width} h-1.5 rounded-full`} />
+                      { label: "New", width: "75%", color: "bg-blue-500" },
+                      { label: "Qualified", width: "45%", color: "bg-yellow-500" },
+                      { label: "Won", width: "25%", color: "bg-green-500" },
+                    ].map((p) => (
+                      <div key={p.label} className="mb-2">
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>{p.label}</span>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 rounded-full">
+                          <div className={`h-1.5 rounded-full ${p.color}`} style={{width: p.width}} />
                         </div>
                       </div>
                     ))}
@@ -188,7 +236,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Features — Enhanced Cards */}
+      {/* Features */}
       <section className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900">Everything you need</h2>
@@ -246,7 +294,7 @@ export default async function LandingPage() {
       <section className="max-w-6xl mx-auto px-6 py-12">
         <div className="bg-gray-900 rounded-2xl p-10 text-center">
           <h2 className="text-3xl font-bold text-white">Ready to get organized?</h2>
-          <p className="text-gray-400 mt-2">Join thousands of freelancers managing their business with ClientOps.</p>
+          <p className="text-gray-400 mt-2">Join freelancers and agencies managing their business with ClientOps.</p>
           <div className="flex items-center justify-center gap-4 mt-8">
             <Link href="/sign-up" className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors">
               Get started for free <ArrowRight className="h-4 w-4" />
