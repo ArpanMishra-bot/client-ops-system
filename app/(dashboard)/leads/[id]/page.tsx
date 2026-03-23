@@ -11,13 +11,14 @@ import ConvertToClientButton from "@/components/modules/leads/ConvertToClientBut
 export default async function LeadDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const { userId } = await auth()
   if (!userId) notFound()
 
   const lead = await db.lead.findFirst({
-    where: { id: params.id, userId },
+    where: { id, userId },
   })
 
   if (!lead) notFound()

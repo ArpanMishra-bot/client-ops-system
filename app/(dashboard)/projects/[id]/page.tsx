@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { getProjectById } from "@/modules/projects/actions"
 import { notFound } from "next/navigation"
 import { ArrowLeft, Plus, Calendar, DollarSign } from "lucide-react"
@@ -9,9 +11,10 @@ import AddTaskForm from "@/components/modules/leads/AddTaskForm"
 export default async function ProjectDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const project = await getProjectById(params.id)
+  const { id } = await params
+  const project = await getProjectById(id)
   if (!project) notFound()
 
   const statusConfig = PROJECT_STATUS_CONFIG[project.status]

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { getInvoiceById } from "@/modules/invoices/actions"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -9,9 +11,10 @@ import InvoiceDownloadButton from "@/components/modules/invoices/InvoiceDownload
 export default async function InvoiceDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const invoice = await getInvoiceById(params.id)
+  const { id } = await params
+  const invoice = await getInvoiceById(id)
   if (!invoice) notFound()
 
   const statusConfig = INVOICE_STATUS_CONFIG[invoice.status]

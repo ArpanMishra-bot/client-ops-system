@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { getClientById } from "@/modules/clients/actions"
 import { notFound } from "next/navigation"
 import EditClientForm from "./EditClientForm"
@@ -7,9 +9,10 @@ import Link from "next/link"
 export default async function EditClientPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const client = await getClientById(params.id)
+  const { id } = await params
+  const client = await getClientById(id)
   if (!client) notFound()
 
   return (
