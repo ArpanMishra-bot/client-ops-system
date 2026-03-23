@@ -22,7 +22,7 @@ export default async function LeadDetailPage({
 
   const stage = LEAD_STAGES.find((s) => s.status === lead.status)
   const isWon = lead.status === "WON"
-  const alreadyConverted = !!lead.convertedToId
+  const alreadyConverted = lead.convertedToId !== null && lead.convertedToId !== undefined
 
   return (
     <div className="space-y-6 max-w-3xl">
