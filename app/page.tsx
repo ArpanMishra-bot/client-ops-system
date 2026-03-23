@@ -247,7 +247,7 @@ export default async function LandingPage() {
             const Icon = feature.icon
             return (
               <div key={feature.title} className={`${feature.color} rounded-xl p-6 hover:shadow-md transition-all hover:-translate-y-0.5`}>
-                <div style={{background: feature.iconBg, color: feature.iconText}} className="w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <div style={{background: feature.iconBg, color: feature.iconText, border: "1px solid rgba(0,0,0,0.08)"}} className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 shadow-sm">
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-sm font-semibold text-gray-900">{feature.title}</h3>
