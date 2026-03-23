@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
 import InvoiceStatusUpdater from "@/components/modules/invoices/InvoiceStatusUpdater"
+import InvoiceDownloadButton from "@/components/modules/invoices/InvoiceDownloadButton"
 
 export default async function InvoiceDetailPage({
   params,
@@ -22,7 +23,10 @@ export default async function InvoiceDetailPage({
           <ArrowLeft className="h-4 w-4" />
           Back to Invoices
         </Link>
-        <InvoiceStatusUpdater invoiceId={invoice.id} currentStatus={invoice.status} />
+        <div className="flex items-center gap-3">
+          <InvoiceDownloadButton invoice={invoice} />
+          <InvoiceStatusUpdater invoiceId={invoice.id} currentStatus={invoice.status} />
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-8">
