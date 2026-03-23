@@ -25,64 +25,11 @@ const priorityConfig = {
   HIGH: { label: "High", class: "bg-red-50 text-red-600" },
 }
 
-export default function LeadMobileList({ leads, stages }: Props) {
-  const [activeStage, setActiveStage] = useState<LeadStatus | "ALL">("ALL")
-
-  const filteredLeads = activeStage === "ALL"
-    ? leads
-    : leads.filter(l => l.status === activeStage)
-
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        <button
-          onClick={() => setActiveStage("ALL")}
-          className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-            activeStage === "ALL"
-              ? "bg-gray-900 text-white"
-              : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          All ({leads.length})
-        </button>
-        {stages.map((stage) => {
-          const count = leads.filter(l => l.status === stage.status).length
-          return (
-            <button
-              key={stage.status}
-              onClick={() => setActiveStage(stage.status)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                activeStage === stage.status
-                  ? "bg-gray-900 text-white"
-                  : `${stage.bg} ${stage.color}`
-              }`}
-            >
-              {stage.label} ({count})
-            </button>
-          )
-        })}
-      </div>
-
-      {filteredLeads.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
-          <p className="text-sm text-gray-500">No leads in this stage</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filteredLeads.map((lead) => (
-            <MobileLeadCard key={lead.id} lead={lead} stages={stages} />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function MobileLeadCard({ lead, stages }: { lead: Lead, stages: Stage[] }) {
+function MobileLeadCard({ lead, stages }: { lead: Lead; stages: Stage[] }) {
   const [showMove, setShowMove] = useState(false)
   const [loading, setLoading] = useState(false)
   const priority = priorityConfig[lead.priority]
-  const stage = stages.find(s => s.status === lead.status)
+  const stage = stages.find((s) => s.status === lead.status)
 
   async function handleMove(status: LeadStatus) {
     setLoading(true)
@@ -139,7 +86,7 @@ function MobileLeadCard({ lead, stages }: { lead: Lead, stages: Stage[] }) {
           </button>
           {showMove && (
             <div className="absolute right-0 bottom-6 z-20 bg-white border border-gray-200 rounded-lg shadow-lg py-1 w-36">
-              {stages.filter(s => s.status !== lead.status).map((stage) => (
+              {stages.filter((s) => s.status !== lead.status).map((stage) => (
                 <button
                   key={stage.status}
                   onClick={() => handleMove(stage.status)}
@@ -152,6 +99,56 @@ function MobileLeadCard({ lead, stages }: { lead: Lead, stages: Stage[] }) {
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+export default function LeadMobileList({ leads, stages }: Props) {
+  const [activeStage, setActiveStage] = useState<LeadStatus | "ALL">("ALL")
+
+  const filteredLeads =
+    activeStage === "ALL" ? leads : leads.filter((l) => l.status === activeStage)
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        <button
+          onClick={() => setActiveStage("ALL")}
+          className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            activeStage === "ALL" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600"
+          }`}
+        >
+          All ({leads.length})
+        </button>
+        {stages.map((stage) => {
+          const count = leads.filter((l) => l.status === stage.status).length
+          return (
+            <button
+              key={stage.status}
+              onClick={() => setActiveStage(stage.status)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                activeStage === stage.status
+                  ? "bg-gray-900 text-white"
+                  : `${stage.bg} ${stage.color}`
+              }`}
+            >
+              {stage.label} ({count})
+            </button>
+          )
+        })}
+      </div>
+
+      {filteredLeads.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
+          <p className="text-sm text-gray-500">No leads in this stage</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filteredLeads.map((lead) => (
+            <MobileLeadCard key={lead.id} lead={lead} stages={stages} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
