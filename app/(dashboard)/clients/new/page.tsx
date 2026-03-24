@@ -3,40 +3,41 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/modules/clients/actions"
+import { toast } from "sonner"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function NewClientPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setError("")
 
     const form = e.currentTarget
     const formData = new FormData(form)
 
-    try {
-      await createClient({
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
-        company: formData.get("company") as string,
-        address: formData.get("address") as string,
-        city: formData.get("city") as string,
-        country: formData.get("country") as string,
-        website: formData.get("website") as string,
-        notes: formData.get("notes") as string,
-      })
+    const result = await createClient({
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      company: formData.get("company") as string,
+      address: formData.get("address") as string,
+      city: formData.get("city") as string,
+      country: formData.get("country") as string,
+      website: formData.get("website") as string,
+      notes: formData.get("notes") as string,
+    })
+
+    if (result.success) {
+      toast.success("Client created successfully")
       router.push("/clients")
-    } catch (err) {
-      setError("Something went wrong. Please try again.")
-    } finally {
-      setLoading(false)
+    } else {
+      toast.error(result.error || "Failed to create client")
     }
+
+    setLoading(false)
   }
 
   return (
@@ -57,12 +58,6 @@ export default function NewClientPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Full Name *</label>

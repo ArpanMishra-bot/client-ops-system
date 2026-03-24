@@ -28,35 +28,45 @@ export async function createClient(input: CreateClientInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  const client = await db.client.create({
-    data: { ...input, userId },
-  })
-
-  revalidatePath("/clients")
-  return client
+  try {
+    const client = await db.client.create({
+      data: { ...input, userId },
+    })
+    revalidatePath("/clients")
+    return { success: true, data: client }
+  } catch (error) {
+    return { success: false, error: "Failed to create client" }
+  }
 }
 
 export async function updateClient(id: string, input: UpdateClientInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  const client = await db.client.update({
-    where: { id, userId },
-    data: input,
-  })
-
-  revalidatePath("/clients")
-  revalidatePath(`/clients/${id}`)
-  return client
+  try {
+    const client = await db.client.update({
+      where: { id, userId },
+      data: input,
+    })
+    revalidatePath("/clients")
+    revalidatePath(`/clients/${id}`)
+    return { success: true, data: client }
+  } catch (error) {
+    return { success: false, error: "Failed to update client" }
+  }
 }
 
 export async function deleteClient(id: string) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  await db.client.delete({
-    where: { id, userId },
-  })
-
-  revalidatePath("/clients")
+  try {
+    await db.client.delete({
+      where: { id, userId },
+    })
+    revalidatePath("/clients")
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: "Failed to delete client" }
+  }
 }
