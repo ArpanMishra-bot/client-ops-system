@@ -10,23 +10,49 @@ import Link from "next/link"
 export default function NewClientPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
+    setErrors({})
 
     const form = e.currentTarget
     const formData = new FormData(form)
 
+    const name = formData.get("name") as string
+    const email = formData.get("email") as string
+    const website = formData.get("website") as string
+
+    // Simple validation
+    const newErrors: Record<string, string> = {}
+    if (!name || name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!email.includes("@")) {
+      newErrors.email = "Please enter a valid email address"
+    }
+    if (website && !website.startsWith("http")) {
+      newErrors.website = "Website must start with http:// or https://"
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setLoading(false)
+      return
+    }
+
     const result = await createClient({
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
+      name: name,
+      email: email,
       phone: formData.get("phone") as string,
       company: formData.get("company") as string,
       address: formData.get("address") as string,
       city: formData.get("city") as string,
       country: formData.get("country") as string,
-      website: formData.get("website") as string,
+      website: website,
       notes: formData.get("notes") as string,
     })
 
@@ -63,20 +89,28 @@ export default function NewClientPage() {
             <label className="text-sm font-medium text-gray-700">Full Name *</label>
             <input
               name="name"
-              required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                errors.name ? "border-red-500" : "border-gray-200"
+              }`}
               placeholder="John Smith"
             />
+            {errors.name && (
+              <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Email *</label>
             <input
               name="email"
               type="email"
-              required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                errors.email ? "border-red-500" : "border-gray-200"
+              }`}
               placeholder="john@company.com"
             />
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Phone</label>
@@ -114,9 +148,14 @@ export default function NewClientPage() {
             <label className="text-sm font-medium text-gray-700">Website</label>
             <input
               name="website"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                errors.website ? "border-red-500" : "border-gray-200"
+              }`}
               placeholder="https://company.com"
             />
+            {errors.website && (
+              <p className="text-xs text-red-500 mt-1">{errors.website}</p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Address</label>
