@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/modules/clients/actions"
+import { clientSchema } from "@/modules/clients/schema"
 import { toast } from "sonner"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -10,15 +11,17 @@ import Link from "next/link"
 export default function NewClientPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
+    setErrors({})
 
     const form = e.currentTarget
     const formData = new FormData(form)
 
-    const result = await createClient({
+    const raw = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       phone: formData.get("phone") as string,
@@ -28,7 +31,21 @@ export default function NewClientPage() {
       country: formData.get("country") as string,
       website: formData.get("website") as string,
       notes: formData.get("notes") as string,
-    })
+    }
+
+    const parsed = clientSchema.safeParse(raw)
+
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {}
+      parsed.error.errors.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0] as string] = err.message
+      })
+      setErrors(fieldErrors)
+      setLoading(false)
+      return
+    }
+
+    const result = await createClient(parsed.data)
 
     if (result.success) {
       toast.success("Client created successfully")
@@ -63,20 +80,20 @@ export default function NewClientPage() {
             <label className="text-sm font-medium text-gray-700">Full Name *</label>
             <input
               name="name"
-              required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${errors.name ? "border-red-400" : "border-gray-200"}`}
               placeholder="John Smith"
             />
+            {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Email *</label>
             <input
               name="email"
               type="email"
-              required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${errors.email ? "border-red-400" : "border-gray-200"}`}
               placeholder="john@company.com"
             />
+            {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Phone</label>
@@ -114,9 +131,10 @@ export default function NewClientPage() {
             <label className="text-sm font-medium text-gray-700">Website</label>
             <input
               name="website"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${errors.website ? "border-red-400" : "border-gray-200"}`}
               placeholder="https://company.com"
             />
+            {errors.website && <p className="text-xs text-red-500">{errors.website}</p>}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Address</label>
