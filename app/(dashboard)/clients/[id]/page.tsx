@@ -4,6 +4,7 @@ import { getClientById } from "@/modules/clients/actions"
 import { notFound } from "next/navigation"
 import { ArrowLeft, Mail, Phone, Globe, MapPin, Building } from "lucide-react"
 import Link from "next/link"
+import { DeleteButton } from "./delete-button"
 
 export default async function ClientDetailPage({
   params,
@@ -49,12 +50,15 @@ export default async function ClientDetailPage({
               </span>
             </div>
           </div>
-          <Link
-            href={`/clients/${client.id}/edit`}
-            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-          >
-            Edit Client
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href={`/clients/${client.id}/edit`}
+              className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              Edit Client
+            </Link>
+            <DeleteButton clientId={client.id} clientName={client.name} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-100">
