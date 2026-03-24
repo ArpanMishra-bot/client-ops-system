@@ -7,10 +7,10 @@ import { toast } from "sonner"
 import type { Client } from "@/modules/clients/types"
 import Link from "next/link"
 
-export default function EditClientForm({ client }: { client: Client }) {
+export default function EditForm({ client }: { client: Client }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<{ name?: string }>({})
+  const [errors, setErrors] = useState<{ name?: string; email?: string; website?: string }>({})
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -21,23 +21,43 @@ export default function EditClientForm({ client }: { client: Client }) {
     const formData = new FormData(form)
     
     const name = formData.get("name") as string
+    const email = formData.get("email") as string
+    const website = formData.get("website") as string
+
+    const newErrors: { name?: string; email?: string; website?: string } = {}
 
     // Validate name
     if (!name || name.trim().length < 2) {
-      setErrors({ name: "Name must be at least 2 characters" })
+      newErrors.name = "Name must be at least 2 characters"
+    }
+
+    // Validate email
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!email.includes("@")) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    // Validate website
+    if (website && !website.startsWith("http")) {
+      newErrors.website = "Website must start with http:// or https://"
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       setLoading(false)
       return
     }
 
     const result = await updateClient(client.id, {
       name: name,
-      email: formData.get("email") as string,
+      email: email,
       phone: formData.get("phone") as string,
       company: formData.get("company") as string,
       address: formData.get("address") as string,
       city: formData.get("city") as string,
       country: formData.get("country") as string,
-      website: formData.get("website") as string,
+      website: website,
       notes: formData.get("notes") as string,
     })
 
@@ -58,7 +78,6 @@ export default function EditClientForm({ client }: { client: Client }) {
           <label className="text-sm font-medium text-gray-700">Full Name *</label>
           <input 
             name="name" 
-            required 
             defaultValue={client.name}
             className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
               errors.name ? "border-red-500" : "border-gray-200"
@@ -70,8 +89,17 @@ export default function EditClientForm({ client }: { client: Client }) {
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Email *</label>
-          <input name="email" type="email" required defaultValue={client.email}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+          <input 
+            name="email" 
+            type="email" 
+            defaultValue={client.email}
+            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+              errors.email ? "border-red-500" : "border-gray-200"
+            }`}
+          />
+          {errors.email && (
+            <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+          )}
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Phone</label>
@@ -95,8 +123,16 @@ export default function EditClientForm({ client }: { client: Client }) {
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Website</label>
-          <input name="website" defaultValue={client.website ?? ""}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+          <input 
+            name="website" 
+            defaultValue={client.website ?? ""}
+            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+              errors.website ? "border-red-500" : "border-gray-200"
+            }`}
+          />
+          {errors.website && (
+            <p className="text-xs text-red-500 mt-1">{errors.website}</p>
+          )}
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Address</label>
