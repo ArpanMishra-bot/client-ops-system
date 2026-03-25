@@ -2,11 +2,12 @@ export const dynamic = "force-dynamic"
 
 import { getProjectById } from "@/modules/projects/actions"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Plus, Calendar, DollarSign } from "lucide-react"
+import { ArrowLeft, Plus, Calendar, DollarSign, Pencil } from "lucide-react"
 import Link from "next/link"
 import { PROJECT_STATUS_CONFIG, TASK_STATUS_CONFIG } from "@/modules/projects/types"
 import TaskItem from "@/components/modules/leads/TaskItem"
 import AddTaskForm from "@/components/modules/leads/AddTaskForm"
+import { DeleteProjectButton } from "./delete-project-button"
 
 export default async function ProjectDetailPage({
   params,
@@ -31,11 +32,21 @@ export default async function ProjectDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between">
         <Link href="/projects" className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to Projects
         </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/projects/${project.id}/edit`}
+            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Edit
+          </Link>
+          <DeleteProjectButton projectId={project.id} projectName={project.name} />
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
@@ -76,6 +87,13 @@ export default async function ProjectDetailPage({
             </div>
           )}
         </div>
+
+        {project.description && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <p className="text-xs text-gray-400 mb-1">Description</p>
+            <p className="text-sm text-gray-700">{project.description}</p>
+          </div>
+        )}
       </div>
 
       <div>
