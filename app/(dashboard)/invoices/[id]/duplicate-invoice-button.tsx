@@ -18,7 +18,7 @@ export function DuplicateInvoiceButton({ invoiceId }: DuplicateInvoiceButtonProp
     setLoading(true)
     const result = await duplicateInvoice(invoiceId)
     
-    if (result.success) {
+    if (result.success && result.data) {
       toast.success("Invoice duplicated successfully")
       router.push(`/invoices/${result.data.id}`)
     } else {
