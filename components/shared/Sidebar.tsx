@@ -46,13 +46,13 @@ export default function Sidebar() {
               href={item.href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 text-sm font-medium transition-all duration-150",
+                "flex items-center gap-3 px-3 py-2 text-sm font-medium transition-all duration-200 ease-out",
                 isActive
                   ? "bg-gray-50 text-gray-900 border-l-2 border-gray-900 rounded-l-none"
                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-md"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
               {item.label}
             </Link>
           )
@@ -74,7 +74,7 @@ export default function Sidebar() {
         <Logo href="/dashboard" size="sm" variant="dark" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors active:scale-95"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
