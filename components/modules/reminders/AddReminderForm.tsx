@@ -2,32 +2,58 @@
 
 import { useState } from "react"
 import { createReminder } from "@/modules/reminders/actions"
+import { toast } from "sonner"
 import { Plus } from "lucide-react"
 
 export default function AddReminderForm() {
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
+    setErrors({})
+
     const form = e.currentTarget
     const formData = new FormData(form)
 
-    try {
-      await createReminder({
-        title: formData.get("title") as string,
-        description: formData.get("description") as string,
-        type: formData.get("type") as string,
-        dueDate: formData.get("dueDate") as string,
-      })
+    const title = formData.get("title") as string
+    const dueDate = formData.get("dueDate") as string
+
+    const newErrors: Record<string, string> = {}
+
+    if (!title || title.trim().length < 2) {
+      newErrors.title = "Title must be at least 2 characters"
+    }
+
+    if (!dueDate) {
+      newErrors.dueDate = "Due date is required"
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setLoading(false)
+      return
+    }
+
+    const result = await createReminder({
+      title: title.trim(),
+      description: formData.get("description") as string,
+      type: formData.get("type") as string,
+      dueDate: dueDate,
+    })
+
+    if (result.success) {
+      toast.success("Reminder created successfully")
       form.reset()
       setShow(false)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
+      setErrors({})
+    } else {
+      toast.error(result.error || "Failed to create reminder")
     }
+
+    setLoading(false)
   }
 
   if (!show) {
@@ -48,9 +74,14 @@ export default function AddReminderForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Title *</label>
-          <input name="title" required
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-            placeholder="Follow up with client..." />
+          <input 
+            name="title"
+            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+              errors.title ? "border-red-500" : "border-gray-200"
+            }`}
+            placeholder="Follow up with client..." 
+          />
+          {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Type</label>
@@ -60,13 +91,18 @@ export default function AddReminderForm() {
             <option value="MEETING">Meeting</option>
             <option value="DEADLINE">Deadline</option>
             <option value="PAYMENT">Payment</option>
-            <option value="OTHER">Other</option>
           </select>
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Due Date *</label>
-          <input name="dueDate" type="datetime-local" required
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          <input 
+            name="dueDate" 
+            type="datetime-local"
+            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+              errors.dueDate ? "border-red-500" : "border-gray-200"
+            }`}
+          />
+          {errors.dueDate && <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>}
         </div>
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Description</label>
