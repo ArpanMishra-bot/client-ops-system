@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic"
 import { db } from "@/lib/db"
 import { auth } from "@clerk/nextjs/server"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Mail, Phone, Building, DollarSign } from "lucide-react"
+import { ArrowLeft, Mail, Phone, Building, DollarSign, Pencil } from "lucide-react"
 import Link from "next/link"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import ConvertToClientButton from "@/components/modules/leads/ConvertToClientButton"
@@ -36,6 +36,13 @@ export default async function LeadDetailPage({
           Back to Leads
         </Link>
         <div className="flex items-center gap-2">
+          <Link
+            href={`/leads/${lead.id}/edit`}
+            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Edit
+          </Link>
           {isWon && !alreadyConverted && (
             <ConvertToClientButton leadId={lead.id} />
           )}
