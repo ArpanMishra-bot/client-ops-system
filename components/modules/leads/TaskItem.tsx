@@ -17,9 +17,9 @@ export default function TaskItem({ task, projectId }: Props) {
   const [showMove, setShowMove] = useState(false)
   const [loading, setLoading] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [editingTitle, setEditingTitle] = useState(task.title)
+  const [editModalOpen, setEditModalOpen] = useState(false)
   const [editingLoading, setEditingLoading] = useState(false)
 
   async function handleMove(status: TaskStatus) {
@@ -48,44 +48,45 @@ export default function TaskItem({ task, projectId }: Props) {
 
   async function handleEditTitle() {
     if (!editingTitle.trim() || editingTitle === task.title) {
-      setEditDialogOpen(false)
+      setEditModalOpen(false)
       return
     }
 
     setEditingLoading(true)
-    // Note: We need to add updateTaskTitle action
-    // For now, just close and show warning
+    // TODO: Add updateTaskTitle action
     toast.info("Edit task title feature coming soon")
-    setEditDialogOpen(false)
+    setEditModalOpen(false)
     setEditingLoading(false)
   }
 
+  const currentStatusConfig = TASK_STATUS_CONFIG[task.status as keyof typeof TASK_STATUS_CONFIG]
+
   return (
     <>
-      <div className="bg-gray-50 rounded-lg p-3 group relative hover:bg-gray-100 transition-colors">
+      <div className="group relative bg-white rounded-lg border border-gray-100 p-3 hover:shadow-sm transition-all">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1">
-            <p className="text-xs font-medium text-gray-900">{task.title}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
             {task.dueDate && (
               <p className="text-xs text-gray-400 mt-1">
                 Due: {new Date(task.dueDate).toLocaleDateString()}
               </p>
             )}
           </div>
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
             <button
-              onClick={() => setEditDialogOpen(true)}
-              className="text-gray-400 hover:text-gray-700 transition-colors p-1"
+              onClick={() => setEditModalOpen(true)}
+              className="p-1 text-gray-400 hover:text-gray-700 transition-colors"
               title="Edit task"
             >
-              <Pencil className="h-3 w-3" />
+              <Pencil className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setDeleteDialogOpen(true)}
-              className="text-gray-400 hover:text-red-500 transition-colors p-1"
+              className="p-1 text-gray-400 hover:text-red-600 transition-colors"
               title="Delete task"
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -128,7 +129,7 @@ export default function TaskItem({ task, projectId }: Props) {
       />
 
       {/* Edit Task Modal */}
-      {editDialogOpen && (
+      {editModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Edit Task</h2>
@@ -141,7 +142,7 @@ export default function TaskItem({ task, projectId }: Props) {
             />
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setEditDialogOpen(false)}
+                onClick={() => setEditModalOpen(false)}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancel
