@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const reminderTypes = ["FOLLOW_UP", "MEETING", "DEADLINE", "PAYMENT"] as const
+export const reminderTypes = ["FOLLOW_UP", "MEETING", "DEADLINE", "PAYMENT", "OTHER"] as const
 
 export const createReminderSchema = z.object({
   title: z.string()

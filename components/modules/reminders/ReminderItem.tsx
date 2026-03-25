@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { toggleReminder, deleteReminder, updateReminder } from "@/modules/reminders/actions"
 import { toast } from "sonner"
-import { Check, Trash2, Pencil, Calendar, X } from "lucide-react"
+import { Check, Trash2, Pencil, Calendar } from "lucide-react"
 import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog"
 import type { Reminder } from "@/modules/reminders/types"
 
@@ -75,6 +75,15 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
     MEETING: "Meeting",
     DEADLINE: "Deadline",
     PAYMENT: "Payment",
+    OTHER: "Other",
+  }
+
+  const typeColors: Record<string, string> = {
+    FOLLOW_UP: "bg-blue-50 text-blue-600",
+    MEETING: "bg-purple-50 text-purple-600",
+    DEADLINE: "bg-orange-50 text-orange-600",
+    PAYMENT: "bg-green-50 text-green-600",
+    OTHER: "bg-gray-50 text-gray-600",
   }
 
   return (
@@ -98,12 +107,7 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
                 <p className={`text-sm font-medium ${isDone ? "line-through text-gray-400" : "text-gray-900"}`}>
                   {reminder.title}
                 </p>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  reminder.type === "FOLLOW_UP" ? "bg-blue-50 text-blue-600" :
-                  reminder.type === "MEETING" ? "bg-purple-50 text-purple-600" :
-                  reminder.type === "DEADLINE" ? "bg-orange-50 text-orange-600" :
-                  "bg-green-50 text-green-600"
-                }`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${typeColors[reminder.type] || "bg-gray-50 text-gray-600"}`}>
                   {typeLabels[reminder.type] || reminder.type}
                 </span>
                 {isOverdue && !isDone && (
@@ -181,6 +185,7 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
                   <option value="MEETING">Meeting</option>
                   <option value="DEADLINE">Deadline</option>
                   <option value="PAYMENT">Payment</option>
+                  <option value="OTHER">Other</option>
                 </select>
               </div>
               <div className="space-y-1.5">

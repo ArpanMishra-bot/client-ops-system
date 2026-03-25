@@ -1,4 +1,4 @@
-export type ReminderType = "FOLLOW_UP" | "MEETING" | "DEADLINE" | "PAYMENT"
+export type ReminderType = "FOLLOW_UP" | "MEETING" | "DEADLINE" | "PAYMENT" | "OTHER"
 
 export type Reminder = {
   id: string
