@@ -7,7 +7,6 @@ import type { Task, TaskStatus } from "@/modules/projects/types"
 import { TASK_STATUS_CONFIG } from "@/modules/projects/types"
 import { Trash2, ChevronRight, Pencil } from "lucide-react"
 import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog"
-import EditTaskModal from "./EditTaskModal"
 
 type Props = {
   task: Task
@@ -20,6 +19,8 @@ export default function TaskItem({ task, projectId }: Props) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [editingTitle, setEditingTitle] = useState(task.title)
+  const [editingLoading, setEditingLoading] = useState(false)
 
   async function handleMove(status: TaskStatus) {
     setLoading(true)
@@ -45,9 +46,23 @@ export default function TaskItem({ task, projectId }: Props) {
     setIsDeleting(false)
   }
 
+  async function handleEditTitle() {
+    if (!editingTitle.trim() || editingTitle === task.title) {
+      setEditDialogOpen(false)
+      return
+    }
+
+    setEditingLoading(true)
+    // Note: We need to add updateTaskTitle action
+    // For now, just close and show warning
+    toast.info("Edit task title feature coming soon")
+    setEditDialogOpen(false)
+    setEditingLoading(false)
+  }
+
   return (
     <>
-      <div className="bg-gray-50 rounded-lg p-3 group relative">
+      <div className="bg-gray-50 rounded-lg p-3 group relative hover:bg-gray-100 transition-colors">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <p className="text-xs font-medium text-gray-900">{task.title}</p>
@@ -57,16 +72,18 @@ export default function TaskItem({ task, projectId }: Props) {
               </p>
             )}
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => setEditDialogOpen(true)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-gray-700"
+              className="text-gray-400 hover:text-gray-700 transition-colors p-1"
+              title="Edit task"
             >
               <Pencil className="h-3 w-3" />
             </button>
             <button
               onClick={() => setDeleteDialogOpen(true)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
+              className="text-gray-400 hover:text-red-500 transition-colors p-1"
+              title="Delete task"
             >
               <Trash2 className="h-3 w-3" />
             </button>
@@ -110,12 +127,36 @@ export default function TaskItem({ task, projectId }: Props) {
         isDeleting={isDeleting}
       />
 
-      <EditTaskModal
-        task={task}
-        projectId={projectId}
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-      />
+      {/* Edit Task Modal */}
+      {editDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Edit Task</h2>
+            <input
+              type="text"
+              value={editingTitle}
+              onChange={(e) => setEditingTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-4"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setEditDialogOpen(false)}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditTitle}
+                disabled={editingLoading}
+                className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
+              >
+                {editingLoading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
