@@ -3,16 +3,26 @@
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
-import type { CreateInvoiceInput, InvoiceStatus } from "./types"
+import { createInvoiceSchema, updateInvoiceSchema } from "./schemas"
+import type { InvoiceStatus } from "./types"
 
 export async function getInvoices() {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  return await db.invoice.findMany({
+  const invoices = await db.invoice.findMany({
     where: { userId },
     include: { client: true, items: true },
     orderBy: { createdAt: "desc" },
+  })
+
+  // Auto-update overdue status
+  const today = new Date()
+  return invoices.map((invoice) => {
+    if (invoice.status !== "PAID" && invoice.dueDate < today) {
+      return { ...invoice, status: "OVERDUE" as InvoiceStatus }
+    }
+    return invoice
   })
 }
 
@@ -20,68 +30,161 @@ export async function getInvoiceById(id: string) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  return await db.invoice.findFirst({
+  const invoice = await db.invoice.findFirst({
     where: { id, userId },
     include: { client: true, items: true, project: true },
   })
+
+  if (!invoice) return null
+
+  // Auto-update overdue status
+  const today = new Date()
+  if (invoice.status !== "PAID" && invoice.dueDate < today) {
+    return { ...invoice, status: "OVERDUE" as InvoiceStatus }
+  }
+  return invoice
 }
 
-export async function createInvoice(input: CreateInvoiceInput) {
+export async function createInvoice(input: any) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  const subtotal = input.items.reduce((sum, item) => sum + item.quantity * item.rate, 0)
-  const total = subtotal
+  const validated = createInvoiceSchema.safeParse(input)
+  if (!validated.success) {
+    const errorMessage = validated.error.issues[0]?.message || "Validation failed"
+    return { 
+      success: false, 
+      error: errorMessage
+    }
+  }
 
-  const invoice = await db.invoice.create({
-    data: {
-      userId,
-      clientId: input.clientId,
-      projectId: input.projectId || null,
-      number: input.number,
-      status: "DRAFT",
-      issueDate: new Date(),
-      dueDate: new Date(input.dueDate),
-      subtotal,
-      tax: 0,
-      discount: 0,
-      total,
-      currency: input.currency || "USD",
-      notes: input.notes || null,
-      terms: input.terms || null,
-      items: {
-        create: input.items.map((item) => ({
-          description: item.description,
-          quantity: item.quantity,
-          rate: item.rate,
-          amount: item.quantity * item.rate,
-        })),
+  try {
+    const subtotal = validated.data.items.reduce(
+      (sum, item) => sum + item.quantity * item.rate, 
+      0
+    )
+    const total = subtotal
+
+    const invoice = await db.invoice.create({
+      data: {
+        userId,
+        clientId: validated.data.clientId,
+        projectId: validated.data.projectId || null,
+        number: validated.data.number,
+        status: "DRAFT",
+        issueDate: new Date(),
+        dueDate: new Date(validated.data.dueDate),
+        subtotal,
+        tax: 0,
+        discount: 0,
+        total,
+        currency: validated.data.currency || "USD",
+        notes: validated.data.notes || null,
+        terms: validated.data.terms || null,
+        items: {
+          create: validated.data.items.map((item) => ({
+            description: item.description,
+            quantity: item.quantity,
+            rate: item.rate,
+            amount: item.quantity * item.rate,
+          })),
+        },
       },
-    },
-  })
+    })
 
-  revalidatePath("/invoices")
-  return invoice
+    revalidatePath("/invoices")
+    return { success: true, data: invoice }
+  } catch (error) {
+    console.error("Create invoice error:", error)
+    return { success: false, error: "Failed to create invoice" }
+  }
 }
 
 export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  const data: any = { status }
-  if (status === "PAID") data.paidAt = new Date()
+  try {
+    const data: any = { status }
+    if (status === "PAID") data.paidAt = new Date()
 
-  const invoice = await db.invoice.update({
-    where: { id, userId },
-    data,
-  })
+    const invoice = await db.invoice.update({
+      where: { id, userId },
+      data,
+    })
 
-  revalidatePath("/invoices")
-  revalidatePath(`/invoices/${id}`)
-  return invoice
+    revalidatePath("/invoices")
+    revalidatePath(`/invoices/${id}`)
+    return { success: true, data: invoice }
+  } catch (error) {
+    console.error("Update invoice status error:", error)
+    return { success: false, error: "Failed to update invoice status" }
+  }
+}
+
+export async function deleteInvoice(id: string) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  try {
+    await db.invoice.delete({
+      where: { id, userId },
+    })
+    revalidatePath("/invoices")
+    return { success: true }
+  } catch (error) {
+    console.error("Delete invoice error:", error)
+    return { success: false, error: "Failed to delete invoice" }
+  }
 }
 
 export async function generateInvoiceNumber(userId: string) {
   const count = await db.invoice.count({ where: { userId } })
   return `INV-${String(count + 1).padStart(4, "0")}`
+}
+
+export async function duplicateInvoice(id: string) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  const original = await getInvoiceById(id)
+  if (!original) return { success: false, error: "Invoice not found" }
+
+  const count = await db.invoice.count({ where: { userId } })
+  const newNumber = `INV-${String(count + 1).padStart(4, "0")}`
+
+  try {
+    const newInvoice = await db.invoice.create({
+      data: {
+        userId,
+        clientId: original.clientId,
+        projectId: original.projectId,
+        number: newNumber,
+        status: "DRAFT",
+        issueDate: new Date(),
+        dueDate: new Date(original.dueDate),
+        subtotal: original.subtotal,
+        tax: original.tax,
+        discount: original.discount,
+        total: original.total,
+        currency: original.currency,
+        notes: original.notes,
+        terms: original.terms,
+        items: {
+          create: original.items.map((item) => ({
+            description: item.description,
+            quantity: item.quantity,
+            rate: item.rate,
+            amount: item.amount,
+          })),
+        },
+      },
+    })
+
+    revalidatePath("/invoices")
+    return { success: true, data: newInvoice }
+  } catch (error) {
+    console.error("Duplicate invoice error:", error)
+    return { success: false, error: "Failed to duplicate invoice" }
+  }
 }

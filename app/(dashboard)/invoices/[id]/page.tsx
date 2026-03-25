@@ -2,11 +2,13 @@ export const dynamic = "force-dynamic"
 
 import { getInvoiceById } from "@/modules/invoices/actions"
 import { notFound } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Trash2, Copy } from "lucide-react"
 import Link from "next/link"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
 import InvoiceStatusUpdater from "@/components/modules/invoices/InvoiceStatusUpdater"
 import InvoiceDownloadButton from "@/components/modules/invoices/InvoiceDownloadButton"
+import { DeleteInvoiceButton } from "./delete-invoice-button"
+import { DuplicateInvoiceButton } from "./duplicate-invoice-button"
 
 export default async function InvoiceDetailPage({
   params,
@@ -26,9 +28,11 @@ export default async function InvoiceDetailPage({
           <ArrowLeft className="h-4 w-4" />
           Back to Invoices
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <DuplicateInvoiceButton invoiceId={invoice.id} />
           <InvoiceDownloadButton invoice={invoice} />
           <InvoiceStatusUpdater invoiceId={invoice.id} currentStatus={invoice.status} />
+          <DeleteInvoiceButton invoiceId={invoice.id} invoiceNumber={invoice.number} />
         </div>
       </div>
 
@@ -77,7 +81,7 @@ export default async function InvoiceDetailPage({
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Qty</th>
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Rate</th>
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Amount</th>
-              </tr>
+               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {invoice.items.map((item) => (

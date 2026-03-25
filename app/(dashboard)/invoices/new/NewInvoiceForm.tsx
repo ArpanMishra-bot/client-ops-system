@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createInvoice } from "@/modules/invoices/actions"
+import { toast } from "sonner"
 import type { Client } from "@/modules/clients/types"
 import { Plus, Trash2 } from "lucide-react"
 import Link from "next/link"
@@ -11,6 +12,13 @@ type LineItem = {
   description: string
   quantity: number
   rate: number
+}
+
+type FormErrors = {
+  clientId?: string
+  dueDate?: string
+  items?: string
+  itemErrors?: { description?: string; quantity?: string; rate?: string }[]
 }
 
 export default function NewInvoiceForm({
@@ -22,7 +30,7 @@ export default function NewInvoiceForm({
 }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [errors, setErrors] = useState<FormErrors>({})
   const [items, setItems] = useState<LineItem[]>([
     { description: "", quantity: 1, rate: 0 },
   ])
@@ -43,38 +51,89 @@ export default function NewInvoiceForm({
     ))
   }
 
+  function validateForm(): boolean {
+    const form = document.querySelector("form")
+    const formData = new FormData(form!)
+    
+    const clientId = formData.get("clientId") as string
+    const dueDate = formData.get("dueDate") as string
+    
+    const newErrors: FormErrors = {}
+    const itemErrors: any[] = []
+
+    // Validate client
+    if (!clientId) {
+      newErrors.clientId = "Please select a client"
+    }
+
+    // Validate due date
+    if (!dueDate) {
+      newErrors.dueDate = "Due date is required"
+    }
+
+    // Validate items
+    let hasValidItem = false
+    items.forEach((item, idx) => {
+      const itemErr: any = {}
+      if (!item.description.trim()) {
+        itemErr.description = "Description is required"
+      }
+      if (item.quantity <= 0) {
+        itemErr.quantity = "Quantity must be greater than 0"
+      }
+      if (item.rate <= 0) {
+        itemErr.rate = "Rate must be greater than 0"
+      }
+      if (Object.keys(itemErr).length === 0) {
+        hasValidItem = true
+      }
+      itemErrors.push(itemErr)
+    })
+
+    if (!hasValidItem) {
+      newErrors.items = "At least one valid line item is required"
+    }
+    newErrors.itemErrors = itemErrors
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).filter(k => k !== "itemErrors").length === 0 && hasValidItem
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      toast.error("Please fix the errors above")
+      return
+    }
+
     setLoading(true)
-    setError("")
 
     const form = e.currentTarget
     const formData = new FormData(form)
 
-    try {
-      await createInvoice({
-        clientId: formData.get("clientId") as string,
-        number: invoiceNumber,
-        dueDate: formData.get("dueDate") as string,
-        currency: "USD",
-        notes: formData.get("notes") as string,
-        terms: formData.get("terms") as string,
-        items,
-      })
+    const result = await createInvoice({
+      clientId: formData.get("clientId") as string,
+      number: invoiceNumber,
+      dueDate: formData.get("dueDate") as string,
+      currency: "USD",
+      notes: formData.get("notes") as string,
+      terms: formData.get("terms") as string,
+      items: items.filter(item => item.description.trim() && item.quantity > 0 && item.rate > 0),
+    })
+
+    if (result.success) {
+      toast.success("Invoice created successfully")
       router.push("/invoices")
-    } catch (err) {
-      setError("Something went wrong. Please try again.")
-    } finally {
-      setLoading(false)
+    } else {
+      toast.error(result.error || "Failed to create invoice")
     }
+
+    setLoading(false)
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {error && (
-        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">{error}</div>
-      )}
-
       <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
         <h2 className="text-sm font-semibold text-gray-900">Invoice Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -85,24 +144,36 @@ export default function NewInvoiceForm({
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Client *</label>
-            <select name="clientId" required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+            <select 
+              name="clientId" 
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+                errors.clientId ? "border-red-500" : "border-gray-200"
+              }`}
+            >
               <option value="">Select client</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
+            {errors.clientId && <p className="text-xs text-red-500 mt-1">{errors.clientId}</p>}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Due Date *</label>
-            <input name="dueDate" type="date" required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            <input 
+              name="dueDate" 
+              type="date" 
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+                errors.dueDate ? "border-red-500" : "border-gray-200"
+              }`}
+            />
+            {errors.dueDate && <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>}
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
         <h2 className="text-sm font-semibold text-gray-900">Line Items</h2>
+        {errors.items && <p className="text-xs text-red-500">{errors.items}</p>}
         <div className="space-y-2">
           <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 px-1">
             <span className="col-span-6">Description</span>
@@ -111,38 +182,60 @@ export default function NewInvoiceForm({
             <span className="col-span-2">Amount</span>
           </div>
           {items.map((item, index) => (
-            <div key={index} className="grid grid-cols-12 gap-2 items-center">
-              <input
-                value={item.description}
-                onChange={(e) => updateItem(index, "description", e.target.value)}
-                placeholder="Service description"
-                className="col-span-6 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-              />
-              <input
-                type="number"
-                value={item.quantity}
-                onChange={(e) => updateItem(index, "quantity", Number(e.target.value))}
-                min="1"
-                className="col-span-2 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-              />
-              <input
-                type="number"
-                value={item.rate}
-                onChange={(e) => updateItem(index, "rate", Number(e.target.value))}
-                min="0"
-                className="col-span-2 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-              />
-              <div className="col-span-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-900">
-                  ${(item.quantity * item.rate).toLocaleString()}
-                </span>
-                {items.length > 1 && (
-                  <button type="button" onClick={() => removeItem(index)}
-                    className="text-gray-400 hover:text-red-500 transition-colors">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
+            <div key={index} className="space-y-1">
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <div className="col-span-6">
+                  <input
+                    value={item.description}
+                    onChange={(e) => updateItem(index, "description", e.target.value)}
+                    placeholder="Service description"
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+                      errors.itemErrors?.[index]?.description ? "border-red-500" : "border-gray-200"
+                    }`}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <input
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) => updateItem(index, "quantity", Number(e.target.value))}
+                    min="1"
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+                      errors.itemErrors?.[index]?.quantity ? "border-red-500" : "border-gray-200"
+                    }`}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <input
+                    type="number"
+                    value={item.rate}
+                    onChange={(e) => updateItem(index, "rate", Number(e.target.value))}
+                    min="0"
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+                      errors.itemErrors?.[index]?.rate ? "border-red-500" : "border-gray-200"
+                    }`}
+                  />
+                </div>
+                <div className="col-span-2 flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-900">
+                    ${(item.quantity * item.rate).toLocaleString()}
+                  </span>
+                  {items.length > 1 && (
+                    <button type="button" onClick={() => removeItem(index)}
+                      className="text-gray-400 hover:text-red-500 transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
+              {errors.itemErrors?.[index]?.description && (
+                <p className="text-xs text-red-500 ml-1">{errors.itemErrors[index].description}</p>
+              )}
+              {(errors.itemErrors?.[index]?.quantity || errors.itemErrors?.[index]?.rate) && (
+                <p className="text-xs text-red-500 ml-1">
+                  {errors.itemErrors[index].quantity || errors.itemErrors[index].rate}
+                </p>
+              )}
             </div>
           ))}
         </div>
