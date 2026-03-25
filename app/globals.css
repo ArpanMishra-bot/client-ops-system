@@ -101,3 +101,33 @@
 .icon-btn:active {
   transform: scale(0.92);
 }
+
+/* Mobile tap feedback for all clickable elements */
+a:active, button:active, .clickable:active {
+  transform: scale(0.97);
+  transition: transform 0.05s ease;
+}
+
+/* Ensure smooth reset */
+a, button, .clickable {
+  transition: transform 0.15s ease;
+}
+
+/* Mobile tap feedback */
+a:active, 
+button:active,
+[role="button"]:active {
+  transform: scale(0.97);
+  transition: transform 0.05s ease;
+}
+
+/* Reset transition for smooth return */
+a, button, [role="button"] {
+  transition: transform 0.15s ease;
+}
+
+/* Disable scaling on elements that should not scale */
+.no-tap-scale:active {
+  transform: none !important;
+}
+
