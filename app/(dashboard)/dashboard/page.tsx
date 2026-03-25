@@ -4,24 +4,6 @@ import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, Activity, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
 import Link from "next/link"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts"
-
-// Sample data for charts
-const revenueData = [
-  { name: "Week 1", revenue: 1200 },
-  { name: "Week 2", revenue: 1800 },
-  { name: "Week 3", revenue: 2400 },
-  { name: "Week 4", revenue: 3200 },
-]
-
-const pipelineData = [
-  { name: "New", value: 5000 },
-  { name: "Contacted", value: 3000 },
-  { name: "Qualified", value: 8000 },
-  { name: "Proposal", value: 4000 },
-  { name: "Negotiation", value: 6000 },
-  { name: "Won", value: 12000 },
-]
 
 async function DashboardStats() {
   const stats = await getDashboardStats()
@@ -69,7 +51,6 @@ async function DashboardStats() {
 async function RecentClients() {
   const stats = await getDashboardStats()
   
-  // Top clients by revenue (sample data)
   const topClients = [
     { name: "Acme Corp", revenue: 8400, growth: 23 },
     { name: "TechStart", revenue: 5200, growth: 12 },
@@ -100,10 +81,10 @@ async function RecentClients() {
 
 async function ActivityFeed() {
   const activities = [
-    { id: 1, action: "Created invoice INV-0023", user: "You", time: "2 minutes ago", type: "invoice" },
-    { id: 2, action: "Marked lead as WON", user: "You", time: "1 hour ago", type: "lead" },
-    { id: 3, action: "Added new client: Acme Corp", user: "You", time: "3 hours ago", type: "client" },
-    { id: 4, action: "Invoice INV-0022 was paid", user: "Client", time: "Yesterday", type: "payment" },
+    { id: 1, action: "Created invoice INV-0023", time: "2 minutes ago" },
+    { id: 2, action: "Marked lead as WON", time: "1 hour ago" },
+    { id: 3, action: "Added new client: Acme Corp", time: "3 hours ago" },
+    { id: 4, action: "Invoice INV-0022 was paid", time: "Yesterday" },
   ]
   
   return (
@@ -140,55 +121,14 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {user?.firstName ?? "there"} 👋</h1>
-          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
-        </div>
-        <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
-          <option>Last 7 days</option>
-          <option>Last 30 days</option>
-          <option>This month</option>
-          <option>Last month</option>
-        </select>
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {user?.firstName ?? "there"} 👋</h1>
+        <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
       </div>
 
-      {/* Stats */}
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
       </Suspense>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Chart */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Revenue Trend</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="#111827" strokeWidth={2} dot={{ fill: "#111827" }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Pipeline Chart */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Pipeline Value by Stage</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={pipelineData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="value" fill="#111827" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
@@ -215,26 +155,10 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Three Column Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Two Column Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentClients />
         <ActivityFeed />
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Business Health</h2>
-          <div className="text-center">
-            <div className="text-5xl font-bold text-gray-900">85</div>
-            <p className="text-sm text-gray-500 mt-1">out of 100</p>
-            <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full w-[85%] bg-gray-900 rounded-full" />
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-              <div><span className="font-medium">Clients:</span> 25/25</div>
-              <div><span className="font-medium">Revenue:</span> 18/25</div>
-              <div><span className="font-medium">Pipeline:</span> 22/25</div>
-              <div><span className="font-medium">Tasks:</span> 20/25</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
