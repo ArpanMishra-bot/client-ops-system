@@ -10,7 +10,7 @@ export const leadStatuses = [
   "LOST",
 ] as const
 
-export type LeadStatus = typeof leadStatuses[number]
+export const leadPriorities = ["LOW", "MEDIUM", "HIGH"] as const
 
 export const createLeadSchema = z.object({
   name: z.string()
@@ -23,7 +23,7 @@ export const createLeadSchema = z.object({
   company: z.string().optional().nullable(),
   status: z.enum(leadStatuses).default("NEW"),
   value: z.number().min(0, "Value must be 0 or greater").optional().nullable(),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
+  priority: z.enum(leadPriorities).default("MEDIUM"),
   source: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 })

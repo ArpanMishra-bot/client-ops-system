@@ -31,7 +31,7 @@ export async function createLead(input: any) {
 
   const validated = createLeadSchema.safeParse(input)
   if (!validated.success) {
-    const errorMessage = validated.error.errors[0]?.message || "Validation failed"
+    const errorMessage = validated.error.issues[0]?.message || "Validation failed"
     return { 
       success: false, 
       error: errorMessage
@@ -56,7 +56,7 @@ export async function updateLead(id: string, input: any) {
 
   const validated = updateLeadSchema.safeParse(input)
   if (!validated.success) {
-    const errorMessage = validated.error.errors[0]?.message || "Validation failed"
+    const errorMessage = validated.error.issues[0]?.message || "Validation failed"
     return { 
       success: false, 
       error: errorMessage
