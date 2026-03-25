@@ -18,12 +18,14 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
       <div className="md:ml-64">
-        <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10 mt-16 md:mt-0">
+        <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10">
           <div />
           <UserButton />
         </header>
-        <main className="p-4 md:p-8">
-          {children}
+        <main className="p-6 md:p-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
