@@ -2,8 +2,6 @@ import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
-import PrimaryButton from "@/components/shared/PrimaryButton"
-import SecondaryButton from "@/components/shared/SecondaryButton"
 import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar } from "lucide-react"
 import Link from "next/link"
 
@@ -27,7 +25,7 @@ async function DashboardStats() {
           <Link
             key={stat.label}
             href={stat.href}
-            className="block bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            className="block bg-white rounded-xl border border-gray-100 shadow-sm p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           >
             <div className="flex justify-between">
               <div>
@@ -50,18 +48,18 @@ async function RecentClients() {
   const stats = await getDashboardStats()
   
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 transition-all duration-300 hover:shadow-md">
       <h2 className="text-sm font-semibold text-gray-900 mb-4">Recent Clients</h2>
       {stats.recentClients.length === 0 ? (
         <div className="text-center py-8">
           <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No clients yet</p>
-          <SecondaryButton href="/clients/new">Add your first client →</SecondaryButton>
+          <Link href="/clients/new" className="text-xs text-gray-900 font-medium hover:underline">Add your first client →</Link>
         </div>
       ) : (
         <div className="space-y-3">
           {stats.recentClients.map((client: any) => (
-            <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors duration-150">
+            <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-all duration-200">
               <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
               </div>
@@ -82,13 +80,13 @@ async function UpcomingReminders() {
   const stats = await getDashboardStats()
   
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 transition-all duration-300 hover:shadow-md">
       <h2 className="text-sm font-semibold text-gray-900 mb-4">Upcoming Reminders</h2>
       {stats.upcomingReminders.length === 0 ? (
         <div className="text-center py-8">
           <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <SecondaryButton href="/reminders">Add a reminder →</SecondaryButton>
+          <Link href="/reminders" className="text-xs text-gray-900 font-medium hover:underline">Add a reminder →</Link>
         </div>
       ) : (
         <div className="space-y-3">
@@ -143,7 +141,7 @@ export default async function DashboardPage() {
               <Link
                 key={action.label}
                 href={action.href}
-                className="flex flex-col items-center text-center p-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition-all duration-200 hover:scale-105 active:scale-95"
+                className="flex flex-col items-center text-center p-3 rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${action.color}`}>
                   <Icon className="h-5 w-5" />
