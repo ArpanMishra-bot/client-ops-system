@@ -19,7 +19,7 @@ async function ClientsList() {
         </p>
         <Link
           href="/clients/new"
-          className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all"
+          className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <UserPlus className="h-4 w-4" />
           Add your first client
@@ -44,7 +44,7 @@ async function ClientsList() {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {clients.map((client) => (
-              <tr key={client.id} className="hover:bg-gray-50 transition-colors duration-100">
+              <tr key={client.id} className="transition-all duration-150 hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
@@ -81,7 +81,7 @@ async function ClientsList() {
           <Link
             key={client.id}
             href={`/clients/${client.id}`}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4 hover:shadow-md transition-all block"
+            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4 hover:shadow-md transition-all duration-200 active:scale-[0.98] block"
           >
             <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center shrink-0">
               <span className="text-white text-sm font-medium">
@@ -117,7 +117,7 @@ export default async function ClientsPage() {
         </div>
         <Link
           href="/clients/new"
-          className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+          className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Add Client</span>
