@@ -1,10 +1,10 @@
-export const dynamic = "force-dynamic"
-
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
-import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap } from "lucide-react"
+import PrimaryButton from "@/components/shared/PrimaryButton"
+import SecondaryButton from "@/components/shared/SecondaryButton"
+import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar } from "lucide-react"
 import Link from "next/link"
 
 async function DashboardStats() {
@@ -24,7 +24,11 @@ async function DashboardStats() {
       {statCards.map((stat) => {
         const Icon = stat.icon
         return (
-          <Link key={stat.label} href={stat.href} className="block bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+          <Link
+            key={stat.label}
+            href={stat.href}
+            className="block bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+          >
             <div className="flex justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">{stat.label}</p>
@@ -52,12 +56,12 @@ async function RecentClients() {
         <div className="text-center py-8">
           <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No clients yet</p>
-          <Link href="/clients/new" className="text-xs text-gray-900 font-medium mt-2 inline-block">Add your first client →</Link>
+          <SecondaryButton href="/clients/new">Add your first client →</SecondaryButton>
         </div>
       ) : (
         <div className="space-y-3">
           {stats.recentClients.map((client: any) => (
-            <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg">
+            <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors duration-150">
               <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
               </div>
@@ -84,7 +88,7 @@ async function UpcomingReminders() {
         <div className="text-center py-8">
           <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <Link href="/reminders" className="text-xs text-gray-900 font-medium mt-2 inline-block">Add a reminder →</Link>
+          <SecondaryButton href="/reminders">Add a reminder →</SecondaryButton>
         </div>
       ) : (
         <div className="space-y-3">
@@ -107,6 +111,14 @@ async function UpcomingReminders() {
 export default async function DashboardPage() {
   const user = await currentUser()
 
+  const quickActions = [
+    { label: "Add Client", icon: UserPlus, href: "/clients/new", color: "bg-blue-50 text-blue-600" },
+    { label: "Add Lead", icon: TrendingUp, href: "/leads/new", color: "bg-purple-50 text-purple-600" },
+    { label: "Create Project", icon: Briefcase, href: "/projects/new", color: "bg-orange-50 text-orange-600" },
+    { label: "Create Invoice", icon: Receipt, href: "/invoices/new", color: "bg-green-50 text-green-600" },
+    { label: "Add Reminder", icon: Calendar, href: "/reminders", color: "bg-yellow-50 text-yellow-600" },
+  ]
+
   return (
     <div className="space-y-8">
       <div>
@@ -114,7 +126,6 @@ export default async function DashboardPage() {
         <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
       </div>
 
-      {/* Stats with Skeleton */}
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
       </Suspense>
@@ -125,12 +136,22 @@ export default async function DashboardPage() {
           <Zap className="h-5 w-5 text-gray-900" />
           <h2 className="text-sm font-semibold text-gray-900">Quick Actions</h2>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/clients/new" className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">+ Add Client</Link>
-          <Link href="/leads/new" className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium">+ Add Lead</Link>
-          <Link href="/projects/new" className="px-4 py-2 bg-orange-50 text-orange-700 rounded-lg text-sm font-medium">+ Create Project</Link>
-          <Link href="/invoices/new" className="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium">+ Create Invoice</Link>
-          <Link href="/reminders" className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg text-sm font-medium">+ Add Reminder</Link>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {quickActions.map((action) => {
+            const Icon = action.icon
+            return (
+              <Link
+                key={action.label}
+                href={action.href}
+                className="flex flex-col items-center text-center p-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${action.color}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="text-xs font-medium mt-2 text-gray-700">{action.label}</span>
+              </Link>
+            )
+          })}
         </div>
       </div>
 

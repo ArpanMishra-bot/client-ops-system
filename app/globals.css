@@ -84,3 +84,20 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
 }
+
+/* Mobile Press Effects */
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+/* For inline buttons (icons, etc.) */
+.icon-btn {
+  transition: transform 0.1s ease;
+}
+.icon-btn:active {
+  transform: scale(0.92);
+}
