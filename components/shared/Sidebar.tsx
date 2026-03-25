@@ -39,17 +39,17 @@ export default function Sidebar() {
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map((item) => {
           const Icon = item.icon
-          const isActive = pathname === item.href
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150",
+                "flex items-center gap-3 px-3 py-2 text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                  ? "bg-gray-50 text-gray-900 border-l-2 border-gray-900 rounded-l-none"
+                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-md"
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -59,7 +59,7 @@ export default function Sidebar() {
         })}
       </nav>
       <div className="p-3 border-t border-gray-100">
-        <p className="text-xs text-gray-400 px-3">Client Ops System v1.0</p>
+        <p className="text-xs text-gray-400 px-3">ClientOps — v1.0</p>
       </div>
     </>
   )
