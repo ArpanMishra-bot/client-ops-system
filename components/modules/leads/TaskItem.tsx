@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { updateTaskStatus, deleteTask } from "@/modules/projects/actions"
+import { updateTaskStatus, deleteTask, updateTaskTitle } from "@/modules/projects/actions"
 import { toast } from "sonner"
 import type { Task, TaskStatus } from "@/modules/projects/types"
 import { TASK_STATUS_CONFIG } from "@/modules/projects/types"
@@ -53,9 +53,14 @@ export default function TaskItem({ task, projectId }: Props) {
     }
 
     setEditingLoading(true)
-    // TODO: Add updateTaskTitle action
-    toast.info("Edit task title feature coming soon")
-    setEditModalOpen(false)
+    const result = await updateTaskTitle(task.id, editingTitle.trim(), projectId)
+    
+    if (result.success) {
+      toast.success("Task updated successfully")
+      setEditModalOpen(false)
+    } else {
+      toast.error(result.error || "Failed to update task")
+    }
     setEditingLoading(false)
   }
 
@@ -73,7 +78,10 @@ export default function TaskItem({ task, projectId }: Props) {
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <button
-              onClick={() => setEditModalOpen(true)}
+              onClick={() => {
+                setEditingTitle(task.title)
+                setEditModalOpen(true)
+              }}
               className="p-1 text-gray-500 hover:text-gray-900 transition-colors"
               title="Edit task"
             >

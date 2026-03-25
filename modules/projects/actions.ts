@@ -183,3 +183,20 @@ export async function deleteTask(id: string, projectId: string) {
     return { success: false, error: "Failed to delete task" }
   }
 }
+
+export async function updateTaskTitle(id: string, title: string, projectId: string) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  try {
+    const task = await db.task.update({
+      where: { id, userId },
+      data: { title },
+    })
+    revalidatePath(`/projects/${projectId}`)
+    return { success: true, data: task }
+  } catch (error) {
+    console.error("Update task title error:", error)
+    return { success: false, error: "Failed to update task title" }
+  }
+}
