@@ -131,3 +131,18 @@ a, button, [role="button"] {
   transform: none !important;
 }
 
+
+/* Form Input Focus Animations */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #111827;
+  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1), 0 0 0 4px rgba(17, 24, 39, 0.05);
+  transition: all 0.2s ease;
+}
+
+/* Default input styles */
+input, textarea, select {
+  transition: all 0.2s ease;
+}
