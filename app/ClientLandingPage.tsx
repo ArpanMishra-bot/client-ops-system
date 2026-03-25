@@ -82,10 +82,10 @@ const faqs = [
 ]
 
 const workflow = [
-  { step: "01", title: "Add a Lead", description: "Capture prospects and track them through your pipeline stages.", icon: TrendingUp },
-  { step: "02", title: "Convert to Client", description: "When a deal closes, convert your lead to a full client profile.", icon: Users },
-  { step: "03", title: "Deliver the Project", description: "Create a project, break it into tasks, and track progress.", icon: FolderKanban },
-  { step: "04", title: "Get Paid", description: "Generate a professional invoice and mark it paid when received.", icon: FileText },
+  { step: "01", title: "Add a Lead", description: "Capture prospects and track them through your pipeline stages.", icon: TrendingUp, color: "bg-purple-50 text-purple-600" },
+  { step: "02", title: "Convert to Client", description: "When a deal closes, convert your lead to a full client profile.", icon: Users, color: "bg-blue-50 text-blue-600" },
+  { step: "03", title: "Deliver the Project", description: "Create a project, break it into tasks, and track progress.", icon: FolderKanban, color: "bg-orange-50 text-orange-600" },
+  { step: "04", title: "Get Paid", description: "Generate a professional invoice and mark it paid when received.", icon: FileText, color: "bg-green-50 text-green-600" },
 ]
 
 const stats = [
@@ -393,8 +393,8 @@ export default function ClientLandingPage() {
                 viewport={{ once: true }}
                 className="relative bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center hover:shadow-md transition-all"
               >
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
-                  <Icon className="h-6 w-6 text-indigo-600" />
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 ${step.color}`}>
+                  <Icon className="h-6 w-6" />
                 </div>
                 <div className="text-2xl font-bold text-gray-200 mb-2">{step.step}</div>
                 <h3 className="font-semibold text-gray-900">{step.title}</h3>
