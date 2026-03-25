@@ -15,21 +15,8 @@ export default function SignInPage() {
           <p className="text-sm text-gray-500 mt-1">Sign in to continue managing your business</p>
         </div>
 
-        {/* Clerk Sign In with wrapper to hide footer */}
+        {/* Clerk Sign In */}
         <div className="px-8 pb-6">
-          <style>{`
-            .cl-footer, 
-            .cl-footerAction, 
-            .cl-footerActionText, 
-            .cl-footerActionLink,
-            .cl-userButtonPopoverCard,
-            .cl-internal-b3fm6y,
-            .cl-internal-1dauvpw,
-            [class*="cl-footer"],
-            [class*="cl-internal"] {
-              display: none !important;
-            }
-          `}</style>
           <SignIn
             appearance={{
               elements: {

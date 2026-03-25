@@ -17,19 +17,6 @@ export default function SignUpPage() {
 
         {/* Clerk Sign Up */}
         <div className="px-8 pb-6">
-          <style>{`
-            .cl-footer, 
-            .cl-footerAction, 
-            .cl-footerActionText, 
-            .cl-footerActionLink,
-            .cl-userButtonPopoverCard,
-            .cl-internal-b3fm6y,
-            .cl-internal-1dauvpw,
-            [class*="cl-footer"],
-            [class*="cl-internal"] {
-              display: none !important;
-            }
-          `}</style>
           <SignUp
             appearance={{
               elements: {
