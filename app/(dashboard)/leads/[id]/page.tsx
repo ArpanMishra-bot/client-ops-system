@@ -7,6 +7,7 @@ import { ArrowLeft, Mail, Phone, Building, DollarSign } from "lucide-react"
 import Link from "next/link"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import ConvertToClientButton from "@/components/modules/leads/ConvertToClientButton"
+import { DeleteLeadButton } from "./delete-lead-button"
 
 export default async function LeadDetailPage({
   params,
@@ -34,17 +35,20 @@ export default async function LeadDetailPage({
           <ArrowLeft className="h-4 w-4" />
           Back to Leads
         </Link>
-        {isWon && !alreadyConverted && (
-          <ConvertToClientButton leadId={lead.id} />
-        )}
-        {alreadyConverted && (
-          <Link
-            href={`/clients/${lead.convertedToId}`}
-            className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
-          >
-            ✓ View Client Profile
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          {isWon && !alreadyConverted && (
+            <ConvertToClientButton leadId={lead.id} />
+          )}
+          {alreadyConverted && (
+            <Link
+              href={`/clients/${lead.convertedToId}`}
+              className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+            >
+              ✓ View Client Profile
+            </Link>
+          )}
+          <DeleteLeadButton leadId={lead.id} leadName={lead.name} />
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
