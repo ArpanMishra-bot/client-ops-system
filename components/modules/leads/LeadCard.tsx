@@ -39,7 +39,7 @@ export default function LeadCard({ lead, onDragStart }: Props) {
     <div
       draggable
       onDragStart={onDragStart}
-      className="bg-white rounded-lg border border-gray-100 p-3 cursor-grab active:cursor-grabbing hover:shadow-sm transition-all hover:border-gray-200 group"
+      className="bg-white rounded-lg border border-gray-100 shadow-sm p-3 cursor-grab active:cursor-grabbing hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
