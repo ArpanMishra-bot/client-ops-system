@@ -7,14 +7,16 @@ export default function SignInPage() {
     <div className="w-full max-w-md">
       <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         
-        {/* Custom Header Bar - Same width as Clerk UI */}
-        <div className="flex items-center justify-center gap-3 py-4 px-6 border-b border-gray-100 bg-white">
-          <Logo href="/" size="sm" variant="dark" />
-          <div className="h-5 w-px bg-gray-200" />
-          <span className="text-sm font-medium text-gray-700">Welcome back</span>
+        {/* Horizontal Button Bar - Same width as Clerk UI */}
+        <div className="w-full px-6 pt-6">
+          <div className="w-full bg-gray-50 hover:bg-gray-100 transition-colors rounded-t-xl border border-gray-200 shadow-sm py-2.5 flex items-center justify-center gap-2 cursor-pointer">
+            <Logo href="/" size="sm" variant="dark" />
+            <div className="h-4 w-px bg-gray-300" />
+            <span className="text-sm font-medium text-gray-700">Welcome back</span>
+          </div>
         </div>
 
-        {/* Clerk Sign In - Custom colors to match product */}
+        {/* Clerk Sign In */}
         <div className="px-6 pb-6">
           <SignIn
             appearance={{
