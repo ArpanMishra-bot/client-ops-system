@@ -15,8 +15,21 @@ export default function SignInPage() {
           <p className="text-sm text-gray-500 mt-1">Sign in to continue managing your business</p>
         </div>
 
-        {/* Clerk Sign In */}
+        {/* Clerk Sign In with wrapper to hide footer */}
         <div className="px-8 pb-6">
+          <style>{`
+            .cl-footer, 
+            .cl-footerAction, 
+            .cl-footerActionText, 
+            .cl-footerActionLink,
+            .cl-userButtonPopoverCard,
+            .cl-internal-b3fm6y,
+            .cl-internal-1dauvpw,
+            [class*="cl-footer"],
+            [class*="cl-internal"] {
+              display: none !important;
+            }
+          `}</style>
           <SignIn
             appearance={{
               elements: {
@@ -28,13 +41,13 @@ export default function SignInPage() {
                 socialButtons: "flex flex-col gap-3",
                 socialButtonsBlockButton: "bg-white border border-gray-200 rounded-xl py-2.5 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all w-full",
                 socialButtonsBlockButtonText: "text-sm font-medium",
-                divider: "text-xs text-gray-400",
-                dividerLine: "bg-gray-200",
+                divider: "hidden",
                 formFieldLabel: "text-sm font-medium text-gray-700 mb-1.5 block",
                 formFieldInput: "w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all",
                 formButtonPrimary: "w-full bg-gray-900 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-gray-800 transition-all mt-2",
                 footer: "hidden",
                 footerAction: "hidden",
+                footerActionText: "hidden",
                 footerActionLink: "hidden",
               },
             }}
