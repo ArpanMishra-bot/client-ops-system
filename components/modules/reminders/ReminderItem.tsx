@@ -88,7 +88,7 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
 
   return (
     <>
-      <div className={`bg-white rounded-xl border border-gray-100 p-4 hover:shadow-sm transition-all ${isDone ? "opacity-60" : ""}`}>
+      <div className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ${isDone ? "opacity-60" : ""}`}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 flex-1">
             <button
