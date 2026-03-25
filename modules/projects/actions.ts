@@ -43,10 +43,14 @@ export async function createProject(input: any) {
   try {
     const project = await db.project.create({
       data: {
-        ...validated.data,
-        userId,
+        name: validated.data.name,
+        clientId: validated.data.clientId,
+        description: validated.data.description,
+        status: validated.data.status as any,
         startDate: validated.data.startDate ? new Date(validated.data.startDate) : null,
         dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : null,
+        budget: validated.data.budget,
+        userId,
       },
     })
     revalidatePath("/projects")
@@ -74,9 +78,13 @@ export async function updateProject(id: string, input: any) {
     const project = await db.project.update({
       where: { id, userId },
       data: {
-        ...validated.data,
+        name: validated.data.name,
+        clientId: validated.data.clientId,
+        description: validated.data.description,
+        status: validated.data.status as any,
         startDate: validated.data.startDate ? new Date(validated.data.startDate) : null,
         dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : null,
+        budget: validated.data.budget,
       },
     })
     revalidatePath("/projects")
@@ -95,7 +103,7 @@ export async function updateProjectStatus(id: string, status: ProjectStatus) {
   try {
     const project = await db.project.update({
       where: { id, userId },
-      data: { status },
+      data: { status: status as any },
     })
     revalidatePath("/projects")
     revalidatePath(`/projects/${id}`)
@@ -122,7 +130,7 @@ export async function deleteProject(id: string) {
   }
 }
 
-// Task actions (keeping existing but adding return format)
+// Task actions
 export async function createTask(input: any) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
@@ -130,9 +138,11 @@ export async function createTask(input: any) {
   try {
     const task = await db.task.create({
       data: {
-        ...input,
-        userId,
+        title: input.title,
+        projectId: input.projectId,
+        status: input.status || "TODO",
         dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        userId,
       },
     })
     revalidatePath(`/projects/${input.projectId}`)
@@ -150,7 +160,7 @@ export async function updateTaskStatus(id: string, status: TaskStatus, projectId
   try {
     const task = await db.task.update({
       where: { id, userId },
-      data: { status },
+      data: { status: status as any },
     })
     revalidatePath(`/projects/${projectId}`)
     return { success: true, data: task }
