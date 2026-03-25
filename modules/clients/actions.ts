@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
+import type { CreateClientInput, UpdateClientInput } from "./types"
 
 export async function getClients() {
   const { userId } = await auth()
@@ -23,56 +24,36 @@ export async function getClientById(id: string) {
   })
 }
 
-export async function createClient(data: {
-  name: string
-  email: string
-  phone?: string | null
-  company?: string | null
-  address?: string | null
-  city?: string | null
-  country?: string | null
-  website?: string | null
-  notes?: string | null
-}) {
+export async function createClient(input: CreateClientInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
   try {
     const client = await db.client.create({
-      data: { ...data, userId },
+      data: { ...input, userId },
     })
     revalidatePath("/clients")
+    revalidatePath("/dashboard")
     return { success: true, data: client }
   } catch (error) {
-    console.error("Create client error:", error)
     return { success: false, error: "Failed to create client" }
   }
 }
 
-export async function updateClient(id: string, data: {
-  name?: string
-  email?: string
-  phone?: string | null
-  company?: string | null
-  address?: string | null
-  city?: string | null
-  country?: string | null
-  website?: string | null
-  notes?: string | null
-}) {
+export async function updateClient(id: string, input: UpdateClientInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
   try {
     const client = await db.client.update({
       where: { id, userId },
-      data,
+      data: input,
     })
     revalidatePath("/clients")
     revalidatePath(`/clients/${id}`)
+    revalidatePath("/dashboard")
     return { success: true, data: client }
   } catch (error) {
-    console.error("Update client error:", error)
     return { success: false, error: "Failed to update client" }
   }
 }
@@ -86,9 +67,9 @@ export async function deleteClient(id: string) {
       where: { id, userId },
     })
     revalidatePath("/clients")
+    revalidatePath("/dashboard")
     return { success: true }
   } catch (error) {
-    console.error("Delete client error:", error)
     return { success: false, error: "Failed to delete client" }
   }
 }

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
@@ -75,17 +77,53 @@ export default async function DashboardPage() {
         {/* Recent Clients */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Recent Clients</h2>
-          <div className="space-y-3">
-            {/* This will load normally */}
-          </div>
+          {stats.recentClients.length === 0 ? (
+            <div className="text-center py-8">
+              <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+              <p className="text-sm text-gray-500">No clients yet</p>
+              <Link href="/clients/new" className="text-xs text-gray-900 font-medium mt-2 inline-block">Add your first client →</Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {stats.recentClients.map((client: any) => (
+                <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg">
+                  <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{client.name}</p>
+                    {client.company && <p className="text-xs text-gray-500">{client.company}</p>}
+                  </div>
+                  <p className="text-xs text-gray-400">{new Date(client.createdAt).toLocaleDateString()}</p>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Upcoming Reminders */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Upcoming Reminders</h2>
-          <div className="space-y-3">
-            {/* This will load normally */}
-          </div>
+          {stats.upcomingReminders.length === 0 ? (
+            <div className="text-center py-8">
+              <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+              <p className="text-sm text-gray-500">No upcoming reminders</p>
+              <Link href="/reminders" className="text-xs text-gray-900 font-medium mt-2 inline-block">Add a reminder →</Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {stats.upcomingReminders.map((reminder: any) => (
+                <div key={reminder.id} className="flex items-start gap-3 p-2">
+                  <div className="w-2 h-2 rounded-full bg-gray-900 mt-1.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{reminder.title}</p>
+                    <p className="text-xs text-gray-400">{new Date(reminder.dueDate).toLocaleString()}</p>
+                    {reminder.client && <p className="text-xs text-gray-500 mt-1">Client: {reminder.client.name}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
