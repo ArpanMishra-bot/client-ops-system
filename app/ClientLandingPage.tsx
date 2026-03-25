@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import Logo from "@/components/shared/Logo"
-import { ArrowRight, Users, TrendingUp, FolderKanban, FileText, Bell, LayoutDashboard, CheckCircle, Star, Play, ChevronRight, Zap } from "lucide-react"
+import { ArrowRight, Users, TrendingUp, FolderKanban, FileText, Bell, LayoutDashboard, CheckCircle, Star, Play, ChevronRight, Zap, Minus, Plus } from "lucide-react"
 import { motion, useInView } from "framer-motion"
 
 // Animated counter component
@@ -34,6 +34,28 @@ function Counter({ target, suffix = "", prefix = "" }: { target: number; suffix?
     <span ref={ref}>
       {prefix}{count.toLocaleString()}{suffix}
     </span>
+  )
+}
+
+// Accordion component for FAQ
+function AccordionItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+      >
+        <span className="font-semibold text-gray-900">{question}</span>
+        {isOpen ? <Minus className="h-5 w-5 text-gray-400" /> : <Plus className="h-5 w-5 text-gray-400" />}
+      </button>
+      {isOpen && (
+        <div className="px-6 pb-4">
+          <p className="text-sm text-gray-500">{answer}</p>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -73,6 +95,10 @@ const stats = [
   { value: 4.9, suffix: "", label: "User Rating", prefix: "" },
 ]
 
+const logoWall = [
+  "Acme Inc", "TechStart", "DesignCo", "Creative Labs", "Studio 9", "Pixel Perfect", "Innovate Hub", "Bright Future"
+]
+
 export default function ClientLandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -94,6 +120,24 @@ export default function ClientLandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-transparent" />
+        
+        {/* Floating Animation Elements */}
+        <motion.div
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 left-10 w-20 h-20 bg-indigo-100 rounded-full opacity-20 blur-xl"
+        />
+        <motion.div
+          animate={{ y: [0, 20, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-20 right-10 w-32 h-32 bg-purple-100 rounded-full opacity-20 blur-xl"
+        />
+        <motion.div
+          animate={{ x: [0, 30, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-100 rounded-full opacity-20 blur-xl"
+        />
+        
         <div className="max-w-6xl mx-auto px-6 py-20 relative">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -233,7 +277,7 @@ export default function ClientLandingPage() {
                 <p className="text-sm text-gray-500 mt-1">{feature.benefit}</p>
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <ul className="space-y-2">
-                    {feature.details.slice(0, 3).map((detail) => (
+                    {feature.details.map((detail) => (
                       <li key={detail} className="flex items-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
                         {detail}
@@ -245,6 +289,42 @@ export default function ClientLandingPage() {
             )
           })}
         </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="max-w-6xl mx-auto px-6 py-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Simple, transparent pricing</h2>
+          <p className="text-gray-500 mt-2">Start for free. No credit card required.</p>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="max-w-md mx-auto"
+        >
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-xl p-8 text-center">
+            <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-semibold mb-4">
+              Free Forever
+            </div>
+            <p className="text-5xl font-bold text-gray-900">$0</p>
+            <p className="text-sm text-gray-500 mt-2">per month</p>
+            <ul className="mt-6 space-y-3 text-left">
+              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-green-500" /> All core features</li>
+              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-green-500" /> Unlimited clients & leads</li>
+              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-green-500" /> Unlimited invoices</li>
+              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-green-500" /> 5 projects included</li>
+            </ul>
+            <Link href="/sign-up" className="mt-8 inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all hover:scale-[1.02] w-full justify-center">
+              Get Started Free <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </motion.div>
       </section>
 
       {/* Testimonials */}
@@ -333,9 +413,9 @@ export default function ClientLandingPage() {
       {/* Logo Wall */}
       <section className="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100">
         <p className="text-center text-xs text-gray-400 uppercase tracking-wider mb-8">Trusted by innovative companies</p>
-        <div className="flex flex-wrap items-center justify-center gap-8 opacity-50">
-          {["Acme Inc", "TechStart", "DesignCo", "Creative Labs", "Studio 9", "Pixel Perfect"].map((logo) => (
-            <div key={logo} className="text-gray-400 font-semibold text-sm">{logo}</div>
+        <div className="flex flex-wrap items-center justify-center gap-8">
+          {logoWall.map((logo) => (
+            <div key={logo} className="text-gray-400 font-semibold text-sm hover:text-gray-600 transition-colors">{logo}</div>
           ))}
         </div>
       </section>
@@ -351,7 +431,7 @@ export default function ClientLandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Frequently asked questions</h2>
           <p className="text-gray-500 mt-2">Got questions? We've got answers</p>
         </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="max-w-3xl mx-auto space-y-3">
           {faqs.map((faq, i) => (
             <motion.div
               key={faq.q}
@@ -359,10 +439,8 @@ export default function ClientLandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-xl border border-gray-100 shadow-sm p-6"
             >
-              <h3 className="font-semibold text-gray-900">{faq.q}</h3>
-              <p className="text-sm text-gray-500 mt-2">{faq.a}</p>
+              <AccordionItem question={faq.q} answer={faq.a} />
             </motion.div>
           ))}
         </div>
