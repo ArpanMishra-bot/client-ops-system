@@ -66,7 +66,7 @@ async function InvoicesList() {
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-             </>
+            </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {invoices.map((invoice) => {
