@@ -5,7 +5,7 @@ import { toggleReminder, deleteReminder, updateReminder } from "@/modules/remind
 import { toast } from "sonner"
 import { Check, Trash2, Pencil, Calendar } from "lucide-react"
 import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog"
-import type { Reminder } from "@/modules/reminders/types"
+import type { Reminder, ReminderType } from "@/modules/reminders/types"
 
 export default function ReminderItem({ reminder }: { reminder: Reminder }) {
   const [isDone, setIsDone] = useState(reminder.isDone)
@@ -18,7 +18,7 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
     reminder.dueDate ? new Date(reminder.dueDate).toISOString().slice(0, 16) : ""
   )
   const [editingDescription, setEditingDescription] = useState(reminder.description || "")
-  const [editingType, setEditingType] = useState(reminder.type)
+  const [editingType, setEditingType] = useState<ReminderType>(reminder.type)
   const [editingLoading, setEditingLoading] = useState(false)
 
   const isOverdue = !isDone && new Date(reminder.dueDate) < new Date()
@@ -178,7 +178,7 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
                 <label className="text-sm font-medium text-gray-700">Type</label>
                 <select
                   value={editingType}
-                  onChange={(e) => setEditingType(e.target.value)}
+                  onChange={(e) => setEditingType(e.target.value as ReminderType)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                 >
                   <option value="FOLLOW_UP">Follow Up</option>
