@@ -59,11 +59,9 @@ export default function TaskItem({ task, projectId }: Props) {
     setEditingLoading(false)
   }
 
-  const currentStatusConfig = TASK_STATUS_CONFIG[task.status as keyof typeof TASK_STATUS_CONFIG]
-
   return (
     <>
-      <div className="group relative bg-white rounded-lg border border-gray-100 p-3 hover:shadow-sm transition-all">
+      <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
@@ -73,17 +71,17 @@ export default function TaskItem({ task, projectId }: Props) {
               </p>
             )}
           </div>
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+          <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={() => setEditModalOpen(true)}
-              className="p-1 text-gray-400 hover:text-gray-700 transition-colors"
+              className="p-1 text-gray-500 hover:text-gray-900 transition-colors"
               title="Edit task"
             >
               <Pencil className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setDeleteDialogOpen(true)}
-              className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+              className="p-1 text-gray-500 hover:text-red-600 transition-colors"
               title="Delete task"
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -95,7 +93,7 @@ export default function TaskItem({ task, projectId }: Props) {
           <button
             onClick={() => setShowMove(!showMove)}
             disabled={loading}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 transition-colors"
+            className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors"
           >
             <ChevronRight className="h-3 w-3" />
             <span>{loading ? "Moving..." : "Move"}</span>
