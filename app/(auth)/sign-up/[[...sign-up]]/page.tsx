@@ -6,17 +6,16 @@ export default function SignUpPage() {
   return (
     <div className="w-full max-w-md">
       <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-        {/* Header */}
-        <div className="text-center pt-8 pb-6 px-8 border-b border-gray-100">
-          <div className="flex justify-center mb-4">
-            <Logo href="/" size="md" variant="dark" />
-          </div>
-          <h1 className="text-2xl font-semibold text-gray-900">Create your account</h1>
-          <p className="text-sm text-gray-500 mt-1">Start managing your client business today</p>
+        
+        {/* Custom Header Bar - Same width as Clerk UI */}
+        <div className="flex items-center justify-center gap-3 py-4 px-6 border-b border-gray-100 bg-white">
+          <Logo href="/" size="sm" variant="dark" />
+          <div className="h-5 w-px bg-gray-200" />
+          <span className="text-sm font-medium text-gray-700">Create account</span>
         </div>
 
-        {/* Clerk Sign Up */}
-        <div className="px-8 pb-6">
+        {/* Clerk Sign Up - Custom colors to match product */}
+        <div className="px-6 pb-6">
           <SignUp
             appearance={{
               elements: {
@@ -41,15 +40,12 @@ export default function SignUpPage() {
           />
         </div>
 
-        {/* Footer */}
-        <div className="bg-gray-50 px-8 py-4 border-t border-gray-100">
-          <div className="flex items-center justify-center gap-2 mb-2">
+        {/* Footer - Social Proof */}
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100">
+          <div className="flex items-center justify-center gap-2">
             <CheckCircle className="h-4 w-4 text-green-500" />
             <span className="text-xs text-gray-500">Free forever — No credit card required</span>
           </div>
-          <p className="text-xs text-gray-400 text-center">
-            Start growing your business today
-          </p>
         </div>
       </div>
     </div>
