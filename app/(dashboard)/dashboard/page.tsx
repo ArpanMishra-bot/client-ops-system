@@ -2,11 +2,9 @@ import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
-import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, Download, Activity, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
+import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, Activity, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
 import Link from "next/link"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts"
-import { PDFDownloadLink } from "@react-pdf/renderer"
-import { DashboardPDF } from "@/components/shared/DashboardPDF"
 
 // Sample data for charts
 const revenueData = [
@@ -71,7 +69,7 @@ async function DashboardStats() {
 async function RecentClients() {
   const stats = await getDashboardStats()
   
-  // Get top 5 clients by revenue (sample data - replace with real data)
+  // Top clients by revenue (sample data)
   const topClients = [
     { name: "Acme Corp", revenue: 8400, growth: 23 },
     { name: "TechStart", revenue: 5200, growth: 12 },
@@ -101,9 +99,6 @@ async function RecentClients() {
 }
 
 async function ActivityFeed() {
-  const stats = await getDashboardStats()
-  
-  // Sample activity data - replace with real data from activity log
   const activities = [
     { id: 1, action: "Created invoice INV-0023", user: "You", time: "2 minutes ago", type: "invoice" },
     { id: 2, action: "Marked lead as WON", user: "You", time: "1 hour ago", type: "lead" },
@@ -145,25 +140,18 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header with Date Range and Export */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {user?.firstName ?? "there"} 👋</h1>
           <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
-            <option>Last 7 days</option>
-            <option>Last 30 days</option>
-            <option>This month</option>
-            <option>Last month</option>
-            <option>Custom range</option>
-          </select>
-          <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-all">
-            <Download className="h-4 w-4" />
-            Export PDF
-          </button>
-        </div>
+        <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+          <option>This month</option>
+          <option>Last month</option>
+        </select>
       </div>
 
       {/* Stats */}
