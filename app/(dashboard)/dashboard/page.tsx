@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import RevenueChart from "@/components/dashboard/RevenueChart"
+import PipelineChart from "@/components/dashboard/PipelineChart"
 import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
 import Link from "next/link"
 
@@ -196,6 +197,24 @@ async function DashboardRevenueChart() {
   )
 }
 
+async function DashboardPipelineChart() {
+  const stats = await getDashboardStats()
+  
+  if (stats.pipelineData.length === 0) {
+    return null
+  }
+  
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 transition-all duration-300 hover:shadow-md">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold text-gray-900">Pipeline Value by Stage</h2>
+        <span className="text-xs text-gray-400">Deal value per stage</span>
+      </div>
+      <PipelineChart data={stats.pipelineData} />
+    </div>
+  )
+}
+
 export default async function DashboardPage() {
   const user = await currentUser()
 
@@ -218,10 +237,15 @@ export default async function DashboardPage() {
         <DashboardStats />
       </Suspense>
 
-      {/* Revenue Chart */}
-      <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-80 animate-pulse" />}>
-        <DashboardRevenueChart />
-      </Suspense>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-64 animate-pulse" />}>
+          <DashboardRevenueChart />
+        </Suspense>
+        <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-64 animate-pulse" />}>
+          <DashboardPipelineChart />
+        </Suspense>
+      </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">

@@ -18,6 +18,30 @@ export async function getDashboardStats() {
     select: { total: true, status: true, createdAt: true, clientId: true, client: { select: { name: true } } }
   })
 
+  // Get leads for pipeline chart
+  const leads = await db.lead.findMany({
+    where: { userId },
+    select: { value: true, status: true }
+  })
+
+  // Calculate pipeline value by stage
+  const stageOrder = ["NEW", "CONTACTED", "QUALIFIED", "PROPOSAL", "NEGOTIATION", "WON", "LOST"]
+  const stageLabels: Record<string, string> = {
+    NEW: "New",
+    CONTACTED: "Contacted",
+    QUALIFIED: "Qualified",
+    PROPOSAL: "Proposal",
+    NEGOTIATION: "Negotiation",
+    WON: "Won",
+    LOST: "Lost"
+  }
+
+  const pipelineData = stageOrder.map(status => ({
+    stage: stageLabels[status],
+    value: leads.filter(l => l.status === status).reduce((sum, l) => sum + (l.value ?? 0), 0),
+    count: leads.filter(l => l.status === status).length
+  })).filter(d => d.value > 0 || d.count > 0)
+
   // Calculate revenue per month for chart (LAST 6 MONTHS)
   const chartData = []
   for (let i = 5; i >= 0; i--) {
@@ -27,7 +51,6 @@ export async function getDashboardStats() {
     const startDate = new Date(date.getFullYear(), date.getMonth(), 1)
     const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
     
-    // Calculate revenue for this specific month
     const monthlyRevenue = allInvoices
       .filter(inv => inv.status === "PAID" && inv.createdAt >= startDate && inv.createdAt <= endDate)
       .reduce((sum, inv) => sum + inv.total, 0)
@@ -162,6 +185,7 @@ export async function getDashboardStats() {
     recentClients,
     topClients,
     recentActivities,
-    revenueChartData: chartData, // This now has revenue per month
+    revenueChartData: chartData,
+    pipelineData,
   }
 }
