@@ -40,7 +40,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
           tickFormatter={(value) => `$${value}`}
         />
         <Tooltip 
-          formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+          formatter={(value: number) => [`$${value?.toLocaleString() || 0}`, 'Revenue']}
           contentStyle={{ 
             backgroundColor: 'white', 
             border: '1px solid #e5e7eb',
