@@ -12,25 +12,38 @@ export async function getDashboardStats() {
   const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
   const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
-  // Get last 6 months of revenue data for chart
-  const last6Months = []
+  // Get all invoices
+  const allInvoices = await db.invoice.findMany({
+    where: { userId },
+    select: { total: true, status: true, createdAt: true, clientId: true, client: { select: { name: true } } }
+  })
+
+  // Calculate revenue per month for chart (LAST 6 MONTHS)
+  const chartData = []
   for (let i = 5; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    last6Months.push({
-      month: date.toLocaleString('default', { month: 'short' }),
-      year: date.getFullYear(),
-      start: new Date(date.getFullYear(), date.getMonth(), 1),
-      end: new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    const monthName = date.toLocaleString('default', { month: 'short' })
+    const year = date.getFullYear()
+    const startDate = new Date(date.getFullYear(), date.getMonth(), 1)
+    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    
+    // Calculate revenue for this specific month
+    const monthlyRevenue = allInvoices
+      .filter(inv => inv.status === "PAID" && inv.createdAt >= startDate && inv.createdAt <= endDate)
+      .reduce((sum, inv) => sum + inv.total, 0)
+    
+    chartData.push({
+      month: `${monthName} ${year}`,
+      revenue: monthlyRevenue
     })
   }
 
-  // Get all data in fewer queries
+  // The rest of your stats...
   const [
     clients,
     leadsData,
     projectsData,
     tasksData,
-    allInvoices,
     reminders,
   ] = await Promise.all([
     db.client.findMany({
@@ -51,10 +64,6 @@ export async function getDashboardStats() {
       where: { userId },
       select: { id: true, status: true, createdAt: true },
     }),
-    db.invoice.findMany({
-      where: { userId },
-      select: { total: true, status: true, createdAt: true, clientId: true, client: { select: { name: true } } }
-    }),
     db.reminder.findMany({
       where: { userId, isDone: false, dueDate: { gte: now } },
       orderBy: { dueDate: "asc" },
@@ -63,24 +72,11 @@ export async function getDashboardStats() {
     }),
   ])
 
-  // Calculate revenue chart data
-  const revenueChartData = last6Months.map(({ month, year, start, end }) => {
-    const revenue = allInvoices
-      .filter(i => i.status === "PAID" && i.createdAt >= start && i.createdAt <= end)
-      .reduce((sum, i) => sum + i.total, 0)
-    return {
-      month: `${month} ${year}`,
-      revenue,
-    }
-  })
-
   // Calculate counts
   const totalClients = clients.filter(c => c.isActive).length
   const recentClients = clients.slice(0, 5)
 
-  // Calculate active leads (not WON or LOST)
   const activeLeads = leadsData.filter(l => l.status !== "WON" && l.status !== "LOST").length
-  
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
   const leadsTrend = leadsLastMonth === 0 ? (leadsThisMonth > 0 ? 100 : 0) : Math.round(((leadsThisMonth - leadsLastMonth) / leadsLastMonth) * 100)
@@ -166,6 +162,6 @@ export async function getDashboardStats() {
     recentClients,
     topClients,
     recentActivities,
-    revenueChartData,
+    revenueChartData: chartData, // This now has revenue per month
   }
 }
