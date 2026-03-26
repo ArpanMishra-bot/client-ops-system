@@ -11,7 +11,7 @@ export async function getReminders() {
 
   return await db.reminder.findMany({
     where: { userId },
-    include: { client: true, lead: true, project: true },
+    include: { client: true, lead: true },
     orderBy: { dueDate: "asc" },
   })
 }
@@ -22,7 +22,7 @@ export async function getReminderById(id: string) {
 
   return await db.reminder.findFirst({
     where: { id, userId },
-    include: { client: true, lead: true, project: true },
+    include: { client: true, lead: true },
   })
 }
 
