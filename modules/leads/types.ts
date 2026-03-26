@@ -32,7 +32,14 @@ export interface Lead {
   updatedAt: Date
 }
 
-export const LEAD_STAGES = [
+export interface Stage {
+  status: LeadStatus
+  label: string
+  color: string
+  bg: string
+}
+
+export const LEAD_STAGES: Stage[] = [
   { status: "NEW", label: "New", color: "text-blue-600", bg: "bg-blue-50" },
   { status: "CONTACTED", label: "Contacted", color: "text-purple-600", bg: "bg-purple-50" },
   { status: "QUALIFIED", label: "Qualified", color: "text-yellow-600", bg: "bg-yellow-50" },
