@@ -30,12 +30,24 @@ export async function createClient(input: CreateClientInput) {
 
   try {
     const client = await db.client.create({
-      data: { ...input, userId },
+      data: {
+        name: input.name,
+        email: input.email,
+        phone: input.phone || null,
+        company: input.company || null,
+        address: input.address || null,
+        city: input.city || null,
+        country: input.country || null,
+        website: input.website || null,
+        notes: input.notes || null,
+        isActive: input.isActive ?? true,
+        userId,
+      },
     })
     revalidatePath("/clients")
-    revalidatePath("/dashboard")
     return { success: true, data: client }
   } catch (error) {
+    console.error("Create client error:", error)
     return { success: false, error: "Failed to create client" }
   }
 }
@@ -47,13 +59,24 @@ export async function updateClient(id: string, input: UpdateClientInput) {
   try {
     const client = await db.client.update({
       where: { id, userId },
-      data: input,
+      data: {
+        name: input.name,
+        email: input.email,
+        phone: input.phone,
+        company: input.company,
+        address: input.address,
+        city: input.city,
+        country: input.country,
+        website: input.website,
+        notes: input.notes,
+        isActive: input.isActive,
+      },
     })
     revalidatePath("/clients")
     revalidatePath(`/clients/${id}`)
-    revalidatePath("/dashboard")
     return { success: true, data: client }
   } catch (error) {
+    console.error("Update client error:", error)
     return { success: false, error: "Failed to update client" }
   }
 }
@@ -67,9 +90,9 @@ export async function deleteClient(id: string) {
       where: { id, userId },
     })
     revalidatePath("/clients")
-    revalidatePath("/dashboard")
     return { success: true }
   } catch (error) {
+    console.error("Delete client error:", error)
     return { success: false, error: "Failed to delete client" }
   }
 }
