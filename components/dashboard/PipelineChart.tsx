@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 interface PipelineChartProps {
   data: Array<{ stage: string; value: number; count: number }>
@@ -43,7 +43,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
         />
         <Bar dataKey="value" radius={[0, 4, 4, 0]}>
           {data.map((entry, index) => (
-            <cell key={`cell-${index}`} fill={stageColors[entry.stage] || "#6b7280"} />
+            <Cell key={`cell-${index}`} fill={stageColors[entry.stage] || "#6b7280"} />
           ))}
         </Bar>
       </BarChart>
