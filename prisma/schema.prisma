@@ -33,25 +33,23 @@ model Client {
 }
 
 model Lead {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   userId      String
   name        String
   email       String
   phone       String?
   company     String?
   position    String?
-  status      LeadStatus @default(NEW)
+  status      LeadStatus  @default(NEW)
   value       Float?
   priority    LeadPriority @default(MEDIUM)
   source      String?
   notes       String?
   convertedToId String?
-  convertedTo   Client?   @relation(fields: [convertedToId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  client      Client?   @relation(fields: [convertedToId], references: [id])
-  activities  Activity[]
+  client      Client?     @relation("LeadToClient", fields: [convertedToId], references: [id])
   reminders   Reminder[]
 
   @@index([userId])
@@ -175,7 +173,7 @@ model Activity {
   details   Json?
   createdAt DateTime @default(now())
 
-  client    Client?  @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  client    Client?  @relation(fields: [entityId], references: [id])
 
   @@index([userId])
   @@index([createdAt])
