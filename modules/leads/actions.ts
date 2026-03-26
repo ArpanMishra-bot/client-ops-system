@@ -12,7 +12,7 @@ export async function getLeads() {
 
   return await db.lead.findMany({
     where: { userId },
-    orderBy: [{ status: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+    orderBy: [{ status: "asc" }, { createdAt: "desc" }],
   })
 }
 
