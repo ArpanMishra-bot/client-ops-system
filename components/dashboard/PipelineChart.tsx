@@ -22,7 +22,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
         <XAxis type="number" tickFormatter={(value) => `$${value}`} tick={{ fontSize: 11 }} />
         <YAxis type="category" dataKey="stage" tick={{ fontSize: 11 }} width={70} />
         <Tooltip 
-          formatter={(value: number) => [`$${value.toLocaleString()}`, 'Deal Value']}
+          formatter={(value) => [`$${value}`, 'Deal Value']}
           contentStyle={{ 
             backgroundColor: 'white', 
             border: '1px solid #e5e7eb',
