@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { getInvoiceById } from "@/modules/invoices/actions"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Trash2, Copy } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
 import InvoiceStatusUpdater from "@/components/modules/invoices/InvoiceStatusUpdater"
@@ -19,7 +19,7 @@ export default async function InvoiceDetailPage({
   const invoice = await getInvoiceById(id)
   if (!invoice) notFound()
 
-  const statusConfig = INVOICE_STATUS_CONFIG[invoice.status]
+  const statusConfig = INVOICE_STATUS_CONFIG[invoice.status as keyof typeof INVOICE_STATUS_CONFIG]
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -53,9 +53,9 @@ export default async function InvoiceDetailPage({
         <div className="grid grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-100">
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Bill To</p>
-            <p className="text-sm font-semibold text-gray-900">{invoice.client.name}</p>
-            <p className="text-sm text-gray-500">{invoice.client.email}</p>
-            {invoice.client.company && (
+            <p className="text-sm font-semibold text-gray-900">{invoice.client?.name}</p>
+            <p className="text-sm text-gray-500">{invoice.client?.email}</p>
+            {invoice.client?.company && (
               <p className="text-sm text-gray-500">{invoice.client.company}</p>
             )}
           </div>
@@ -84,7 +84,7 @@ export default async function InvoiceDetailPage({
                </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {invoice.items.map((item) => (
+              {invoice.items?.map((item: any) => (
                 <tr key={item.id}>
                   <td className="py-3 text-sm text-gray-900">{item.description}</td>
                   <td className="py-3 text-sm text-gray-500 text-right">{item.quantity}</td>
