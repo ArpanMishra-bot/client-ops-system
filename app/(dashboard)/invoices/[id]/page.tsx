@@ -6,7 +6,6 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
 import InvoiceStatusUpdater from "@/components/modules/invoices/InvoiceStatusUpdater"
-import InvoiceDownloadButton from "@/components/modules/invoices/InvoiceDownloadButton"
 import { DeleteInvoiceButton } from "./delete-invoice-button"
 import { DuplicateInvoiceButton } from "./duplicate-invoice-button"
 
@@ -34,7 +33,7 @@ export default async function InvoiceDetailPage({
         </Link>
         <div className="flex items-center gap-2">
           <DuplicateInvoiceButton invoiceId={invoice.id} />
-          <InvoiceDownloadButton invoice={invoice} />
+          {/* InvoiceDownloadButton temporarily disabled */}
           <InvoiceStatusUpdater invoiceId={invoice.id} currentStatus={invoice.status} />
           <DeleteInvoiceButton invoiceId={invoice.id} invoiceNumber={invoice.number} />
         </div>
