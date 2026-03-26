@@ -3,18 +3,21 @@
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
-import { redirect } from "next/navigation"
 
 export async function convertLeadToClient(leadId: string) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
+  // Get the lead
   const lead = await db.lead.findFirst({
     where: { id: leadId, userId },
   })
 
-  if (!lead) throw new Error("Lead not found")
+  if (!lead) {
+    throw new Error("Lead not found")
+  }
 
+  // Create a new client from lead data
   const client = await db.client.create({
     data: {
       userId,
@@ -27,15 +30,16 @@ export async function convertLeadToClient(leadId: string) {
     },
   })
 
+  // Update the lead to mark it as converted
   await db.lead.update({
     where: { id: leadId },
     data: {
-      convertedAt: new Date(),
       convertedToId: client.id,
     },
   })
 
   revalidatePath("/leads")
   revalidatePath("/clients")
-  redirect(`/clients/${client.id}`)
+
+  return client
 }
