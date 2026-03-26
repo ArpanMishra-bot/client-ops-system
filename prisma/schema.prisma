@@ -26,8 +26,6 @@ model Client {
   projects   Project[]
   invoices   Invoice[]
   reminders  Reminder[]
-  leads      Lead[]
-  activities Activity[]
 
   @@index([userId])
 }
@@ -49,7 +47,6 @@ model Lead {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  convertedTo Client?     @relation("LeadToClient", fields: [convertedToId], references: [id])
   reminders   Reminder[]
 
   @@index([userId])
@@ -73,7 +70,6 @@ model Project {
 
   client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
   tasks       Task[]
-  invoices    Invoice[]
 
   @@index([userId])
   @@index([clientId])
@@ -120,7 +116,6 @@ model Invoice {
   updatedAt   DateTime       @updatedAt
 
   client      Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  project     Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
   items       InvoiceItem[]
 
   @@index([userId])
@@ -158,24 +153,10 @@ model Reminder {
 
   client      Client?       @relation(fields: [clientId], references: [id], onDelete: Cascade)
   lead        Lead?         @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  project     Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([dueDate])
   @@index([isDone])
-}
-
-model Activity {
-  id        String   @id @default(cuid())
-  userId    String
-  action    String
-  entity    String
-  entityId  String
-  details   Json?
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([createdAt])
 }
 
 enum LeadStatus {
