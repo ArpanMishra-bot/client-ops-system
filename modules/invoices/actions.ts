@@ -16,7 +16,6 @@ export async function getInvoices() {
     orderBy: { createdAt: "desc" },
   })
 
-  // Auto-update overdue status
   const today = new Date()
   return invoices.map((invoice) => {
     if (invoice.status !== "PAID" && invoice.dueDate < today) {
@@ -32,12 +31,11 @@ export async function getInvoiceById(id: string) {
 
   const invoice = await db.invoice.findFirst({
     where: { id, userId },
-    include: { client: true, items: true, project: true },
+    include: { client: true, items: true },
   })
 
   if (!invoice) return null
 
-  // Auto-update overdue status
   const today = new Date()
   if (invoice.status !== "PAID" && invoice.dueDate < today) {
     return { ...invoice, status: "OVERDUE" as InvoiceStatus }
@@ -69,7 +67,6 @@ export async function createInvoice(input: any) {
       data: {
         userId,
         clientId: validated.data.clientId,
-        projectId: validated.data.projectId || null,
         number: validated.data.number,
         status: "DRAFT",
         issueDate: new Date(),
@@ -158,7 +155,6 @@ export async function duplicateInvoice(id: string) {
       data: {
         userId,
         clientId: original.clientId,
-        projectId: original.projectId,
         number: newNumber,
         status: "DRAFT",
         issueDate: new Date(),
