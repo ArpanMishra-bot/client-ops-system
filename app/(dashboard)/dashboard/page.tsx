@@ -4,7 +4,7 @@ import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import RevenueChart from "@/components/dashboard/RevenueChart"
 import PipelineChart from "@/components/dashboard/PipelineChart"
-import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
+import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, TrendingDown, TrendingUp as TrendingUpIcon, Heart } from "lucide-react"
 import Link from "next/link"
 
 async function DashboardStats() {
@@ -53,6 +53,42 @@ async function DashboardStats() {
           </Link>
         )
       })}
+    </div>
+  )
+}
+
+async function HealthScore() {
+  const stats = await getDashboardStats()
+  
+  return (
+    <div className={`${stats.healthBg} rounded-xl border border-gray-100 shadow-sm p-6 transition-all duration-300 hover:shadow-md`}>
+      <div className="flex items-center gap-3 mb-3">
+        <Heart className={`h-5 w-5 ${stats.healthColor}`} />
+        <h2 className="text-sm font-semibold text-gray-900">Business Health Score</h2>
+      </div>
+      <div className="flex items-baseline gap-2">
+        <span className={`text-4xl font-bold ${stats.healthColor}`}>{stats.healthScore}</span>
+        <span className="text-sm text-gray-400">/ 100</span>
+      </div>
+      <p className="text-xs text-gray-500 mt-2">
+        {stats.healthScore >= 80 ? "Excellent! Your business is thriving." :
+         stats.healthScore >= 50 ? "Good progress. Keep growing!" :
+         "Needs attention. Focus on growing clients and revenue."}
+      </p>
+      <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="flex justify-between text-xs text-gray-500 mb-1">
+          <span>Clients</span>
+          <span>Revenue</span>
+          <span>Pipeline</span>
+          <span>Tasks</span>
+        </div>
+        <div className="flex gap-1">
+          <div className="h-1.5 bg-blue-500 rounded-full flex-1" style={{ width: `${Math.min(100, (stats.totalClients / 20) * 100)}%` }} />
+          <div className="h-1.5 bg-green-500 rounded-full flex-1" style={{ width: `${Math.min(100, (stats.totalRevenue / 10000) * 100)}%` }} />
+          <div className="h-1.5 bg-purple-500 rounded-full flex-1" style={{ width: `${Math.min(100, (stats.pipelineData.reduce((sum, p) => sum + p.value, 0) / 20000) * 100)}%` }} />
+          <div className="h-1.5 bg-orange-500 rounded-full flex-1" style={{ width: `${Math.min(100, Math.max(0, 100 - (stats.pendingTasks / 10) * 20))}%` }} />
+        </div>
+      </div>
     </div>
   )
 }
@@ -228,16 +264,20 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {user?.firstName ?? "there"} 👋</h1>
-        <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {user?.firstName ?? "there"} 👋</h1>
+          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
+        </div>
+        <Suspense fallback={<div className="w-32 h-10 bg-gray-200 rounded animate-pulse" />}>
+          <HealthScore />
+        </Suspense>
       </div>
 
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
       </Suspense>
 
-      {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-64 animate-pulse" />}>
           <DashboardRevenueChart />
@@ -247,7 +287,6 @@ export default async function DashboardPage() {
         </Suspense>
       </div>
 
-      {/* Quick Actions */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
         <div className="flex items-center gap-2 mb-4">
           <Zap className="h-5 w-5 text-gray-900" />
@@ -272,16 +311,22 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Two Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TopClients />
-        <ActivityFeed />
+        <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-48 animate-pulse" />}>
+          <TopClients />
+        </Suspense>
+        <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-48 animate-pulse" />}>
+          <ActivityFeed />
+        </Suspense>
       </div>
 
-      {/* Second Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentClients />
-        <UpcomingReminders />
+        <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-48 animate-pulse" />}>
+          <RecentClients />
+        </Suspense>
+        <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-48 animate-pulse" />}>
+          <UpcomingReminders />
+        </Suspense>
       </div>
     </div>
   )

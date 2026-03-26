@@ -12,37 +12,46 @@ export async function getDashboardStats() {
   const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
   const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
-  // Get all invoices
-  const allInvoices = await db.invoice.findMany({
-    where: { userId },
-    select: { total: true, status: true, createdAt: true, clientId: true, client: { select: { name: true } } }
-  })
+  // Get all data
+  const [
+    clients,
+    leadsData,
+    projectsData,
+    tasksData,
+    allInvoices,
+    reminders,
+  ] = await Promise.all([
+    db.client.findMany({
+      where: { userId },
+      select: { id: true, name: true, company: true, createdAt: true, isActive: true },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    db.lead.findMany({
+      where: { userId },
+      select: { id: true, status: true, createdAt: true, value: true },
+    }),
+    db.project.findMany({
+      where: { userId },
+      select: { id: true, status: true, createdAt: true },
+    }),
+    db.task.findMany({
+      where: { userId },
+      select: { id: true, status: true, createdAt: true },
+    }),
+    db.invoice.findMany({
+      where: { userId },
+      select: { total: true, status: true, createdAt: true, clientId: true, client: { select: { name: true } } }
+    }),
+    db.reminder.findMany({
+      where: { userId, isDone: false, dueDate: { gte: now } },
+      orderBy: { dueDate: "asc" },
+      take: 5,
+      include: { client: true, lead: true },
+    }),
+  ])
 
-  // Get leads for pipeline chart
-  const leads = await db.lead.findMany({
-    where: { userId },
-    select: { value: true, status: true }
-  })
-
-  // Calculate pipeline value by stage
-  const stageOrder = ["NEW", "CONTACTED", "QUALIFIED", "PROPOSAL", "NEGOTIATION", "WON", "LOST"]
-  const stageLabels: Record<string, string> = {
-    NEW: "New",
-    CONTACTED: "Contacted",
-    QUALIFIED: "Qualified",
-    PROPOSAL: "Proposal",
-    NEGOTIATION: "Negotiation",
-    WON: "Won",
-    LOST: "Lost"
-  }
-
-  const pipelineData = stageOrder.map(status => ({
-    stage: stageLabels[status],
-    value: leads.filter(l => l.status === status).reduce((sum, l) => sum + (l.value ?? 0), 0),
-    count: leads.filter(l => l.status === status).length
-  })).filter(d => d.value > 0 || d.count > 0)
-
-  // Calculate revenue per month for chart (LAST 6 MONTHS)
+  // Calculate revenue chart data
   const chartData = []
   for (let i = 5; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
@@ -61,65 +70,43 @@ export async function getDashboardStats() {
     })
   }
 
-  // The rest of your stats...
-  const [
-    clients,
-    leadsData,
-    projectsData,
-    tasksData,
-    reminders,
-  ] = await Promise.all([
-    db.client.findMany({
-      where: { userId },
-      select: { id: true, name: true, company: true, createdAt: true, isActive: true },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    }),
-    db.lead.findMany({
-      where: { userId },
-      select: { id: true, status: true, createdAt: true },
-    }),
-    db.project.findMany({
-      where: { userId },
-      select: { id: true, status: true, createdAt: true },
-    }),
-    db.task.findMany({
-      where: { userId },
-      select: { id: true, status: true, createdAt: true },
-    }),
-    db.reminder.findMany({
-      where: { userId, isDone: false, dueDate: { gte: now } },
-      orderBy: { dueDate: "asc" },
-      take: 5,
-      include: { client: true, lead: true },
-    }),
-  ])
+  // Calculate pipeline data
+  const stageOrder = ["NEW", "CONTACTED", "QUALIFIED", "PROPOSAL", "NEGOTIATION", "WON", "LOST"]
+  const stageLabels: Record<string, string> = {
+    NEW: "New", CONTACTED: "Contacted", QUALIFIED: "Qualified", PROPOSAL: "Proposal", NEGOTIATION: "Negotiation", WON: "Won", LOST: "Lost"
+  }
+
+  const pipelineData = stageOrder.map(status => ({
+    stage: stageLabels[status],
+    value: leadsData.filter(l => l.status === status).reduce((sum, l) => sum + (l.value ?? 0), 0),
+    count: leadsData.filter(l => l.status === status).length
+  })).filter(d => d.value > 0 || d.count > 0)
 
   // Calculate counts
   const totalClients = clients.filter(c => c.isActive).length
   const recentClients = clients.slice(0, 5)
-
   const activeLeads = leadsData.filter(l => l.status !== "WON" && l.status !== "LOST").length
+  const activeProjects = projectsData.filter(p => p.status === "IN_PROGRESS" || p.status === "NOT_STARTED").length
+  const pendingTasks = tasksData.filter(t => t.status !== "DONE").length
+  const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
+  const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
+
+  // Calculate trends
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
   const leadsTrend = leadsLastMonth === 0 ? (leadsThisMonth > 0 ? 100 : 0) : Math.round(((leadsThisMonth - leadsLastMonth) / leadsLastMonth) * 100)
 
-  const activeProjects = projectsData.filter(p => p.status === "IN_PROGRESS" || p.status === "NOT_STARTED").length
   const projectsThisMonth = projectsData.filter(p => p.createdAt >= firstDayThisMonth).length
   const projectsLastMonth = projectsData.filter(p => p.createdAt >= firstDayLastMonth && p.createdAt <= lastDayLastMonth).length
   const projectsTrend = projectsLastMonth === 0 ? (projectsThisMonth > 0 ? 100 : 0) : Math.round(((projectsThisMonth - projectsLastMonth) / projectsLastMonth) * 100)
 
-  const pendingTasks = tasksData.filter(t => t.status !== "DONE").length
   const tasksThisMonth = tasksData.filter(t => t.createdAt >= firstDayThisMonth).length
   const tasksLastMonth = tasksData.filter(t => t.createdAt >= firstDayLastMonth && t.createdAt <= lastDayLastMonth).length
   const tasksTrend = tasksLastMonth === 0 ? (tasksThisMonth > 0 ? 100 : 0) : Math.round(((tasksThisMonth - tasksLastMonth) / tasksLastMonth) * 100)
 
-  const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const revenueThisMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayThisMonth).reduce((sum, i) => sum + i.total, 0)
   const revenueLastMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth).reduce((sum, i) => sum + i.total, 0)
   const revenueTrend = revenueLastMonth === 0 ? (revenueThisMonth > 0 ? 100 : 0) : Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100)
-
-  const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
 
   const clientsThisMonth = clients.filter(c => c.createdAt >= firstDayThisMonth).length
   const clientsLastMonth = clients.filter(c => c.createdAt >= firstDayLastMonth && c.createdAt <= lastDayLastMonth).length
@@ -153,6 +140,29 @@ export async function getDashboardStats() {
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 5)
 
+  // Calculate Business Health Score (0-100)
+  let healthScore = 0
+  
+  // Client Score (max 25 points)
+  const clientScore = Math.min(25, (totalClients / 20) * 25)
+  
+  // Revenue Score (max 25 points, based on $10k target)
+  const revenueScore = Math.min(25, (totalRevenue / 10000) * 25)
+  
+  // Pipeline Score (max 25 points)
+  const pipelineValue = pipelineData.reduce((sum, p) => sum + p.value, 0)
+  const pipelineScore = Math.min(25, (pipelineValue / 20000) * 25)
+  
+  // Tasks Score (max 25 points, fewer pending tasks is better)
+  const tasksScore = Math.min(25, Math.max(0, 25 - (pendingTasks / 10) * 5))
+  
+  healthScore = Math.round(clientScore + revenueScore + pipelineScore + tasksScore)
+  healthScore = Math.min(100, Math.max(0, healthScore))
+
+  const healthColor = healthScore >= 80 ? "text-green-600" : healthScore >= 50 ? "text-yellow-600" : "text-red-600"
+  const healthBg = healthScore >= 80 ? "bg-green-50" : healthScore >= 50 ? "bg-yellow-50" : "bg-red-50"
+
+  // Activity feed
   const recentActivities = [
     ...allInvoices.slice(0, 2).map(i => ({
       type: "invoice" as const,
@@ -187,5 +197,8 @@ export async function getDashboardStats() {
     recentActivities,
     revenueChartData: chartData,
     pipelineData,
+    healthScore,
+    healthColor,
+    healthBg,
   }
 }
