@@ -6,6 +6,17 @@ interface PipelineChartProps {
   data: Array<{ stage: string; value: number; count: number }>
 }
 
+// Stage colors matching your badge colors
+const stageColors: Record<string, string> = {
+  "New": "#3b82f6",        // Blue
+  "Contacted": "#8b5cf6",  // Purple
+  "Qualified": "#eab308",  // Yellow
+  "Proposal": "#f97316",   // Orange
+  "Negotiation": "#f59e0b", // Amber/Orange
+  "Won": "#22c55e",        // Green
+  "Lost": "#6b7280"        // Gray
+}
+
 export default function PipelineChart({ data }: PipelineChartProps) {
   if (data.length === 0) {
     return (
@@ -30,7 +41,11 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             fontSize: '12px'
           }}
         />
-        <Bar dataKey="value" fill="#111827" radius={[0, 4, 4, 0]} />
+        <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+          {data.map((entry, index) => (
+            <cell key={`cell-${index}`} fill={stageColors[entry.stage] || "#6b7280"} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   )
