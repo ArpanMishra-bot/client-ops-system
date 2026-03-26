@@ -21,6 +21,10 @@ export default async function InvoiceDetailPage({
 
   const statusConfig = INVOICE_STATUS_CONFIG[invoice.status as keyof typeof INVOICE_STATUS_CONFIG]
 
+  // Ensure client and items exist with fallbacks
+  const client = (invoice as any).client || { name: "Unknown", email: "", company: "" }
+  const items = (invoice as any).items || []
+
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
@@ -53,10 +57,10 @@ export default async function InvoiceDetailPage({
         <div className="grid grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-100">
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Bill To</p>
-            <p className="text-sm font-semibold text-gray-900">{invoice.client?.name}</p>
-            <p className="text-sm text-gray-500">{invoice.client?.email}</p>
-            {invoice.client?.company && (
-              <p className="text-sm text-gray-500">{invoice.client.company}</p>
+            <p className="text-sm font-semibold text-gray-900">{client.name}</p>
+            <p className="text-sm text-gray-500">{client.email}</p>
+            {client.company && (
+              <p className="text-sm text-gray-500">{client.company}</p>
             )}
           </div>
           <div className="text-right">
@@ -81,15 +85,15 @@ export default async function InvoiceDetailPage({
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Qty</th>
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Rate</th>
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Amount</th>
-               </tr>
+                </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {invoice.items?.map((item: any) => (
-                <tr key={item.id}>
+              {items.map((item: any, index: number) => (
+                <tr key={item.id || index}>
                   <td className="py-3 text-sm text-gray-900">{item.description}</td>
                   <td className="py-3 text-sm text-gray-500 text-right">{item.quantity}</td>
-                  <td className="py-3 text-sm text-gray-500 text-right">${item.rate.toLocaleString()}</td>
-                  <td className="py-3 text-sm font-medium text-gray-900 text-right">${item.amount.toLocaleString()}</td>
+                  <td className="py-3 text-sm text-gray-500 text-right">${item.rate?.toLocaleString() || 0}</td>
+                  <td className="py-3 text-sm font-medium text-gray-900 text-right">${item.amount?.toLocaleString() || 0}</td>
                 </tr>
               ))}
             </tbody>
@@ -99,11 +103,11 @@ export default async function InvoiceDetailPage({
             <div className="space-y-2 w-48">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Subtotal</span>
-                <span className="text-sm text-gray-900">${invoice.subtotal.toLocaleString()}</span>
+                <span className="text-sm text-gray-900">${invoice.subtotal?.toLocaleString() || 0}</span>
               </div>
               <div className="flex justify-between border-t border-gray-100 pt-2">
                 <span className="text-base font-semibold text-gray-900">Total</span>
-                <span className="text-base font-semibold text-gray-900">${invoice.total.toLocaleString()}</span>
+                <span className="text-base font-semibold text-gray-900">${invoice.total?.toLocaleString() || 0}</span>
               </div>
             </div>
           </div>
