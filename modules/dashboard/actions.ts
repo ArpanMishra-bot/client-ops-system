@@ -12,6 +12,18 @@ export async function getDashboardStats() {
   const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
   const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
+  // Get last 6 months of revenue data for chart
+  const last6Months = []
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    last6Months.push({
+      month: date.toLocaleString('default', { month: 'short' }),
+      year: date.getFullYear(),
+      start: new Date(date.getFullYear(), date.getMonth(), 1),
+      end: new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    })
+  }
+
   // Get all data in fewer queries
   const [
     clients,
@@ -51,6 +63,17 @@ export async function getDashboardStats() {
     }),
   ])
 
+  // Calculate revenue chart data
+  const revenueChartData = last6Months.map(({ month, year, start, end }) => {
+    const revenue = allInvoices
+      .filter(i => i.status === "PAID" && i.createdAt >= start && i.createdAt <= end)
+      .reduce((sum, i) => sum + i.total, 0)
+    return {
+      month: `${month} ${year}`,
+      revenue,
+    }
+  })
+
   // Calculate counts
   const totalClients = clients.filter(c => c.isActive).length
   const recentClients = clients.slice(0, 5)
@@ -58,55 +81,27 @@ export async function getDashboardStats() {
   // Calculate active leads (not WON or LOST)
   const activeLeads = leadsData.filter(l => l.status !== "WON" && l.status !== "LOST").length
   
-  // Calculate leads trend
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
-  const leadsTrend = leadsLastMonth === 0 
-    ? (leadsThisMonth > 0 ? 100 : 0)
-    : Math.round(((leadsThisMonth - leadsLastMonth) / leadsLastMonth) * 100)
+  const leadsTrend = leadsLastMonth === 0 ? (leadsThisMonth > 0 ? 100 : 0) : Math.round(((leadsThisMonth - leadsLastMonth) / leadsLastMonth) * 100)
 
-  // Calculate active projects (IN_PROGRESS or NOT_STARTED)
   const activeProjects = projectsData.filter(p => p.status === "IN_PROGRESS" || p.status === "NOT_STARTED").length
-  
-  // Calculate projects trend
   const projectsThisMonth = projectsData.filter(p => p.createdAt >= firstDayThisMonth).length
   const projectsLastMonth = projectsData.filter(p => p.createdAt >= firstDayLastMonth && p.createdAt <= lastDayLastMonth).length
-  const projectsTrend = projectsLastMonth === 0 
-    ? (projectsThisMonth > 0 ? 100 : 0)
-    : Math.round(((projectsThisMonth - projectsLastMonth) / projectsLastMonth) * 100)
+  const projectsTrend = projectsLastMonth === 0 ? (projectsThisMonth > 0 ? 100 : 0) : Math.round(((projectsThisMonth - projectsLastMonth) / projectsLastMonth) * 100)
 
-  // Calculate pending tasks (not DONE)
   const pendingTasks = tasksData.filter(t => t.status !== "DONE").length
-  
-  // Calculate tasks trend
   const tasksThisMonth = tasksData.filter(t => t.createdAt >= firstDayThisMonth).length
   const tasksLastMonth = tasksData.filter(t => t.createdAt >= firstDayLastMonth && t.createdAt <= lastDayLastMonth).length
-  const tasksTrend = tasksLastMonth === 0 
-    ? (tasksThisMonth > 0 ? 100 : 0)
-    : Math.round(((tasksThisMonth - tasksLastMonth) / tasksLastMonth) * 100)
+  const tasksTrend = tasksLastMonth === 0 ? (tasksThisMonth > 0 ? 100 : 0) : Math.round(((tasksThisMonth - tasksLastMonth) / tasksLastMonth) * 100)
 
-  // Calculate revenue
-  const totalRevenue = allInvoices
-    .filter(i => i.status === "PAID")
-    .reduce((sum, i) => sum + i.total, 0)
+  const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
+  const revenueThisMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayThisMonth).reduce((sum, i) => sum + i.total, 0)
+  const revenueLastMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth).reduce((sum, i) => sum + i.total, 0)
+  const revenueTrend = revenueLastMonth === 0 ? (revenueThisMonth > 0 ? 100 : 0) : Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100)
 
-  const revenueThisMonth = allInvoices
-    .filter(i => i.status === "PAID" && i.createdAt >= firstDayThisMonth)
-    .reduce((sum, i) => sum + i.total, 0)
+  const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
 
-  const revenueLastMonth = allInvoices
-    .filter(i => i.status === "PAID" && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth)
-    .reduce((sum, i) => sum + i.total, 0)
-
-  const revenueTrend = revenueLastMonth === 0 
-    ? (revenueThisMonth > 0 ? 100 : 0)
-    : Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100)
-
-  const outstanding = allInvoices
-    .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status))
-    .reduce((sum, i) => sum + i.total, 0)
-
-  // Calculate clients trend
   const clientsThisMonth = clients.filter(c => c.createdAt >= firstDayThisMonth).length
   const clientsLastMonth = clients.filter(c => c.createdAt >= firstDayLastMonth && c.createdAt <= lastDayLastMonth).length
   const clientTrend = clientsLastMonth === 0 ? (clientsThisMonth > 0 ? 100 : 0) : Math.round(((clientsThisMonth - clientsLastMonth) / clientsLastMonth) * 100)
@@ -134,14 +129,11 @@ export async function getDashboardStats() {
       id,
       name: data.name,
       revenue: data.total,
-      trend: data.lastMonthTotal === 0 
-        ? (data.total > 0 ? 100 : 0)
-        : Math.round(((data.total - data.lastMonthTotal) / data.lastMonthTotal) * 100)
+      trend: data.lastMonthTotal === 0 ? (data.total > 0 ? 100 : 0) : Math.round(((data.total - data.lastMonthTotal) / data.lastMonthTotal) * 100)
     }))
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 5)
 
-  // Activity feed
   const recentActivities = [
     ...allInvoices.slice(0, 2).map(i => ({
       type: "invoice" as const,
@@ -174,5 +166,6 @@ export async function getDashboardStats() {
     recentClients,
     topClients,
     recentActivities,
+    revenueChartData,
   }
 }

@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
+import RevenueChart from "@/components/dashboard/RevenueChart"
 import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Bell, Zap, UserPlus, Briefcase, Receipt, Calendar, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
 import Link from "next/link"
 
@@ -181,6 +182,20 @@ async function UpcomingReminders() {
   )
 }
 
+async function DashboardRevenueChart() {
+  const stats = await getDashboardStats()
+  
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 transition-all duration-300 hover:shadow-md">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold text-gray-900">Revenue Trend</h2>
+        <span className="text-xs text-gray-400">Last 6 months</span>
+      </div>
+      <RevenueChart data={stats.revenueChartData} />
+    </div>
+  )
+}
+
 export default async function DashboardPage() {
   const user = await currentUser()
 
@@ -201,6 +216,11 @@ export default async function DashboardPage() {
 
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
+      </Suspense>
+
+      {/* Revenue Chart */}
+      <Suspense fallback={<div className="bg-white rounded-xl border p-6 h-80 animate-pulse" />}>
+        <DashboardRevenueChart />
       </Suspense>
 
       {/* Quick Actions */}
