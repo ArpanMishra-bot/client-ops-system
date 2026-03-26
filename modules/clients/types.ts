@@ -1,4 +1,4 @@
-export type Client = {
+export interface Client {
   id: string
   userId: string
   name: string
@@ -10,24 +10,10 @@ export type Client = {
   country: string | null
   website: string | null
   notes: string | null
-  avatarUrl: string | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
 }
 
-export type CreateClientInput = {
-  name: string
-  email: string
-  phone?: string
-  company?: string
-  address?: string
-  city?: string
-  country?: string
-  website?: string
-  notes?: string
-}
-
-export type UpdateClientInput = Partial<CreateClientInput> & {
-  isActive?: boolean
-}
+export type CreateClientInput = Omit<Client, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+export type UpdateClientInput = Partial<CreateClientInput>
