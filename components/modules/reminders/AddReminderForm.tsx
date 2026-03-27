@@ -3,10 +3,10 @@
 import { useState } from "react"
 import { createReminder } from "@/modules/reminders/actions"
 import { toast } from "sonner"
-import { Plus } from "lucide-react"
+import { Plus, X } from "lucide-react"
 
 export default function AddReminderForm() {
-  const [show, setShow] = useState(false)
+  const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -47,7 +47,7 @@ export default function AddReminderForm() {
     if (result.success) {
       toast.success("Reminder created successfully")
       form.reset()
-      setShow(false)
+      setShowForm(false)
       setErrors({})
     } else {
       toast.error(result.error || "Failed to create reminder")
@@ -56,10 +56,10 @@ export default function AddReminderForm() {
     setLoading(false)
   }
 
-  if (!show) {
+  if (!showForm) {
     return (
       <button
-        onClick={() => setShow(true)}
+        onClick={() => setShowForm(true)}
         className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
       >
         <Plus className="h-4 w-4" />
@@ -70,7 +70,16 @@ export default function AddReminderForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
-      <h2 className="text-sm font-semibold text-gray-900">New Reminder</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-900">New Reminder</h2>
+        <button
+          type="button"
+          onClick={() => setShowForm(false)}
+          className="p-1 text-gray-400 hover:text-gray-600"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Title *</label>
@@ -116,7 +125,7 @@ export default function AddReminderForm() {
           className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50">
           {loading ? "Adding..." : "Add Reminder"}
         </button>
-        <button type="button" onClick={() => setShow(false)}
+        <button type="button" onClick={() => setShowForm(false)}
           className="px-5 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
           Cancel
         </button>
