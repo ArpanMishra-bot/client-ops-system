@@ -34,7 +34,7 @@ export default function Sidebar() {
   const NavContent = () => (
     <>
       <div className="h-16 flex items-center px-6 border-b border-gray-100">
-        <Logo href="/dashboard" size="md" variant="dark" />
+        <Logo size="md" />
       </div>
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map((item) => {
@@ -74,7 +74,7 @@ export default function Sidebar() {
       </div>
 
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-30">
-        <Logo href="/dashboard" size="sm" variant="dark" />
+        <Logo size="sm" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors active:scale-95"
