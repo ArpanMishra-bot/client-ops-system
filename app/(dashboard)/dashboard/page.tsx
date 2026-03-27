@@ -12,60 +12,12 @@ async function DashboardStats() {
   const stats = await getDashboardStats()
   
   const statCards = [
-    { 
-      label: "Active Clients", 
-      value: stats.totalClients.toString(), 
-      icon: <Users className="h-5 w-5 text-white" />, 
-      color: "from-blue-500 to-indigo-600",
-      href: "/clients", 
-      sub: "Total active clients", 
-      trend: stats.clientTrend 
-    },
-    { 
-      label: "Active Leads", 
-      value: stats.activeLeads.toString(), 
-      icon: <TrendingUp className="h-5 w-5 text-white" />, 
-      color: "from-purple-500 to-pink-500",
-      href: "/leads", 
-      sub: "In pipeline", 
-      trend: stats.leadsTrend 
-    },
-    { 
-      label: "Active Projects", 
-      value: stats.activeProjects.toString(), 
-      icon: <FolderKanban className="h-5 w-5 text-white" />, 
-      color: "from-orange-500 to-red-500",
-      href: "/projects", 
-      sub: "In progress", 
-      trend: stats.projectsTrend 
-    },
-    { 
-      label: "Total Revenue", 
-      value: `$${stats.totalRevenue.toLocaleString()}`, 
-      icon: <DollarSign className="h-5 w-5 text-white" />, 
-      color: "from-green-500 to-emerald-600",
-      href: "/invoices", 
-      sub: "From paid invoices", 
-      trend: stats.revenueTrend 
-    },
-    { 
-      label: "Outstanding", 
-      value: `$${stats.outstanding.toLocaleString()}`, 
-      icon: <FileText className="h-5 w-5 text-white" />, 
-      color: "from-yellow-500 to-amber-600",
-      href: "/invoices", 
-      sub: "Awaiting payment", 
-      trend: null 
-    },
-    { 
-      label: "Pending Tasks", 
-      value: stats.pendingTasks.toString(), 
-      icon: <Clock className="h-5 w-5 text-white" />, 
-      color: "from-red-500 to-rose-600",
-      href: "/tasks", 
-      sub: "Across all projects", 
-      trend: stats.tasksTrend 
-    },
+    { label: "Active Clients", value: stats.totalClients.toString(), icon: <Users className="h-5 w-5 text-white" />, color: "from-blue-500 to-indigo-600", href: "/clients", sub: "Total active clients", trend: stats.clientTrend },
+    { label: "Active Leads", value: stats.activeLeads.toString(), icon: <TrendingUp className="h-5 w-5 text-white" />, color: "from-purple-500 to-pink-500", href: "/leads", sub: "In pipeline", trend: stats.leadsTrend },
+    { label: "Active Projects", value: stats.activeProjects.toString(), icon: <FolderKanban className="h-5 w-5 text-white" />, color: "from-orange-500 to-red-500", href: "/projects", sub: "In progress", trend: stats.projectsTrend },
+    { label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: <DollarSign className="h-5 w-5 text-white" />, color: "from-green-500 to-emerald-600", href: "/invoices", sub: "From paid invoices", trend: stats.revenueTrend },
+    { label: "Outstanding", value: `$${stats.outstanding.toLocaleString()}`, icon: <FileText className="h-5 w-5 text-white" />, color: "from-yellow-500 to-amber-600", href: "/invoices", sub: "Awaiting payment", trend: null },
+    { label: "Pending Tasks", value: stats.pendingTasks.toString(), icon: <Clock className="h-5 w-5 text-white" />, color: "from-red-500 to-rose-600", href: "/tasks", sub: "Across all projects", trend: stats.tasksTrend },
   ]
 
   return (
@@ -77,21 +29,17 @@ async function DashboardStats() {
   )
 }
 
-// ... rest of your dashboard components (TopClients, ActivityFeed, etc.) remain the same
-
 async function TopClients() {
   const stats = await getDashboardStats()
   
-  if (stats.topClients.length === 0) {
-    return null
-  }
+  if (stats.topClients.length === 0) return null
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="glass-card p-6">
       <h2 className="text-sm font-semibold text-gray-900 mb-4">Top Clients by Revenue</h2>
       <div className="space-y-3">
         {stats.topClients.map((client) => (
-          <div key={client.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-xl transition-colors">
+          <div key={client.id} className="flex items-center justify-between p-2 hover:bg-white/50 rounded-xl transition-colors">
             <div>
               <p className="text-sm font-medium text-gray-900">{client.name}</p>
               <p className="text-xs text-gray-500">${client.revenue.toLocaleString()}</p>
@@ -111,16 +59,14 @@ async function TopClients() {
 async function ActivityFeed() {
   const stats = await getDashboardStats()
   
-  if (stats.recentActivities.length === 0) {
-    return null
-  }
+  if (stats.recentActivities.length === 0) return null
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="glass-card p-6">
       <h2 className="text-sm font-semibold text-gray-900 mb-4">Activity Feed</h2>
       <div className="space-y-3">
         {stats.recentActivities.map((activity, i) => (
-          <div key={i} className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-xl transition-colors">
+          <div key={i} className="flex items-start gap-3 p-2 hover:bg-white/50 rounded-xl transition-colors">
             <div className="w-2 h-2 rounded-full bg-gray-900 mt-1.5" />
             <div>
               <p className="text-sm text-gray-700">
@@ -147,7 +93,7 @@ async function RecentClients() {
   const stats = await getDashboardStats()
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="glass-card p-6">
       <h2 className="text-sm font-semibold text-gray-900 mb-4">Recent Clients</h2>
       {stats.recentClients.length === 0 ? (
         <div className="text-center py-8">
@@ -158,7 +104,7 @@ async function RecentClients() {
       ) : (
         <div className="space-y-3">
           {stats.recentClients.map((client: any) => (
-            <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-xl transition-all duration-200">
+            <Link key={client.id} href={`/clients/${client.id}`} className="flex items-center gap-3 hover:bg-white/50 p-2 rounded-xl transition-all duration-200">
               <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
               </div>
@@ -179,7 +125,7 @@ async function UpcomingReminders() {
   const stats = await getDashboardStats()
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="glass-card p-6">
       <h2 className="text-sm font-semibold text-gray-900 mb-4">Upcoming Reminders</h2>
       {stats.upcomingReminders.length === 0 ? (
         <div className="text-center py-8">
@@ -209,7 +155,7 @@ async function DashboardRevenueChart() {
   const stats = await getDashboardStats()
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="glass-card p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900">Revenue Trend</h2>
         <span className="text-xs text-gray-400">Last 6 months</span>
@@ -222,12 +168,10 @@ async function DashboardRevenueChart() {
 async function DashboardPipelineChart() {
   const stats = await getDashboardStats()
   
-  if (stats.pipelineData.length === 0) {
-    return null
-  }
+  if (stats.pipelineData.length === 0) return null
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="glass-card p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900">Pipeline Value by Stage</h2>
         <span className="text-xs text-gray-400">Deal value per stage</span>
@@ -262,16 +206,16 @@ export default async function DashboardPage() {
       </Suspense>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Suspense fallback={<div className="bg-white rounded-2xl border p-6 h-80 animate-pulse" />}>
+        <Suspense fallback={<div className="glass-card p-6 h-80 animate-pulse" />}>
           <DashboardRevenueChart />
         </Suspense>
-        <Suspense fallback={<div className="bg-white rounded-2xl border p-6 h-80 animate-pulse" />}>
+        <Suspense fallback={<div className="glass-card p-6 h-80 animate-pulse" />}>
           <DashboardPipelineChart />
         </Suspense>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <div className="glass-card p-6">
         <div className="flex items-center gap-2 mb-4">
           <Zap className="h-5 w-5 text-gray-900" />
           <h2 className="text-sm font-semibold text-gray-900">Quick Actions</h2>
@@ -283,7 +227,7 @@ export default async function DashboardPage() {
               <Link
                 key={action.label}
                 href={action.href}
-                className="group flex flex-col items-center text-center p-3 rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-md active:scale-95"
+                className="group flex flex-col items-center text-center p-3 rounded-xl glass-btn transition-all duration-300 hover:-translate-y-1 active:scale-95"
               >
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform`}>
                   <Icon className="h-5 w-5 text-white" />
@@ -297,20 +241,20 @@ export default async function DashboardPage() {
 
       {/* Two Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Suspense fallback={<div className="bg-white rounded-2xl border p-6 h-48 animate-pulse" />}>
+        <Suspense fallback={<div className="glass-card p-6 h-48 animate-pulse" />}>
           <TopClients />
         </Suspense>
-        <Suspense fallback={<div className="bg-white rounded-2xl border p-6 h-48 animate-pulse" />}>
+        <Suspense fallback={<div className="glass-card p-6 h-48 animate-pulse" />}>
           <ActivityFeed />
         </Suspense>
       </div>
 
       {/* Second Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Suspense fallback={<div className="bg-white rounded-2xl border p-6 h-48 animate-pulse" />}>
+        <Suspense fallback={<div className="glass-card p-6 h-48 animate-pulse" />}>
           <RecentClients />
         </Suspense>
-        <Suspense fallback={<div className="bg-white rounded-2xl border p-6 h-48 animate-pulse" />}>
+        <Suspense fallback={<div className="glass-card p-6 h-48 animate-pulse" />}>
           <UpcomingReminders />
         </Suspense>
       </div>
