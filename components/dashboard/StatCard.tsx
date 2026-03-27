@@ -20,7 +20,7 @@ export default function StatCard({ label, value, sub, icon, href, trend, color }
   return (
     <Link
       href={href}
-      className="group block bg-white rounded-2xl border border-gray-100 p-5 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:bg-white/50 active:backdrop-blur-sm active:scale-[0.98]"
+      className="group block bg-white rounded-2xl border border-gray-100 p-5 shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:bg-white/20 active:backdrop-blur-md active:scale-[0.98]"
     >
       <div className="flex items-start justify-between mb-3">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</span>
