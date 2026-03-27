@@ -28,7 +28,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
 
   return (
     <div className="space-y-4">
-      {/* Chart Header with Stats */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <p className="text-2xl font-bold text-gray-900">
@@ -42,7 +41,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
         </div>
       </div>
 
-      {/* Chart */}
       <ResponsiveContainer width="100%" height={280}>
         <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
           <defs>
@@ -52,7 +50,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
             </linearGradient>
             <linearGradient id="premiumStroke" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#6366f1"/>
-              <stop offset="100%" stopColor="#8b5cf6"/>
+              <stop offset="100%" stopColor="#818cf8"/>
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -95,7 +93,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
         </AreaChart>
       </ResponsiveContainer>
 
-      {/* Data Points Summary */}
       <div className="flex justify-between pt-2 text-xs text-gray-400 border-t border-gray-100">
         {data.map((item, idx) => (
           <div key={idx} className="text-center">

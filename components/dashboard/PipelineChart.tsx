@@ -6,10 +6,10 @@ interface PipelineChartProps {
   data: Array<{ stage: string; value: number; count: number }>
 }
 
-// Stage colors matching your badge colors
+// Indigo-based stage colors (preserves your existing color logic)
 const stageColors: Record<string, string> = {
   "New": "#6366f1",
-  "Contacted": "#8b5cf6",
+  "Contacted": "#818cf8",
   "Qualified": "#f59e0b",
   "Proposal": "#f97316",
   "Negotiation": "#ec489a",

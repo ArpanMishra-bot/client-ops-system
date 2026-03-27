@@ -33,7 +33,7 @@ export default function Sidebar() {
 
   const NavContent = () => (
     <>
-      <div className="h-16 flex items-center px-6 border-b border-gray-200">
+      <div className="h-16 flex items-center px-6 border-b border-gray-100">
         <Logo href="/dashboard" size="md" variant="dark" />
       </div>
       <nav className="flex-1 px-3 py-4 space-y-0.5">
@@ -69,11 +69,11 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="hidden md:flex w-64 h-screen bg-white border-r border-gray-200 flex-col fixed left-0 top-0">
+      <div className="hidden md:flex w-64 h-screen bg-white border-r border-gray-100 flex-col fixed left-0 top-0">
         <NavContent />
       </div>
 
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-30">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-30">
         <Logo href="/dashboard" size="sm" variant="dark" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -86,7 +86,7 @@ export default function Sidebar() {
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-20">
           <div className="absolute inset-0 bg-black/20" onClick={() => setMobileOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex flex-col">
+          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-100 flex flex-col">
             <NavContent />
           </div>
         </div>
