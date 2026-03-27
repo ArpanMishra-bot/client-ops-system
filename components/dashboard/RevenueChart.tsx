@@ -72,7 +72,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
             dx={-5}
           />
           <Tooltip 
-            formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+            formatter={(value) => [`$${value}`, 'Revenue']}
             contentStyle={{ 
               backgroundColor: 'white', 
               border: 'none',
