@@ -18,7 +18,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
       <Sidebar />
       <div className="md:ml-64">
-        <header className="h-16 glass-card rounded-none border-x-0 border-t-0 sticky top-0 z-10 flex items-center justify-between px-6">
+        <header className="h-16 bg-white/30 backdrop-blur-md border-b border-white/40 sticky top-0 z-10 flex items-center justify-between px-6">
           <div />
           <UserButton />
         </header>
