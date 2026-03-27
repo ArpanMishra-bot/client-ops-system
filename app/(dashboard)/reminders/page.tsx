@@ -12,23 +12,9 @@ async function RemindersList() {
   const completed = reminders.filter(r => r.isDone)
   const overdue = pending.filter(r => new Date(r.dueDate) < new Date())
 
-  if (reminders.length === 0) {
-    return (
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <Calendar className="h-8 w-8 text-gray-400" />
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900">Get started with reminders</h3>
-        <p className="text-sm text-gray-500 mt-2 max-w-sm">
-          Add your first reminder to never miss a follow-up, meeting, or deadline again.
-        </p>
-      </div>
-    )
-  }
-
   return (
     <>
-      {/* Stats Cards */}
+      {/* Stats Cards - Always show */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 text-center">
           <p className="text-2xl font-semibold text-gray-900">{pending.length}</p>
@@ -44,30 +30,43 @@ async function RemindersList() {
         </div>
       </div>
 
+      {/* Add Reminder Form - Always visible */}
       <AddReminderForm />
 
-      <div className="space-y-4">
-        {pending.length > 0 && (
-          <div>
-            <h2 className="text-sm font-semibold text-gray-700 mb-2">Pending ({pending.length})</h2>
-            <div className="space-y-2">
-              {pending.map(reminder => (
-                <ReminderItem key={reminder.id} reminder={reminder} />
-              ))}
-            </div>
+      {reminders.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <Calendar className="h-8 w-8 text-gray-400" />
           </div>
-        )}
-        {completed.length > 0 && (
-          <div>
-            <h2 className="text-sm font-semibold text-gray-400 mb-2">Completed ({completed.length})</h2>
-            <div className="space-y-2 opacity-60">
-              {completed.map(reminder => (
-                <ReminderItem key={reminder.id} reminder={reminder} />
-              ))}
+          <h3 className="text-lg font-semibold text-gray-900">No reminders yet</h3>
+          <p className="text-sm text-gray-500 mt-2 max-w-sm">
+            Click the button above to add your first reminder.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {pending.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-700 mb-2">Pending ({pending.length})</h2>
+              <div className="space-y-2">
+                {pending.map(reminder => (
+                  <ReminderItem key={reminder.id} reminder={reminder} />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+          {completed.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-400 mb-2">Completed ({completed.length})</h2>
+              <div className="space-y-2 opacity-60">
+                {completed.map(reminder => (
+                  <ReminderItem key={reminder.id} reminder={reminder} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   )
 }
