@@ -23,7 +23,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
     )
   }
 
-  const maxRevenue = Math.max(...data.map(d => d.revenue))
   const totalRevenue = data.reduce((sum, d) => sum + d.revenue, 0)
   const avgRevenue = Math.round(totalRevenue / data.filter(d => d.revenue > 0).length)
 
@@ -48,7 +47,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
         <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
           <defs>
             <linearGradient id="premiumGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
               <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
             </linearGradient>
             <linearGradient id="premiumStroke" x1="0" y1="0" x2="1" y2="0">
@@ -88,7 +87,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
             type="monotone" 
             dataKey="revenue" 
             stroke="url(#premiumStroke)"
-            strokeWidth={2.5}
+            strokeWidth={3}
             fill="url(#premiumGradient)"
             animationDuration={1000}
             animationEasing="ease-out"
