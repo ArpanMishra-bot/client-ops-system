@@ -26,21 +26,4 @@
     transform: scale(0.98);
     transition: transform 0.1s;
   }
-  
-  /* Glass button */
-  .glass-btn {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    transition: all 0.2s;
-  }
-  
-  .glass-btn:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-1px);
-  }
-  
-  .glass-btn:active {
-    transform: scale(0.97);
-  }
 }

@@ -227,7 +227,7 @@ export default async function DashboardPage() {
               <Link
                 key={action.label}
                 href={action.href}
-                className="group flex flex-col items-center text-center p-3 rounded-xl glass-btn transition-all duration-300 hover:-translate-y-1 active:scale-95"
+                className="group flex flex-col items-center text-center p-3 rounded-xl glass-btn transition-all duration-300 hover:-translate-y-1 active:scale-95 active:shadow-[0_0_0_3px_rgba(99,102,241,0.4)]"
               >
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform`}>
                   <Icon className="h-5 w-5 text-white" />
