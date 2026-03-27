@@ -46,13 +46,16 @@ export default function Sidebar() {
               href={item.href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg",
+                "flex items-center gap-3 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg group",
                 isActive
-                  ? "bg-gray-100 text-gray-900 border-l-2 border-gray-900 rounded-l-none"
+                  ? "bg-indigo-50 text-indigo-700 border-l-2 border-indigo-500 rounded-l-none"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className={cn(
+                "h-4 w-4 shrink-0 transition-colors duration-200",
+                isActive ? "text-indigo-500" : "text-gray-400 group-hover:text-gray-600"
+              )} />
               {item.label}
             </Link>
           )
@@ -66,11 +69,11 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="hidden md:flex w-64 h-screen bg-white/80 backdrop-blur-sm border-r border-gray-200 flex-col fixed left-0 top-0">
+      <div className="hidden md:flex w-64 h-screen bg-white border-r border-gray-200 flex-col fixed left-0 top-0">
         <NavContent />
       </div>
 
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-4 z-30">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-30">
         <Logo href="/dashboard" size="sm" variant="dark" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -83,7 +86,7 @@ export default function Sidebar() {
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-20">
           <div className="absolute inset-0 bg-black/20" onClick={() => setMobileOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white/80 backdrop-blur-sm border-r border-gray-200 flex flex-col">
+          <div className="absolute left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex flex-col">
             <NavContent />
           </div>
         </div>
