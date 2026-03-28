@@ -1,9 +1,21 @@
 "use client"
 
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 interface RevenueChartProps {
   data: Array<{ month: string; revenue: number }>
+}
+
+// Format Y-axis values
+const formatYAxis = (value: number) => {
+  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
+  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
+  return `$${value}`
+}
+
+// Format tooltip values
+const formatTooltipValue = (value: number) => {
+  return `$${value.toLocaleString()}`
 }
 
 export default function RevenueChart({ data }: RevenueChartProps) {
@@ -26,6 +38,22 @@ export default function RevenueChart({ data }: RevenueChartProps) {
   const totalRevenue = data.reduce((sum, d) => sum + d.revenue, 0)
   const avgRevenue = Math.round(totalRevenue / data.filter(d => d.revenue > 0).length)
 
+  // Custom tooltip with glass effect
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const value = payload[0].value
+      
+      return (
+        <div className="bg-white/95 backdrop-blur-sm border border-indigo-200 rounded-xl shadow-lg p-3 min-w-[140px]">
+          <p className="text-xs font-semibold text-indigo-600 mb-1">{payload[0].payload.month}</p>
+          <p className="text-lg font-bold text-gray-900">{formatTooltipValue(value)}</p>
+          <p className="text-xs text-gray-500 mt-1">Total revenue</p>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -42,65 +70,56 @@ export default function RevenueChart({ data }: RevenueChartProps) {
       </div>
 
       <ResponsiveContainer width="100%" height={280}>
-        <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-          <defs>
-            <linearGradient id="premiumGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
-            </linearGradient>
-            <linearGradient id="premiumStroke" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#6366f1"/>
-              <stop offset="100%" stopColor="#818cf8"/>
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+        <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis 
             dataKey="month" 
-            tick={{ fontSize: 11, fill: '#6b7280' }}
+            tick={{ fontSize: 12, fill: '#1f2937', fontWeight: 500 }}
             axisLine={false}
             tickLine={false}
             dy={10}
           />
           <YAxis 
-            tick={{ fontSize: 11, fill: '#6b7280' }}
+            tick={{ fontSize: 11, fill: '#64748b' }}
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) => `$${value / 1000}k`}
+            tickFormatter={formatYAxis}
             dx={-5}
           />
-          <Tooltip 
-            formatter={(value) => [`$${value}`, 'Revenue']}
-            contentStyle={{ 
-              backgroundColor: 'white', 
-              border: 'none',
-              borderRadius: '12px',
-              fontSize: '12px',
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.02)',
-              padding: '8px 12px'
-            }}
-            labelStyle={{ color: '#6b7280', fontWeight: 500 }}
-            cursor={{ stroke: '#e5e7eb', strokeWidth: 1, strokeDasharray: '4 4' }}
-          />
-          <Area 
-            type="monotone" 
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(79, 70, 229, 0.05)' }} />
+          <Bar 
             dataKey="revenue" 
-            stroke="url(#premiumStroke)"
-            strokeWidth={3}
-            fill="url(#premiumGradient)"
+            radius={[8, 8, 0, 0]}
             animationDuration={1000}
-            animationEasing="ease-out"
-          />
-        </AreaChart>
+            animationBegin={0}
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={`url(#barGradient-${index})`}
+                style={{
+                  transition: 'filter 0.2s',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e: any) => {
+                  e.target.style.filter = 'brightness(1.05)'
+                }}
+                onMouseLeave={(e: any) => {
+                  e.target.style.filter = 'brightness(1)'
+                }}
+              />
+            ))}
+          </Bar>
+          <defs>
+            {data.map((entry, index) => (
+              <linearGradient key={`grad-${index}`} id={`barGradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#4f46e5" />
+              </linearGradient>
+            ))}
+          </defs>
+        </BarChart>
       </ResponsiveContainer>
-
-      <div className="flex justify-between pt-2 text-xs text-gray-400 border-t border-gray-100">
-        {data.map((item, idx) => (
-          <div key={idx} className="text-center">
-            <div className="font-medium text-gray-600">{item.month.split(' ')[0]}</div>
-            <div className="mt-1">${item.revenue.toLocaleString()}</div>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
