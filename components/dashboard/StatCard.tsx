@@ -30,7 +30,7 @@ export default function StatCard({ label, value, sub, icon, href, trend, color }
       </div>
       <p className="text-2xl font-bold text-gray-900">{value}</p>
       <p className="text-xs text-gray-400 mt-1">{sub}</p>
-      {trend !== undefined && trend !== null && trend !== 0 && (
+      {trend !== undefined && trend !== null && (
         <div className={`flex items-center gap-1 mt-3 text-xs font-medium ${isPositive ? 'text-green-600' : isNegative ? 'text-red-600' : 'text-gray-500'}`}>
           {isPositive && <TrendingUp className="h-3 w-3" />}
           {isNegative && <TrendingDown className="h-3 w-3" />}
