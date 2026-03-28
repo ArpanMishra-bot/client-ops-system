@@ -36,7 +36,7 @@ async function TopClients() {
   
   return (
     <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold text-gray-900 mb-4">Top Clients by Revenue</h2>
+      <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent mb-4">Top Clients by Revenue</h2>
       <div className="space-y-3">
         {stats.topClients.map((client) => (
           <Link
@@ -45,7 +45,7 @@ async function TopClients() {
             className="flex items-center justify-between p-2 rounded-xl transition-all duration-200 hover:bg-white/50 active:scale-95 active:shadow-[0_0_0_3px_rgba(99,102,241,0.4)]"
           >
             <div>
-              <p className="text-sm font-medium text-gray-900">{client.name}</p>
+              <p className="text-sm font-medium bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">{client.name}</p>
               <p className="text-xs text-gray-500">${client.revenue.toLocaleString()}</p>
             </div>
             <div className={`flex items-center gap-1 text-xs font-medium ${client.trend > 0 ? 'text-green-600' : client.trend < 0 ? 'text-red-600' : 'text-gray-500'}`}>
@@ -67,7 +67,7 @@ async function ActivityFeed() {
   
   return (
     <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold text-gray-900 mb-4">Activity Feed</h2>
+      <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent mb-4">Activity Feed</h2>
       <div className="space-y-3">
         {stats.recentActivities.map((activity, i) => (
           <div key={i} className="flex items-start gap-3 p-2 hover:bg-white/50 rounded-xl transition-colors">
@@ -98,12 +98,12 @@ async function RecentClients() {
   
   return (
     <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold text-gray-900 mb-4">Recent Clients</h2>
+      <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent mb-4">Recent Clients</h2>
       {stats.recentClients.length === 0 ? (
         <div className="text-center py-8">
           <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No clients yet</p>
-          <Link href="/clients/new" className="text-xs text-gray-900 font-medium mt-2 hover:underline">Add your first client →</Link>
+          <Link href="/clients/new" className="text-xs bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent font-medium mt-2 hover:underline">Add your first client →</Link>
         </div>
       ) : (
         <div className="space-y-3">
@@ -117,7 +117,7 @@ async function RecentClients() {
                 <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{client.name}</p>
+                <p className="text-sm font-medium bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">{client.name}</p>
                 {client.company && <p className="text-xs text-gray-500">{client.company}</p>}
               </div>
               <p className="text-xs text-gray-400">{new Date(client.createdAt).toLocaleDateString()}</p>
@@ -134,12 +134,12 @@ async function UpcomingReminders() {
   
   return (
     <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold text-gray-900 mb-4">Upcoming Reminders</h2>
+      <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent mb-4">Upcoming Reminders</h2>
       {stats.upcomingReminders.length === 0 ? (
         <div className="text-center py-8">
           <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <Link href="/reminders" className="text-xs text-gray-900 font-medium mt-2 hover:underline">Add a reminder →</Link>
+          <Link href="/reminders" className="text-xs bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent font-medium mt-2 hover:underline">Add a reminder →</Link>
         </div>
       ) : (
         <div className="space-y-3">
@@ -147,7 +147,7 @@ async function UpcomingReminders() {
             <div key={reminder.id} className="flex items-start gap-3 p-2">
               <div className="w-2 h-2 rounded-full bg-gray-900 mt-1.5" />
               <div>
-                <p className="text-sm font-medium text-gray-900">{reminder.title}</p>
+                <p className="text-sm font-medium bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">{reminder.title}</p>
                 <p className="text-xs text-gray-400">{new Date(reminder.dueDate).toLocaleString()}</p>
                 {reminder.client && <p className="text-xs text-gray-500 mt-1">Client: {reminder.client.name}</p>}
               </div>
@@ -165,7 +165,7 @@ async function DashboardRevenueChart() {
   return (
     <div className="glass-card p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-gray-900">Revenue Trend</h2>
+        <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">Revenue Trend</h2>
         <span className="text-xs text-gray-400">Last 6 months</span>
       </div>
       <RevenueChart data={stats.revenueChartData} />
@@ -181,7 +181,7 @@ async function DashboardPipelineChart() {
   return (
     <div className="glass-card p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-gray-900">Pipeline Value by Stage</h2>
+        <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">Pipeline Value by Stage</h2>
         <span className="text-xs text-gray-400">Deal value per stage</span>
       </div>
       <PipelineChart data={stats.pipelineData} />
@@ -205,7 +205,7 @@ export default async function DashboardPage() {
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/30 to-transparent rounded-2xl" />
         <div className="relative">
-          <h1 className="text-2xl font-semibold text-gray-900">Welcome back, {user?.firstName ?? "there"} 👋</h1>
+          <h1 className="text-2xl font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">Welcome back, {user?.firstName ?? "there"} 👋</h1>
           <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
         </div>
       </div>
@@ -227,8 +227,8 @@ export default async function DashboardPage() {
         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-2xl -mr-16 -mt-16" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-4">
-            <Zap className="h-5 w-5 text-gray-900" />
-            <h2 className="text-sm font-semibold text-gray-900">Quick Actions</h2>
+            <Zap className="h-5 w-5 bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent" />
+            <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">Quick Actions</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {quickActions.map((action) => {
