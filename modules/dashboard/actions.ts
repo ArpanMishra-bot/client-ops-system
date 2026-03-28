@@ -90,6 +90,25 @@ export async function getDashboardStats() {
   const pendingTasks = tasksData.filter(t => t.status !== "DONE").length
   const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
+  // Calculate outstanding trend
+
+  const outstandingThisMonth = allInvoices
+
+   .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayThisMonth)
+
+   .reduce((sum, i) => sum + i.total, 0)
+
+  const outstandingLastMonth = allInvoices
+
+   .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth)
+
+   .reduce((sum, i) => sum + i.total, 0)
+
+  const outstandingTrend = outstandingLastMonth === 0 
+
+   ? (outstandingThisMonth > 0 ? 100 : 0) 
+
+   : Math.round(((outstandingThisMonth - outstandingLastMonth) / outstandingLastMonth) * 100)
 
   // Calculate trends
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
