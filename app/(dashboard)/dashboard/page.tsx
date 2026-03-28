@@ -139,14 +139,14 @@ async function UpcomingReminders() {
         <div className="text-center py-8">
           <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <Link href="/dashboard/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</Link>
+          <Link href="/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</Link>
         </div>
       ) : (
         <div className="space-y-3">
           {stats.upcomingReminders.map((reminder: any) => (
             <Link
               key={reminder.id}
-              href={`/dashboard/reminders/${reminder.id}`}
+              href={`/reminders/${reminder.id}`}
               className="flex items-start gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-indigo-50 active:scale-95 active:shadow-[0_0_0_3px_rgba(79,70,229,0.4)]"
             >
               <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5" />
