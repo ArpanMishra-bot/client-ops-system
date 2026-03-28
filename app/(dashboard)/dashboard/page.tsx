@@ -113,7 +113,7 @@ async function RecentClients() {
               href={`/clients/${client.id}`}
               className="flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-white/50 active:scale-95 active:shadow-[0_0_0_3px_rgba(99,102,241,0.4)]"
             >
-              <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
               </div>
               <div className="flex-1">
