@@ -227,7 +227,7 @@ export default async function DashboardPage() {
         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-2xl -mr-16 -mt-16" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-4">
-            <Zap className="h-5 w-5 bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent" />
+            <Zap className="h-5 w-5 text-indigo-600" />
             <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">Quick Actions</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
