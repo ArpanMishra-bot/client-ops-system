@@ -12,12 +12,12 @@ async function DashboardStats() {
   const stats = await getDashboardStats()
   
   const statCards = [
-    { label: "Active Clients", value: stats.totalClients.toString(), icon: <Users className="h-5 w-5 text-white" />, color: "from-blue-500 to-indigo-600", href: "/clients", sub: "Total active clients", trend: stats.clientTrend },
-    { label: "Active Leads", value: stats.activeLeads.toString(), icon: <TrendingUp className="h-5 w-5 text-white" />, color: "from-purple-500 to-pink-500", href: "/leads", sub: "In pipeline", trend: stats.leadsTrend },
-    { label: "Active Projects", value: stats.activeProjects.toString(), icon: <FolderKanban className="h-5 w-5 text-white" />, color: "from-orange-500 to-red-500", href: "/projects", sub: "In progress", trend: stats.projectsTrend },
-    { label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: <DollarSign className="h-5 w-5 text-white" />, color: "from-green-500 to-emerald-600", href: "/invoices", sub: "From paid invoices", trend: stats.revenueTrend },
-    { label: "Outstanding", value: `$${stats.outstanding.toLocaleString()}`, icon: <FileText className="h-5 w-5 text-white" />, color: "from-yellow-500 to-amber-600", href: "/invoices", sub: "Awaiting payment", trend: null },
-    { label: "Pending Tasks", value: stats.pendingTasks.toString(), icon: <Clock className="h-5 w-5 text-white" />, color: "from-red-500 to-rose-600", href: "/tasks", sub: "Across all projects", trend: stats.tasksTrend },
+    { label: "Active Clients", value: stats.totalClients.toString(), icon: <Users className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/clients", sub: "Total active clients", trend: stats.clientTrend },
+    { label: "Active Leads", value: stats.activeLeads.toString(), icon: <TrendingUp className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/leads", sub: "In pipeline", trend: stats.leadsTrend },
+    { label: "Active Projects", value: stats.activeProjects.toString(), icon: <FolderKanban className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/projects", sub: "In progress", trend: stats.projectsTrend },
+    { label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: <DollarSign className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/invoices", sub: "From paid invoices", trend: stats.revenueTrend },
+    { label: "Outstanding", value: `$${stats.outstanding.toLocaleString()}`, icon: <FileText className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/invoices", sub: "Awaiting payment", trend: null },
+    { label: "Pending Tasks", value: stats.pendingTasks.toString(), icon: <Clock className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/tasks", sub: "Across all projects", trend: stats.tasksTrend },
   ]
 
   return (
@@ -193,11 +193,11 @@ export default async function DashboardPage() {
   const user = await currentUser()
 
   const quickActions = [
-    { label: "Add Client", icon: UserPlus, href: "/clients/new", color: "from-blue-500 to-indigo-600" },
-    { label: "Add Lead", icon: TrendingUp, href: "/leads/new", color: "from-purple-500 to-pink-500" },
-    { label: "Create Project", icon: Briefcase, href: "/projects/new", color: "from-orange-500 to-red-500" },
-    { label: "Create Invoice", icon: Receipt, href: "/invoices/new", color: "from-green-500 to-emerald-600" },
-    { label: "Add Reminder", icon: Calendar, href: "/reminders", color: "from-yellow-500 to-amber-600" },
+    { label: "Add Client", icon: UserPlus, href: "/clients/new", color: "from-indigo-500 to-indigo-700" },
+    { label: "Add Lead", icon: TrendingUp, href: "/leads/new", color: "from-indigo-500 to-indigo-700" },
+    { label: "Create Project", icon: Briefcase, href: "/projects/new", color: "from-indigo-500 to-indigo-700" },
+    { label: "Create Invoice", icon: Receipt, href: "/invoices/new", color: "from-indigo-500 to-indigo-700" },
+    { label: "Add Reminder", icon: Calendar, href: "/reminders", color: "from-indigo-500 to-indigo-700" },
   ]
 
   return (
