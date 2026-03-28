@@ -139,27 +139,19 @@ async function UpcomingReminders() {
         <div className="text-center py-8">
           <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <a href="/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</a>
+          <Link href="/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          {stats.upcomingReminders.map((reminder: any) => (
-            reminder.id ? (
-              <Link
-                key={reminder.id}
-                href={`/reminders/${reminder.id}`}
-                className="flex items-start gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-indigo-50 active:scale-95 active:shadow-[0_0_0_3px_rgba(79,70,229,0.4)]"
-              >
-                <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{reminder.title}</p>
-                  <p className="text-xs text-gray-400">{new Date(reminder.dueDate).toLocaleString()}</p>
-                  {reminder.client && <p className="text-xs text-gray-500 mt-1">Client: {reminder.client.name}</p>}
-                </div>
-              </Link>
-            ) : null
-          ))}
-        </div>
+        <Link 
+          href="/reminders#pending"
+          className="group flex items-center justify-between p-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 active:shadow-[0_0_0_3px_rgba(79,70,229,0.4)]"
+        >
+          <div>
+            <p className="text-sm font-semibold text-indigo-600">View Pending Reminders</p>
+            <p className="text-xs text-gray-500 mt-0.5">{stats.upcomingReminders.length} reminder{stats.upcomingReminders.length !== 1 ? 's' : ''} pending</p>
+          </div>
+          <span className="text-indigo-600 text-lg group-hover:translate-x-0.5 transition-transform">→</span>
+        </Link>
       )}
     </div>
   )
