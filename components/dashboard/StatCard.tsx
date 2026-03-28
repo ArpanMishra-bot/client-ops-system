@@ -24,7 +24,7 @@ export default function StatCard({ label, value, sub, icon, href, trend, color }
     >
       <div className="flex items-start justify-between mb-3">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</span>
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-md shadow-indigo-300/50 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
           {icon}
         </div>
       </div>
