@@ -139,7 +139,7 @@ async function UpcomingReminders() {
         <div className="text-center py-8">
           <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <Link href="/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</Link>
+          <a href="/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</a>
         </div>
       ) : (
         <div className="space-y-3">
