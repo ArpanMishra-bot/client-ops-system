@@ -1,75 +1,145 @@
 "use client"
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useEffect, useState } from 'react'
 
 interface PipelineChartProps {
-  data: Array<{ stage: string; value: number; count: number }>
+  data: Array<{ stage: string; value: number }>
 }
 
-// Indigo-based stage colors (preserves your existing color logic)
-const stageColors: Record<string, string> = {
-  "New": "#6366f1",
-  "Contacted": "#818cf8",
-  "Qualified": "#f59e0b",
-  "Proposal": "#f97316",
-  "Negotiation": "#ec489a",
-  "Won": "#10b981",
-  "Lost": "#6b7280"
+// Format Y-axis values
+const formatYAxis = (value: number) => {
+  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
+  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
+  return `$${value}`
+}
+
+// Format tooltip values
+const formatTooltipValue = (value: number) => {
+  return `$${value.toLocaleString()}`
+}
+
+// Map stage names to display names
+const formatStageName = (stage: string) => {
+  const stageMap: Record<string, string> = {
+    'new': 'New',
+    'contacted': 'Contacted',
+    'qualified': 'Qualified',
+    'proposal': 'Proposal',
+    'negotiation': 'Negotiation',
+    'won': 'Won',
+    'lost': 'Lost'
+  }
+  return stageMap[stage.toLowerCase()] || stage
 }
 
 export default function PipelineChart({ data }: PipelineChartProps) {
-  if (data.length === 0) {
+  const [animated, setAnimated] = useState(false)
+  
+  useEffect(() => {
+    setAnimated(true)
+  }, [])
+  
+  if (!data || data.length === 0) {
     return (
       <div className="h-48 flex flex-col items-center justify-center text-center">
         <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </div>
-        <p className="text-sm text-gray-500">No leads in pipeline yet</p>
-        <p className="text-xs text-gray-400 mt-1">Add leads with deal values to see your pipeline</p>
+        <p className="text-sm text-gray-500">No pipeline data yet</p>
+        <p className="text-xs text-gray-400 mt-1">Add leads to see pipeline value</p>
       </div>
     )
   }
-
-  const totalValue = data.reduce((sum, d) => sum + d.value, 0)
+  
+  // Format data with proper stage names
+  const formattedData = data.map(item => ({
+    ...item,
+    stage: formatStageName(item.stage),
+    value: item.value || 0
+  }))
+  
+  // Calculate total for percentage
+  const total = formattedData.reduce((sum, item) => sum + item.value, 0)
+  
+  // Custom tooltip with glass effect
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const value = payload[0].value
+      const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
+      
+      return (
+        <div className="bg-white/95 backdrop-blur-sm border border-indigo-200 rounded-xl shadow-lg p-3 min-w-[140px]">
+          <p className="text-xs font-semibold text-indigo-600 mb-1">{payload[0].payload.stage}</p>
+          <p className="text-lg font-bold text-gray-900">{formatTooltipValue(value)}</p>
+          <p className="text-xs text-gray-500 mt-1">{percentage}% of total pipeline</p>
+        </div>
+      )
+    }
+    return null
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-2xl font-bold text-gray-900">${totalValue.toLocaleString()}</p>
-          <p className="text-xs text-gray-500">Total pipeline value</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm font-medium text-gray-700">Deals</p>
-          <p className="text-lg font-semibold text-gray-900">{data.reduce((sum, d) => sum + d.count, 0)}</p>
-        </div>
-      </div>
-
-      <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 70, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-          <XAxis type="number" tickFormatter={(value) => `$${value / 1000}k`} tick={{ fontSize: 11 }} />
-          <YAxis type="category" dataKey="stage" tick={{ fontSize: 11, fill: '#6b7280' }} width={70} />
-          <Tooltip 
-            formatter={(value) => [`$${value}`, 'Deal Value']}
-            contentStyle={{ 
-              backgroundColor: 'white', 
-              border: 'none',
-              borderRadius: '12px',
-              fontSize: '12px',
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-              padding: '8px 12px'
-            }}
-          />
-          <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={stageColors[entry.stage] || "#6366f1"} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart
+        data={formattedData}
+        layout="vertical"
+        margin={{ left: 20, right: 20, top: 10, bottom: 10 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+        <XAxis
+          type="number"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#64748b', fontSize: 12 }}
+          tickFormatter={formatYAxis}
+        />
+        <YAxis
+          type="category"
+          dataKey="stage"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#1f2937', fontSize: 12, fontWeight: 500 }}
+          width={80}
+        />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(79, 70, 229, 0.05)' }} />
+        <Bar
+          dataKey="value"
+          radius={[0, 8, 8, 0]}
+          animationDuration={1000}
+          animationBegin={0}
+        >
+          {formattedData.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={`url(#barGradient-${index})`}
+              style={{
+                transition: 'filter 0.2s',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e: any) => {
+                e.target.style.filter = 'brightness(1.05)'
+              }}
+              onMouseLeave={(e: any) => {
+                e.target.style.filter = 'brightness(1)'
+              }}
+            />
+          ))}
+        </Bar>
+        <defs>
+          {formattedData.map((entry, index) => (
+            <linearGradient key={`grad-${index}`} id={`barGradient-${index}`} x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#6366f1" />
+              <stop offset="100%" stopColor="#4f46e5" />
+            </linearGradient>
+          ))}
+        </defs>
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
+
+// Import Cell for Bar children
+import { Cell } from 'recharts'
