@@ -111,6 +111,17 @@ export async function getDashboardStats() {
   const clientsThisMonth = clients.filter(c => c.createdAt >= firstDayThisMonth).length
   const clientsLastMonth = clients.filter(c => c.createdAt >= firstDayLastMonth && c.createdAt <= lastDayLastMonth).length
   const clientTrend = clientsLastMonth === 0 ? (clientsThisMonth > 0 ? 100 : 0) : Math.round(((clientsThisMonth - clientsLastMonth) / clientsLastMonth) * 100)
+  
+// Calculate outstanding trend
+const outstandingThisMonth = allInvoices
+  .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayThisMonth)
+  .reduce((sum, i) => sum + i.total, 0)
+const outstandingLastMonth = allInvoices
+  .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth)
+  .reduce((sum, i) => sum + i.total, 0)
+const outstandingTrend = outstandingLastMonth === 0 
+  ? (outstandingThisMonth > 0 ? 100 : 0) 
+  : Math.round(((outstandingThisMonth - outstandingLastMonth) / outstandingLastMonth) * 100)
 
   // Calculate top clients
   const clientRevenue = new Map<string, { name: string; total: number; lastMonthTotal: number }>()
@@ -189,6 +200,7 @@ export async function getDashboardStats() {
     totalRevenue,
     revenueTrend,
     outstanding,
+  outstandingTrend,
     pendingTasks,
     tasksTrend,
     upcomingReminders: reminders,
