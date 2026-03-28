@@ -136,21 +136,26 @@ async function UpcomingReminders() {
     <div className="glass-card p-6">
       <h2 className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent mb-4">Upcoming Reminders</h2>
       {stats.upcomingReminders.length === 0 ? (
-        <div className="text-center py-8">
-          <Bell className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No upcoming reminders</p>
-          <Link href="/reminders" className="text-xs text-indigo-600 font-medium mt-2 hover:underline">Add a reminder →</Link>
-        </div>
+        <Link 
+          href="/reminders"
+          className="group flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-indigo-100/50 hover:from-indigo-100 hover:to-indigo-200/50 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 active:shadow-[0_0_0_3px_rgba(99,102,241,0.4)]"
+        >
+          <div>
+            <p className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">Add a Reminder</p>
+            <p className="text-xs text-gray-500 mt-0.5">Create a new reminder</p>
+          </div>
+          <span className="text-indigo-500 text-lg group-hover:translate-x-0.5 transition-transform">→</span>
+        </Link>
       ) : (
         <Link 
           href="/reminders#pending"
-          className="group flex items-center justify-between p-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 active:shadow-[0_0_0_3px_rgba(79,70,229,0.4)]"
+          className="group flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-indigo-100/50 hover:from-indigo-100 hover:to-indigo-200/50 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 active:shadow-[0_0_0_3px_rgba(99,102,241,0.4)]"
         >
           <div>
-            <p className="text-sm font-semibold text-indigo-600">View Pending Reminders</p>
+            <p className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">View Pending Reminders</p>
             <p className="text-xs text-gray-500 mt-0.5">{stats.upcomingReminders.length} reminder{stats.upcomingReminders.length !== 1 ? 's' : ''} pending</p>
           </div>
-          <span className="text-indigo-600 text-lg group-hover:translate-x-0.5 transition-transform">→</span>
+          <span className="text-indigo-500 text-lg group-hover:translate-x-0.5 transition-transform">→</span>
         </Link>
       )}
     </div>
