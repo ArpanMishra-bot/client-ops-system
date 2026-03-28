@@ -71,7 +71,7 @@ async function ActivityFeed() {
       <div className="space-y-3">
         {stats.recentActivities.map((activity, i) => (
           <div key={i} className="flex items-start gap-3 p-2 hover:bg-white/50 rounded-xl transition-colors">
-            <div className="w-2 h-2 rounded-full bg-gray-900 mt-1.5" />
+            <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5" />
             <div>
               <p className="text-sm text-gray-700">
                 {activity.type === "invoice" ? (
@@ -145,7 +145,7 @@ async function UpcomingReminders() {
         <div className="space-y-3">
           {stats.upcomingReminders.map((reminder: any) => (
             <div key={reminder.id} className="flex items-start gap-3 p-2">
-              <div className="w-2 h-2 rounded-full bg-gray-900 mt-1.5" />
+              <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5" />
               <div>
                 <p className="text-sm font-medium bg-gradient-to-r from-indigo-600 to-indigo-500 bg-clip-text text-transparent">{reminder.title}</p>
                 <p className="text-xs text-gray-400">{new Date(reminder.dueDate).toLocaleString()}</p>
