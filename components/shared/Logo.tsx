@@ -15,7 +15,7 @@ export default function Logo({ href = "/", size = "md", variant = "dark" }: Logo
     lg: "text-xl"
   }
 
-  const gradientClass = "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent font-bold"
+  const gradientClass = "bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent font-bold"
 
   return (
     <Link href={href} className={`${sizeClasses[size]} ${gradientClass} tracking-tight`}>
