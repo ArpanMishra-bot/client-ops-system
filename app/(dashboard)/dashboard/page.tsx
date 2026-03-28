@@ -16,7 +16,7 @@ async function DashboardStats() {
     { label: "Active Leads", value: stats.activeLeads.toString(), icon: <TrendingUp className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/leads", sub: "In pipeline", trend: stats.leadsTrend },
     { label: "Active Projects", value: stats.activeProjects.toString(), icon: <FolderKanban className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/projects", sub: "In progress", trend: stats.projectsTrend },
     { label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: <DollarSign className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/invoices", sub: "From paid invoices", trend: stats.revenueTrend },
-    { label: "Outstanding", value: `$${stats.outstanding.toLocaleString()}`, icon: <FileText className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/invoices", sub: "Awaiting payment", trend: null },
+    { label: "Outstanding", value: `$${stats.outstanding.toLocaleString()}`, icon: <FileText className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/invoices", sub: "Awaiting payment", trend: stats.outstandingTrend },
     { label: "Pending Tasks", value: stats.pendingTasks.toString(), icon: <Clock className="h-5 w-5 text-white" />, color: "from-indigo-500 to-indigo-700", href: "/tasks", sub: "Across all projects", trend: stats.tasksTrend },
   ]
 
