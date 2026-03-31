@@ -20,18 +20,20 @@ export default function StatCard({ label, value, sub, icon, href, trend, color }
   return (
     <Link
       href={href}
-      className="group block bg-white rounded-2xl border border-gray-100 p-5 shadow-md transition-all duration-150 active:bg-indigo-50 active:ring-2 active:ring-indigo-300 active:scale-[0.98]"
+      className="glass-card p-6 rounded-2xl flex flex-col shadow-lg hover:shadow-xl transition-all"
     >
-      <div className="flex items-start justify-between mb-3">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</span>
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-md shadow-indigo-300/50 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+      <div className="flex items-center justify-between w-full mb-4">
+        <span className="text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent">
+          {label}
+        </span>
+        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${color} flex items-center justify-center shadow-md`}>
           {icon}
         </div>
       </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-      <p className="text-xs text-gray-400 mt-1">{sub}</p>
+      <p className="text-3xl font-bold text-gray-900">{value}</p>
+      <p className="text-xs text-gray-500 mt-1">{sub}</p>
       {trend !== undefined && trend !== null && (
-        <div className={`flex items-center gap-1 mt-3 text-xs font-medium ${isPositive ? 'text-green-600' : isNegative ? 'text-red-600' : 'text-gray-500'}`}>
+        <div className={`flex items-center gap-1 mt-3 text-xs font-medium ${isPositive ? 'text-green-500' : isNegative ? 'text-red-500' : 'text-gray-400'}`}>
           {isPositive && <TrendingUp className="h-3 w-3" />}
           {isNegative && <TrendingDown className="h-3 w-3" />}
           <span>{isPositive ? '+' : ''}{trend}% from last month</span>
