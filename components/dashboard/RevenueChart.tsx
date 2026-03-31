@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Area,
 } from "recharts"
 
 interface RevenueChartProps {
@@ -30,12 +31,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
                      bg-white/20 backdrop-blur-md border border-white/30
                      shadow-lg shadow-indigo-200"
         >
-          {/* Glow border at top */}
-          <div
-            className="absolute top-0 left-0 right-0 h-0.5
-                       bg-gradient-to-r from-transparent via-indigo-400 to-transparent
-                       transition-all duration-200"
-          />
           <p className="text-xs font-semibold gradient-text mb-1">
             {payload[0].payload.month}
           </p>
@@ -71,18 +66,41 @@ export default function RevenueChart({ data }: RevenueChartProps) {
           content={<CustomTooltip />}
           cursor={{ stroke: "#6366f1", strokeWidth: 1, strokeDasharray: "3 3" }}
         />
+
+        {/* Gradient area under the line */}
+        <Area
+          type="monotone"
+          dataKey="revenue"
+          stroke="none"
+          fill="url(#revenueFill)"
+        />
+
+        {/* Premium gradient line */}
         <Line
           type="monotone"
           dataKey="revenue"
           stroke="url(#revenueGradient)"
           strokeWidth={3}
           dot={{ r: 4, strokeWidth: 2, fill: "#fff", stroke: "#6366f1" }}
-          activeDot={{ r: 6, strokeWidth: 2, fill: "#fff", stroke: "#a78bfa" }}
+          activeDot={{
+            r: 7,
+            strokeWidth: 2,
+            fill: "#fff",
+            stroke: "#a78bfa",
+          }}
         />
+
         <defs>
+          {/* Line gradient */}
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="#a78bfa" />
             <stop offset="100%" stopColor="#6366f1" />
+          </linearGradient>
+
+          {/* Area fill gradient */}
+          <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6366f1" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
           </linearGradient>
         </defs>
       </LineChart>
