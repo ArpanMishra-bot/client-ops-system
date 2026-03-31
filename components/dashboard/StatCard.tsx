@@ -18,8 +18,11 @@ export default function StatCard({ label, value, icon, color, href, sub, trend }
     <Link
       href={href}
       className={cn(
-        "group glass-card p-5 rounded-xl flex flex-col justify-between relative overflow-hidden",
-        "hover:-translate-y-1 hover:shadow-lg active:scale-95 active:bg-indigo-50 focus-visible:ring-2 focus-visible:ring-indigo-400"
+        "group relative overflow-hidden p-5 rounded-xl flex flex-col justify-between",
+        // Transparent glassmorphism style
+        "bg-white/30 backdrop-blur-md border border-white/20",
+        // Interactions
+        "hover:-translate-y-1 hover:shadow-lg active:scale-95 active:bg-white/40 focus-visible:ring-2 focus-visible:ring-indigo-400 transition-all duration-200"
       )}
     >
       {/* Glow border at top of card */}
@@ -40,7 +43,7 @@ export default function StatCard({ label, value, icon, color, href, sub, trend }
 
       {/* Label + Subtext */}
       <div className="mt-1">
-        <p className="text-sm font-semibold text-gray-700">{label}</p>
+        <p className="text-sm font-semibold text-gray-800">{label}</p>
         {sub && <p className="text-xs text-gray-500">{sub}</p>}
       </div>
 
@@ -58,3 +61,4 @@ export default function StatCard({ label, value, icon, color, href, sub, trend }
     </Link>
   )
 }
+
