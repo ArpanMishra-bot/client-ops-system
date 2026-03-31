@@ -29,7 +29,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
         <div
           className="relative rounded-lg px-3 py-2 min-w-[120px]
                      bg-white/20 backdrop-blur-md border border-white/30
-                     shadow-xl shadow-indigo-200"
+                     shadow-lg shadow-indigo-200"
         >
           <p className="text-xs font-semibold gradient-text mb-1">
             {payload[0].payload.month}
@@ -44,7 +44,8 @@ export default function RevenueChart({ data }: RevenueChartProps) {
   }
 
   return (
-    <div className="rounded-xl shadow-md bg-gradient-to-br from-indigo-50 via-white to-indigo-100 p-4">
+    <div className="rounded-xl shadow-md border border-gray-100 
+                    bg-gradient-to-br from-indigo-50 via-white to-indigo-100 p-4">
       <ResponsiveContainer width="100%" height={280}>
         <LineChart
           data={data}
@@ -94,7 +95,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
               strokeWidth: 2,
               fill: "#fff",
               stroke: "#a78bfa",
-              className: "animate-pulse",
+              className: "animate-pulse", // glow pulse works on mobile tap
             }}
           />
 
