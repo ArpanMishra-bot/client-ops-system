@@ -1,42 +1,67 @@
 "use client"
 
 import Link from "next/link"
-import { TrendingUp, TrendingDown } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface StatCardProps {
   label: string
   value: string
-  sub: string
   icon: React.ReactNode
-  href: string
-  trend?: number | null
   color: string
+  href: string
+  sub?: string
+  trend?: number
 }
 
-export default function StatCard({ label, value, sub, icon, href, trend, color }: StatCardProps) {
-  const isPositive = trend && trend > 0
-  const isNegative = trend && trend < 0
-
+export default function StatCard({ label, value, icon, color, href, sub, trend }: StatCardProps) {
   return (
     <Link
       href={href}
-      className="glass-card p-6 rounded-2xl flex flex-col shadow-lg hover:shadow-xl transition-all"
+      className={cn(
+        "group glass-card p-5 rounded-xl flex flex-col justify-between transition-all duration-200",
+        "hover:-translate-y-1 hover:shadow-lg active:scale-95 active:bg-indigo-50 focus-visible:ring-2 focus-visible:ring-indigo-400"
+      )}
     >
-      <div className="flex items-center justify-between w-full mb-4">
-        <span className="text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent">
-          {label}
-        </span>
-        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${color} flex items-center justify-center shadow-md`}>
+      {/* Icon with glowing top border */}
+      <div className="relative mb-4 flex items-center justify-center">
+        <div
+          className={cn(
+            "w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br",
+            color
+          )}
+        >
           {icon}
         </div>
+        {/* Top border glow */}
+        <div
+          className={cn(
+            "absolute -top-1 left-0 right-0 h-1 rounded-t-md transition-all duration-200",
+            "bg-gradient-to-r from-transparent via-indigo-400 to-transparent",
+            "group-active:from-transparent group-active:via-pink-400 group-active:to-transparent"
+          )}
+        />
       </div>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
-      <p className="text-xs text-gray-500 mt-1">{sub}</p>
-      {trend !== undefined && trend !== null && (
-        <div className={`flex items-center gap-1 mt-3 text-xs font-medium ${isPositive ? 'text-green-500' : isNegative ? 'text-red-500' : 'text-gray-400'}`}>
-          {isPositive && <TrendingUp className="h-3 w-3" />}
-          {isNegative && <TrendingDown className="h-3 w-3" />}
-          <span>{isPositive ? '+' : ''}{trend}% from last month</span>
+
+      {/* Value */}
+      <p className="text-2xl font-bold tracking-tight font-mono gradient-text">
+        {value}
+      </p>
+
+      {/* Label + Subtext */}
+      <div className="mt-1">
+        <p className="text-sm font-semibold text-gray-700">{label}</p>
+        {sub && <p className="text-xs text-gray-500">{sub}</p>}
+      </div>
+
+      {/* Trend indicator */}
+      {trend !== undefined && (
+        <div
+          className={cn(
+            "mt-2 text-xs font-medium",
+            trend > 0 ? "text-green-500" : trend < 0 ? "text-red-500" : "text-gray-400"
+          )}
+        >
+          {trend > 0 ? `▲ ${trend}%` : trend < 0 ? `▼ ${trend}%` : "—"}
         </div>
       )}
     </Link>
