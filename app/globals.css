@@ -1,29 +1,52 @@
 @import "tailwindcss";
 
 @theme {
+  --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+
+  /* Custom pastel gradient palette */
+  --color-gradient-purple: linear-gradient(to right, #a78bfa, #6366f1);
+  --color-gradient-teal: linear-gradient(to right, #5eead4, #3b82f6);
+  --color-gradient-pink: linear-gradient(to right, #f9a8d4, #ec4899);
 }
 
+/* Glassmorphism Card */
 @layer components {
-  /* Glassmorphism Card */
   .glass-card {
     background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   }
-  
+
   .glass-card:hover {
     background: rgba(255, 255, 255, 0.85);
     transform: translateY(-2px);
-    box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.1);
     border-color: rgba(99, 102, 241, 0.2);
   }
-  
+
   .glass-card:active {
     transform: scale(0.98);
     transition: transform 0.1s;
+  }
+
+  /* Gradient text utility */
+  .gradient-text {
+    background: var(--color-gradient-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Hover glow for icons */
+  .hover-glow {
+    transition: all 0.3s ease;
+  }
+  .hover-glow:hover {
+    filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+    transform: scale(1.05);
   }
 }
