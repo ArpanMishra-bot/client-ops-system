@@ -22,9 +22,21 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
+// Collapsible wrapper for mobile
+function CollapsibleCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <details className="glass-card rounded-xl overflow-hidden">
+      <summary className="cursor-pointer px-6 py-3 text-sm font-semibold gradient-text select-none 
+                          hover:bg-white/40 active:bg-indigo-50 transition-colors">
+        {title}
+      </summary>
+      <div className="p-6">{children}</div>
+    </details>
+  )
+}
+
 async function DashboardStats() {
   const stats = await getDashboardStats()
-
   const statCards = [
     { label: "Active Clients", value: stats.totalClients.toString(), icon: <Users className="h-5 w-5 text-white" />, color: "from-purple-400 to-indigo-500", href: "/clients", sub: "Total active clients", trend: stats.clientTrend },
     { label: "Active Leads", value: stats.activeLeads.toString(), icon: <TrendingUp className="h-5 w-5 text-white" />, color: "from-teal-400 to-blue-500", href: "/leads", sub: "In pipeline", trend: stats.leadsTrend },
@@ -35,7 +47,7 @@ async function DashboardStats() {
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-sans">
       {statCards.map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}
@@ -46,13 +58,9 @@ async function DashboardStats() {
 async function DashboardRevenueChart() {
   const stats = await getDashboardStats()
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold gradient-text">Revenue Trend</h2>
-        <span className="text-xs text-gray-400">Last 6 months</span>
-      </div>
+    <CollapsibleCard title="Revenue Trend">
       <RevenueChart data={stats.revenueChartData} />
-    </div>
+    </CollapsibleCard>
   )
 }
 
@@ -60,33 +68,28 @@ async function DashboardPipelineChart() {
   const stats = await getDashboardStats()
   if (stats.pipelineData.length === 0) return null
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold gradient-text">Pipeline Value by Stage</h2>
-        <span className="text-xs text-gray-400">Deal value per stage</span>
-      </div>
+    <CollapsibleCard title="Pipeline Value by Stage">
       <PipelineChart data={stats.pipelineData} />
-    </div>
+    </CollapsibleCard>
   )
 }
 
 async function TopClients() {
   const stats = await getDashboardStats()
   if (stats.topClients.length === 0) return null
-
   return (
-    <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold gradient-text mb-4">Top Clients by Revenue</h2>
+    <CollapsibleCard title="Top Clients by Revenue">
       <div className="space-y-3">
         {stats.topClients.map((client) => (
           <Link
             key={client.id}
             href={`/clients/${client.id}`}
-            className="flex items-center justify-between p-2 rounded-xl transition-all duration-200 hover:bg-white/50 active:scale-95"
+            className="flex items-center justify-between p-2 rounded-xl transition-all duration-200 
+                       hover:bg-white/50 active:bg-indigo-50 active:scale-95 focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             <div>
               <p className="text-sm font-medium gradient-text">{client.name}</p>
-              <p className="text-xs text-gray-500">${client.revenue.toLocaleString()}</p>
+              <p className="text-xs text-gray-500 font-mono">${client.revenue.toLocaleString()}</p>
             </div>
             <div className={`flex items-center gap-1 text-xs font-medium ${client.trend > 0 ? 'text-green-500' : client.trend < 0 ? 'text-red-500' : 'text-gray-400'}`}>
               {client.trend > 0 && <TrendingUpIcon className="h-3 w-3" />}
@@ -96,47 +99,43 @@ async function TopClients() {
           </Link>
         ))}
       </div>
-    </div>
+    </CollapsibleCard>
   )
 }
 
 async function ActivityFeed() {
   const stats = await getDashboardStats()
   if (stats.recentActivities.length === 0) return null
-
   return (
-    <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold gradient-text mb-4">Activity Feed</h2>
+    <CollapsibleCard title="Activity Feed">
       <div className="space-y-3">
         {stats.recentActivities.map((activity, i) => (
-          <div key={i} className="flex items-start gap-3 p-2 hover:bg-white/50 rounded-xl transition-colors">
+          <div key={i} className="flex items-start gap-3 p-2 rounded-xl transition-colors 
+                                  hover:bg-white/50 active:bg-indigo-50 active:scale-95">
             <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1.5" />
             <div>
               <p className="text-sm text-gray-700">
-                {activity.type === "invoice" ? (
-                  activity.action === "paid" 
+                {activity.type === "invoice"
+                  ? activity.action === "paid"
                     ? `Invoice paid: ${activity.name} - $${activity.amount?.toLocaleString()}`
                     : `Created invoice for ${activity.name}`
-                ) : (
-                  `Added new client: ${activity.name}`
-                )}
+                  : `Added new client: ${activity.name}`}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400 font-mono">
                 {new Date(activity.timestamp).toLocaleDateString()} {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </CollapsibleCard>
   )
 }
 
 async function RecentClients() {
   const stats = await getDashboardStats()
   return (
-    <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold gradient-text mb-4">Recent Clients</h2>
+    <CollapsibleCard title="Recent Clients">
       {stats.recentClients.length === 0 ? (
         <div className="text-center py-8">
           <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
@@ -149,7 +148,8 @@ async function RecentClients() {
             <Link
               key={client.id}
               href={`/clients/${client.id}`}
-              className="flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-white/50 active:scale-95"
+              className="flex items-center gap-3 p-2 rounded-xl transition-all duration-200 
+                         hover:bg-white/50 active:bg-indigo-50 active:scale-95"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-medium">{client.name.charAt(0).toUpperCase()}</span>
@@ -158,24 +158,29 @@ async function RecentClients() {
                 <p className="text-sm font-medium gradient-text">{client.name}</p>
                 {client.company && <p className="text-xs text-gray-500">{client.company}</p>}
               </div>
-              <p className="text-xs text-gray-400">{new Date(client.createdAt).toLocaleDateString()}</p>
+                            <p className="text-xs text-gray-400 font-mono">
+                {new Date(client.createdAt).toLocaleDateString()}
+              </p>
             </Link>
           ))}
         </div>
       )}
-    </div>
+    </CollapsibleCard>
   )
 }
 
 async function UpcomingReminders() {
   const stats = await getDashboardStats()
   return (
-    <div className="glass-card p-6">
-      <h2 className="text-sm font-semibold gradient-text mb-4">Upcoming Reminders</h2>
+    <CollapsibleCard title="Upcoming Reminders">
       {stats.upcomingReminders.length === 0 ? (
         <Link 
           href="/reminders"
-          className="group flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-indigo-100/50 hover:from-indigo-100 hover:to-indigo-200/50 transition-all duration-200"
+          className="group flex items-center justify-between p-4 rounded-xl 
+                     bg-gradient-to-r from-indigo-50 to-indigo-100/50 
+                     hover:from-indigo-100 hover:to-indigo-200/50 
+                     active:bg-indigo-50 active:scale-95 
+                     transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <div>
             <p className="text-sm font-semibold gradient-text">Add a Reminder</p>
@@ -186,7 +191,11 @@ async function UpcomingReminders() {
       ) : (
         <Link 
           href="/reminders#pending"
-          className="group flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-indigo-100/50 hover:from-indigo-100 hover:to-indigo-200/50 transition-all duration-200"
+          className="group flex items-center justify-between p-4 rounded-xl 
+                     bg-gradient-to-r from-indigo-50 to-indigo-100/50 
+                     hover:from-indigo-100 hover:to-indigo-200/50 
+                     active:bg-indigo-50 active:scale-95 
+                     transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-400"
         >
           <div>
             <p className="text-sm font-semibold gradient-text">View Pending Reminders</p>
@@ -197,7 +206,7 @@ async function UpcomingReminders() {
           <span className="text-indigo-500 text-lg group-hover:translate-x-0.5 transition-transform">→</span>
         </Link>
       )}
-    </div>
+    </CollapsibleCard>
   )
 }
 
@@ -213,15 +222,15 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 font-sans">
       {/* Welcome Section */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/30 to-transparent rounded-2xl" />
         <div className="relative">
-          <h1 className="text-2xl font-semibold gradient-text">
+          <h1 className="text-2xl font-bold gradient-text tracking-tight">
             Welcome back, {user?.firstName ?? "there"} 👋
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your business today.</p>
+          <p className="text-sm text-gray-500 mt-1">Here’s what’s happening with your business today.</p>
         </div>
       </div>
 
@@ -255,12 +264,20 @@ export default async function DashboardPage() {
                 <Link
                   key={action.label}
                   href={action.href}
-                  className="group flex flex-col items-center text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm border border-gray-100 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg active:scale-95"
+                  className="group flex flex-col items-center text-center p-3 rounded-xl 
+                             bg-white/70 backdrop-blur-sm border border-gray-100 
+                             transition-all duration-200 
+                             hover:-translate-y-1 hover:shadow-lg 
+                             active:scale-95 active:bg-indigo-50 
+                             focus-visible:ring-2 focus-visible:ring-indigo-400"
                 >
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${action.color} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${action.color} 
+                                   flex items-center justify-center mb-2 
+                                   group-hover:scale-110 transition-transform duration-300 
+                                   active:ring-2 active:ring-indigo-300`}>
                     <Icon className="h-5 w-5 text-white" />
                   </div>
-                  <span className="text-xs font-medium text-gray-700">{action.label}</span>
+                  <span className="text-xs font-semibold tracking-wide text-gray-700">{action.label}</span>
                 </Link>
               )
             })}
@@ -289,4 +306,6 @@ export default async function DashboardPage() {
       </div>
     </div>
   )
-                }
+}
+
+              
