@@ -5,7 +5,21 @@ import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import RevenueChart from "@/components/dashboard/RevenueChart"
 import PipelineChart from "@/components/dashboard/PipelineChart"
 import StatCard from "@/components/dashboard/StatCard"
-import { Users, TrendingUp, FolderKanban, FileText, DollarSign, Clock, Zap, UserPlus, Briefcase, Receipt, Calendar, TrendingDown, TrendingUp as TrendingUpIcon } from "lucide-react"
+import {
+  Users,
+  TrendingUp,
+  FolderKanban,
+  FileText,
+  DollarSign,
+  Clock,
+  Zap,
+  UserPlus,
+  Briefcase,
+  Receipt,
+  Calendar,
+  TrendingDown,
+  TrendingUp as TrendingUpIcon,
+} from "lucide-react"
 import Link from "next/link"
 
 async function DashboardStats() {
@@ -25,6 +39,33 @@ async function DashboardStats() {
       {statCards.map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}
+    </div>
+  )
+}
+
+async function DashboardRevenueChart() {
+  const stats = await getDashboardStats()
+  return (
+    <div className="glass-card p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold gradient-text">Revenue Trend</h2>
+        <span className="text-xs text-gray-400">Last 6 months</span>
+      </div>
+      <RevenueChart data={stats.revenueChartData} />
+    </div>
+  )
+}
+
+async function DashboardPipelineChart() {
+  const stats = await getDashboardStats()
+  if (stats.pipelineData.length === 0) return null
+  return (
+    <div className="glass-card p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold gradient-text">Pipeline Value by Stage</h2>
+        <span className="text-xs text-gray-400">Deal value per stage</span>
+      </div>
+      <PipelineChart data={stats.pipelineData} />
     </div>
   )
 }
@@ -150,7 +191,7 @@ async function UpcomingReminders() {
           <div>
             <p className="text-sm font-semibold gradient-text">View Pending Reminders</p>
             <p className="text-xs text-gray-500 mt-0.5">
-              {stats.upcomingReminders.length} reminder{stats.upcomingReminders.length !== 1 ? 's' : ''} pending
+              {stats.upcomingReminders.length} reminder{stats.upcomingReminders.length !== 1 ? "s" : ""} pending
             </p>
           </div>
           <span className="text-indigo-500 text-lg group-hover:translate-x-0.5 transition-transform">→</span>
@@ -248,4 +289,4 @@ export default async function DashboardPage() {
       </div>
     </div>
   )
-}
+                }
