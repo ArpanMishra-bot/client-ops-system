@@ -1,9 +1,9 @@
 "use client"
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
-interface RevenueChartProps {
-  data: Array<{ month: string; revenue: number }>
+interface PipelineChartProps {
+  data: Array<{ stage: string; value: number }>
 }
 
 const formatYAxis = (value: number) => {
@@ -12,19 +12,20 @@ const formatYAxis = (value: number) => {
   return `$${value}`
 }
 
-export default function RevenueChart({ data }: RevenueChartProps) {
+export default function PipelineChart({ data }: PipelineChartProps) {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const value = payload[0].value
       return (
-        <div className="relative bg-white shadow-md border border-gray-100 rounded-lg p-3 min-w-[140px]">
+        <div className="relative rounded-lg px-3 py-2 
+                        bg-white/30 backdrop-blur-md border border-white/20 
+                        shadow-lg">
           {/* Glow border at top */}
-          <div className="absolute top-0 left-0 right-0 h-1 
-                          bg-gradient-to-r from-transparent via-indigo-400 to-transparent 
-                          transition-all duration-200 group-active:via-pink-400" />
-          <p className="text-xs font-semibold gradient-text mb-1">{payload[0].payload.month}</p>
-          <p className="text-lg font-bold font-mono text-gray-900">{formatYAxis(value)}</p>
-          <p className="text-xs text-gray-500 mt-1">Revenue</p>
+          <div className="absolute top-0 left-0 right-0 h-0.5 
+                          bg-gradient-to-r from-transparent via-teal-400 to-transparent 
+                          transition-all duration-200" />
+          <p className="text-xs font-semibold gradient-text">{payload[0].payload.stage}</p>
+          <p className="text-sm font-bold font-mono text-gray-900">{formatYAxis(value)}</p>
         </div>
       )
     }
@@ -33,26 +34,19 @@ export default function RevenueChart({ data }: RevenueChartProps) {
 
   return (
     <ResponsiveContainer width="100%" height={280}>
-      <LineChart data={data} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
+      <BarChart data={data} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-        <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+        <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
         <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={formatYAxis} />
-        <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#6366f1", strokeWidth: 1, strokeDasharray: "3 3" }} />
-        <Line
-          type="monotone"
-          dataKey="revenue"
-          stroke="url(#revenueGradient)"
-          strokeWidth={3}
-          dot={{ r: 4, strokeWidth: 2, fill: "#fff", stroke: "#6366f1" }}
-          activeDot={{ r: 6, strokeWidth: 2, fill: "#fff", stroke: "#a78bfa" }}
-        />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(99,102,241,0.1)" }} />
+        <Bar dataKey="value" fill="url(#pipelineGradient)" radius={[6, 6, 0, 0]} />
         <defs>
-          <linearGradient id="revenueGradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#a78bfa" />
+          <linearGradient id="pipelineGradient" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#14b8a6" />
             <stop offset="100%" stopColor="#6366f1" />
           </linearGradient>
         </defs>
-      </LineChart>
+      </BarChart>
     </ResponsiveContainer>
   )
 }
