@@ -64,12 +64,12 @@ export default function PipelineChart({ data }: PipelineChartProps) {
         <div
           className="rounded-xl px-4 py-3 min-w-[140px]
                      bg-white/95 backdrop-blur-md border border-gray-200
-                     shadow-xl shadow-teal-500/10"
+                     shadow-xl shadow-indigo-500/10"
           style={{
             fontFamily: "'Geist', sans-serif",
           }}
         >
-          <p className="text-xs font-mono text-teal-600 font-semibold mb-1 tracking-wide">
+          <p className="text-xs font-mono text-indigo-600 font-semibold mb-1 tracking-wide">
             {stage}
           </p>
           <p className="text-2xl font-serif font-light tracking-tight text-gray-900">
@@ -91,7 +91,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
-          <div className="text-xs font-mono text-teal-500 font-semibold tracking-wider uppercase mb-1">
+          <div className="text-xs font-mono text-indigo-500 font-semibold tracking-wider uppercase mb-1">
             Pipeline Value
           </div>
           <div className="flex items-baseline gap-2">
@@ -117,7 +117,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             className={`
               px-3 py-1.5 text-xs font-mono font-medium rounded-md transition-all
               ${view === "value" 
-                ? "bg-white shadow-sm text-teal-600" 
+                ? "bg-white shadow-sm text-indigo-600" 
                 : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
               }
             `}
@@ -129,7 +129,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             className={`
               px-3 py-1.5 text-xs font-mono font-medium rounded-md transition-all
               ${view === "percentage" 
-                ? "bg-white shadow-sm text-teal-600" 
+                ? "bg-white shadow-sm text-indigo-600" 
                 : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
               }
             `}
@@ -165,8 +165,9 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
           >
             <defs>
+              {/* Same gradient as revenue chart - purple to indigo */}
               <linearGradient id="pipelineGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#14b8a6" />
+                <stop offset="0%" stopColor="#a78bfa" />
                 <stop offset="100%" stopColor="#6366f1" />
               </linearGradient>
             </defs>
@@ -182,9 +183,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
               tick={{ 
                 fontSize: 11, 
                 fontFamily: "'Geist Mono', monospace", 
-                fill: "#8e9aab",
-                angle: 0,
-                textAnchor: "middle"
+                fill: "#8e9aab"
               }}
               axisLine={false}
               tickLine={false}
@@ -221,16 +220,18 @@ export default function PipelineChart({ data }: PipelineChartProps) {
         </ResponsiveContainer>
       </div>
 
-      {/* Footer with insights */}
+      {/* Footer with legend - matches revenue chart exactly */}
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-teal-500 to-indigo-500" />
-          <span className="text-xs text-gray-500 font-mono">
-            {view === "value" ? "Pipeline Value by Stage" : "Percentage Distribution"}
-          </span>
+        <div className="flex gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-purple-400 to-indigo-500" />
+            <span className="text-xs text-gray-500 font-mono">
+              {view === "value" ? "Pipeline Value" : "Percentage Distribution"}
+            </span>
+          </div>
         </div>
         <div className="text-xs text-gray-400 font-mono">
-          {metrics.totalPipeline > 0 ? `${data.length} active stages` : "No data"}
+          {metrics.totalPipeline > 0 ? `${data.length} pipeline stages` : "No data"}
         </div>
       </div>
     </div>
