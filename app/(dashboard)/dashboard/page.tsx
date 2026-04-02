@@ -1,4 +1,4 @@
-// app/dashboard/page.tsx
+// app/(dashboard)/dashboard/page.tsx
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
@@ -44,7 +44,13 @@ function CollapsibleCard({ title, children, icon }: { title: string; children: R
 async function DashboardStats() {
   const stats = await getDashboardStats()
   
-  const hasPriorMonthData = stats.hasPriorMonthData ?? false
+  // Helper to determine if we should show trend (hide if -100% and no prior data)
+  const shouldShowTrend = (trendValue: number | undefined) => {
+    if (trendValue === undefined || trendValue === null) return false
+    // If trend is -100% and we don't have prior data, hide it
+    if (trendValue === -100) return false
+    return true
+  }
   
   const statCards = [
     { 
@@ -54,8 +60,7 @@ async function DashboardStats() {
       iconBgColor: "bg-indigo-500",
       href: "/clients", 
       sub: "Total active clients", 
-      trendValue: stats.clientTrendRaw,
-      hasPriorData: hasPriorMonthData && stats.clientTrendRaw !== undefined
+      trendValue: stats.clientTrend,
     },
     { 
       label: "Active Leads", 
@@ -64,8 +69,7 @@ async function DashboardStats() {
       iconBgColor: "bg-indigo-500",
       href: "/leads", 
       sub: "In pipeline", 
-      trendValue: stats.leadsTrendRaw,
-      hasPriorData: hasPriorMonthData && stats.leadsTrendRaw !== undefined
+      trendValue: stats.leadsTrend,
     },
     { 
       label: "Active Projects", 
@@ -74,8 +78,7 @@ async function DashboardStats() {
       iconBgColor: "bg-violet-500",
       href: "/projects", 
       sub: "In progress", 
-      trendValue: stats.projectsTrendRaw,
-      hasPriorData: hasPriorMonthData && stats.projectsTrendRaw !== undefined
+      trendValue: stats.projectsTrend,
     },
     { 
       label: "Total Revenue", 
@@ -84,8 +87,7 @@ async function DashboardStats() {
       iconBgColor: "bg-indigo-500",
       href: "/invoices", 
       sub: "From paid invoices", 
-      trendValue: stats.revenueTrendRaw,
-      hasPriorData: hasPriorMonthData && stats.revenueTrendRaw !== undefined
+      trendValue: stats.revenueTrend,
     },
     { 
       label: "Outstanding", 
@@ -94,8 +96,7 @@ async function DashboardStats() {
       iconBgColor: "bg-violet-500",
       href: "/invoices", 
       sub: "Awaiting payment", 
-      trendValue: stats.outstandingTrendRaw,
-      hasPriorData: hasPriorMonthData && stats.outstandingTrendRaw !== undefined
+      trendValue: stats.outstandingTrend,
     },
     { 
       label: "Pending Tasks", 
@@ -104,8 +105,7 @@ async function DashboardStats() {
       iconBgColor: "bg-violet-500",
       href: "/tasks", 
       sub: "Across all projects", 
-      trendValue: stats.tasksTrendRaw,
-      hasPriorData: hasPriorMonthData && stats.tasksTrendRaw !== undefined
+      trendValue: stats.tasksTrend,
     },
   ]
 
@@ -121,7 +121,6 @@ async function DashboardStats() {
             href={stat.href}
             sub={stat.sub}
             trendValue={stat.trendValue}
-            hasPriorData={stat.hasPriorData}
           />
         </div>
       ))}
@@ -163,6 +162,7 @@ async function DashboardPipelineChart() {
   )
 }
 
+// Empty state component for charts
 function EmptyChartState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -179,7 +179,7 @@ function EmptyChartState({ message }: { message: string }) {
 
 async function TopClients() {
   const stats = await getDashboardStats()
-  if (stats.topClients.length === 0) return null
+  if (!stats.topClients || stats.topClients.length === 0) return null
   return (
     <CollapsibleCard title="Top Clients by Revenue" icon={<Users className="h-4 w-4" />}>
       <div className="space-y-3">
@@ -193,21 +193,23 @@ async function TopClients() {
             <div className="flex-1">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-xs font-medium">
-                  {client.name.charAt(0).toUpperCase()}
+                  {client.name?.charAt(0).toUpperCase() || "?"}
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{client.name}</p>
-                  <p className="text-xs text-gray-500">${client.revenue.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500">${client.revenue?.toLocaleString() || 0}</p>
                 </div>
               </div>
             </div>
-            <div className={`flex items-center gap-1 text-xs font-medium ${
-              client.trend > 0 ? 'text-emerald-600' : client.trend < 0 ? 'text-rose-600' : 'text-gray-400'
-            }`}>
-              {client.trend > 0 && <ArrowUpRight className="h-3 w-3" />}
-              {client.trend < 0 && <ArrowDownRight className="h-3 w-3" />}
-              <span>{client.trend > 0 ? '+' : ''}{Math.round(Math.abs(client.trend))}%</span>
-            </div>
+            {client.trend && (
+              <div className={`flex items-center gap-1 text-xs font-medium ${
+                client.trend > 0 ? 'text-emerald-600' : client.trend < 0 ? 'text-rose-600' : 'text-gray-400'
+              }`}>
+                {client.trend > 0 && <ArrowUpRight className="h-3 w-3" />}
+                {client.trend < 0 && <ArrowDownRight className="h-3 w-3" />}
+                <span>{client.trend > 0 ? '+' : ''}{Math.round(Math.abs(client.trend))}%</span>
+              </div>
+            )}
           </Link>
         ))}
       </div>
@@ -217,7 +219,7 @@ async function TopClients() {
 
 async function ActivityFeed() {
   const stats = await getDashboardStats()
-  if (stats.recentActivities.length === 0) return null
+  if (!stats.recentActivities || stats.recentActivities.length === 0) return null
   return (
     <CollapsibleCard title="Activity Feed" icon={<Clock className="h-4 w-4" />}>
       <div className="space-y-4">
@@ -252,7 +254,7 @@ async function RecentClients() {
   const stats = await getDashboardStats()
   return (
     <CollapsibleCard title="Recent Clients" icon={<UserPlus className="h-4 w-4" />}>
-      {stats.recentClients.length === 0 ? (
+      {!stats.recentClients || stats.recentClients.length === 0 ? (
         <div className="text-center py-12">
           <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
             <Users className="h-8 w-8 text-gray-400" />
@@ -276,7 +278,7 @@ async function RecentClients() {
                          hover:bg-gray-50 active:scale-[0.98]"
             >
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center shadow-sm">
-                <span className="text-white text-sm font-medium">{client.name.charAt(0).toUpperCase()}</span>
+                <span className="text-white text-sm font-medium">{client.name?.charAt(0).toUpperCase() || "?"}</span>
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">{client.name}</p>
@@ -284,7 +286,7 @@ async function RecentClients() {
               </div>
               <div className="text-right">
                 <p className="text-xs text-gray-400">
-                  {new Date(client.createdAt).toLocaleDateString()}
+                  {client.createdAt ? new Date(client.createdAt).toLocaleDateString() : "Recently"}
                 </p>
               </div>
             </Link>
@@ -297,7 +299,7 @@ async function RecentClients() {
 
 async function UpcomingReminders() {
   const stats = await getDashboardStats()
-  const reminderCount = stats.upcomingReminders.length
+  const reminderCount = stats.upcomingReminders?.length || 0
   return (
     <CollapsibleCard title="Reminders" icon={<Calendar className="h-4 w-4" />}>
       {reminderCount === 0 ? (
@@ -347,7 +349,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-violet-50 to-pink-50 p-8 animate-rise">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-violet-50 to-pink-50 p-8">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full blur-3xl -mr-32 -mt-32" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-100/40 rounded-full blur-3xl -ml-24 -mb-24" />
         
