@@ -1,108 +1,127 @@
+// components/layout/Sidebar.tsx
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import Logo from "@/components/shared/Logo"
-import {
-  LayoutDashboard,
-  Users,
+import { 
+  LayoutDashboard, 
+  Users, 
+  FolderKanban, 
+  FileText, 
   TrendingUp,
-  FolderKanban,
-  FileText,
-  Bell,
+  Calendar,
   Settings,
+  HelpCircle,
+  LogOut
 } from "lucide-react"
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/clients", label: "Clients", icon: Users },
-  { href: "/leads", label: "Leads", icon: TrendingUp },
-  { href: "/projects", label: "Projects", icon: FolderKanban },
-  { href: "/invoices", label: "Invoices", icon: FileText },
-  { href: "/reminders", label: "Reminders", icon: Bell },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+  { label: "Clients", icon: Users, href: "/clients" },
+  { label: "Leads", icon: TrendingUp, href: "/leads" },
+  { label: "Projects", icon: FolderKanban, href: "/projects" },
+  { label: "Invoices", icon: FileText, href: "/invoices" },
+  { label: "Reminders", icon: Calendar, href: "/reminders" },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const [tooltip, setTooltip] = useState<string | null>(null)
-
-  const NavContent = () => (
-    <>
-      <div className="h-16 flex items-center px-6 border-b border-gray-200/40 backdrop-blur-sm bg-white/50">
-        <Logo size="md" />
-      </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onMouseEnter={() => setTooltip(item.label)}
-              onMouseLeave={() => setTooltip(null)}
-              className={cn(
-                "relative flex items-center gap-3 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg group",
-                isActive
-                  ? "bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-700 shadow-inner"
-                  : "text-gray-600 hover:bg-white/60 hover:text-gray-900 active:bg-indigo-50 active:scale-95 focus-visible:ring-2 focus-visible:ring-indigo-400"
-              )}
-            >
-              <Icon
-                className={cn(
-                  "h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110",
-                  isActive ? "text-indigo-500 drop-shadow-glow" : "text-gray-400 group-hover:text-indigo-400"
-                )}
-              />
-              <span className={isActive ? "gradient-text font-semibold" : ""}>{item.label}</span>
-
-              {/* Tooltip */}
-              {tooltip === item.label && (
-                <div className="absolute left-full ml-2 px-2 py-1 rounded-md bg-white/90 backdrop-blur-sm border border-indigo-200 shadow-lg text-xs text-gray-700">
-                  {item.label}
-                </div>
-              )}
-            </Link>
-          )
-        })}
-      </nav>
-      <div className="p-3 border-t border-gray-200/40 backdrop-blur-sm bg-white/50">
-        <p className="text-xs text-gray-400 px-3">ClientOps — v1.0</p>
-      </div>
-    </>
-  )
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 h-screen glass-card flex-col fixed left-0 top-0">
-        <NavContent />
+    <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-100 flex flex-col">
+      {/* Logo Section */}
+      <div className="p-6 border-b border-gray-100">
+        <Link href="/dashboard" className="flex items-center gap-2 group">
+          {/* Abstract geometric logo mark - indigo colored */}
+          <svg 
+            className="w-7 h-7 text-indigo-500 transition-transform group-hover:scale-105 duration-200" 
+            viewBox="0 0 32 32" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Hexagon base */}
+            <path 
+              d="M16 2L28 10V22L16 30L4 22V10L16 2Z" 
+              stroke="currentColor" 
+              strokeWidth="1.5" 
+              fill="url(#gradient)" 
+              fillOpacity="0.15"
+            />
+            {/* Inner geometric diamond */}
+            <path 
+              d="M16 8L24 16L16 24L8 16L16 8Z" 
+              stroke="currentColor" 
+              strokeWidth="1.2" 
+              fill="currentColor" 
+              fillOpacity="0.2"
+            />
+            {/* Center dot */}
+            <circle cx="16" cy="16" r="2.5" fill="currentColor" />
+            {/* Gradient definition */}
+            <defs>
+              <linearGradient id="gradient" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#6366f1" />
+                <stop offset="1" stopColor="#8b5cf6" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span className="text-lg font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            ClientOps
+          </span>
+        </Link>
       </div>
 
-      {/* Mobile Bottom Nav */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 
-                      bg-white/70 backdrop-blur-md border-t border-gray-200 
-                      flex items-center justify-around z-30 rounded-t-2xl">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 py-2 
-                          ${isActive ? "text-indigo-600" : "text-gray-500"} 
-                          active:scale-95 focus-visible:ring-2 focus-visible:ring-indigo-400`}
-            >
-              <Icon className={`h-5 w-5 ${isActive ? "drop-shadow-glow" : ""}`} />
-              <span className="text-[10px] font-medium">{item.label}</span>
-            </Link>
-          )
-        })}
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-6">
+        <div className="space-y-1.5">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
+            const Icon = item.icon
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`
+                  flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+                  transition-all duration-200 group
+                  ${isActive 
+                    ? "bg-indigo-50 text-indigo-600" 
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }
+                `}
+              >
+                <Icon className={`h-4.5 w-4.5 ${isActive ? "text-indigo-500" : "text-gray-400 group-hover:text-gray-500"}`} />
+                <span>{item.label}</span>
+              </Link>
+            )
+          })}
+        </div>
+      </nav>
+
+      {/* Bottom Section */}
+      <div className="p-4 border-t border-gray-100 space-y-1.5">
+        <Link 
+          href="/settings" 
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200"
+        >
+          <Settings className="h-4.5 w-4.5 text-gray-400" />
+          <span>Settings</span>
+        </Link>
+        <Link 
+          href="/help" 
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200"
+        >
+          <HelpCircle className="h-4.5 w-4.5 text-gray-400" />
+          <span>Help</span>
+        </Link>
+        <button 
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all duration-200"
+        >
+          <LogOut className="h-4.5 w-4.5" />
+          <span>Logout</span>
+        </button>
       </div>
-    </>
+    </aside>
   )
 }
