@@ -7,7 +7,7 @@ interface PipelineChartProps {
   data: Array<{ stage: string; value: number }>
 }
 
-const STAGE_COLORS: Record<string, string> = {
+const STAGE_COLORS = {
   "Lead": "#6366f1",
   "Proposal": "#818cf8",
   "Negotiation": "#a78bfa",
@@ -25,69 +25,57 @@ export default function PipelineChart({ data }: PipelineChartProps) {
     }).format(value)
   }
 
-  const getPercentage = (value: number, total: number) => {
-    if (total === 0) return 0
-    return Math.round((value / total) * 100)
-  }
-
   const total = data.reduce((sum, item) => sum + item.value, 0)
 
   return (
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-          barSize={60}
-          barGap={8}
-        >
-          <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" vertical={false} />
+        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+          {/* Fixed: subtle gray grid, NO black border */}
+          <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" vertical={false} />
+          
           <XAxis 
             dataKey="stage" 
             tick={{ fontSize: 12, fill: "#6b7280" }}
-            axisLine={{ stroke: "#e5e7eb", strokeWidth: 1 }}
+            axisLine={{ stroke: "#e5e7eb" }}
             tickLine={false}
           />
+          
           <YAxis 
-            tickFormatter={(value) => formatCurrency(value)}
+            tickFormatter={formatCurrency}
             tick={{ fontSize: 11, fill: "#6b7280" }}
             axisLine={false}
             tickLine={false}
           />
+          
           <Tooltip
-            formatter={(value) => {
-              const numValue = Number(value)
-              return [formatCurrency(numValue), "Pipeline Value"]
-            }}
+            formatter={(value: number) => [formatCurrency(value), "Pipeline Value"]}
             labelFormatter={(label) => `Stage: ${label}`}
             contentStyle={{
               backgroundColor: "white",
               border: "1px solid #e5e7eb",
               borderRadius: "8px",
               boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-              fontSize: "12px",
             }}
-            cursor={{ fill: "#f9fafb" }}
           />
+          
           <Bar dataKey="value" radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={STAGE_COLORS[entry.stage] || "#6366f1"}
-              />
+              <Cell key={`cell-${index}`} fill={STAGE_COLORS[entry.stage as keyof typeof STAGE_COLORS] || "#6366f1"} />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
       
+      {/* Fixed: Percentages rounded to whole numbers */}
       <div className="flex flex-wrap justify-center gap-4 mt-4 pt-2 border-t border-gray-100">
         {data.map((entry) => {
-          const percentage = getPercentage(entry.value, total)
+          const percentage = total === 0 ? 0 : Math.round((entry.value / total) * 100)
           return (
             <div key={entry.stage} className="flex items-center gap-2">
               <div 
                 className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: STAGE_COLORS[entry.stage] || "#6366f1" }}
+                style={{ backgroundColor: STAGE_COLORS[entry.stage as keyof typeof STAGE_COLORS] || "#6366f1" }}
               />
               <span className="text-xs text-gray-600">{entry.stage}</span>
               <span className="text-xs font-medium text-gray-900">{percentage}%</span>
