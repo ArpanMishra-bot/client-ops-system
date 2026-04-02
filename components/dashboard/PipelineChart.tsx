@@ -55,8 +55,8 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             tickLine={false}
           />
           <Tooltip
-            formatter={(value: number | string) => {
-              const numValue = typeof value === 'number' ? value : parseFloat(value)
+            formatter={(value) => {
+              const numValue = Number(value)
               return [formatCurrency(numValue), "Pipeline Value"]
             }}
             labelFormatter={(label) => `Stage: ${label}`}
