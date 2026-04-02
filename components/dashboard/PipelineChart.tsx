@@ -31,7 +31,6 @@ export default function PipelineChart({ data }: PipelineChartProps) {
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-          {/* Fixed: subtle gray grid, NO black border */}
           <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" vertical={false} />
           
           <XAxis 
@@ -49,7 +48,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
           />
           
           <Tooltip
-            formatter={(value: number) => [formatCurrency(value), "Pipeline Value"]}
+            formatter={(value) => [formatCurrency(Number(value)), "Pipeline Value"]}
             labelFormatter={(label) => `Stage: ${label}`}
             contentStyle={{
               backgroundColor: "white",
@@ -67,7 +66,6 @@ export default function PipelineChart({ data }: PipelineChartProps) {
         </BarChart>
       </ResponsiveContainer>
       
-      {/* Fixed: Percentages rounded to whole numbers */}
       <div className="flex flex-wrap justify-center gap-4 mt-4 pt-2 border-t border-gray-100">
         {data.map((entry) => {
           const percentage = total === 0 ? 0 : Math.round((entry.value / total) * 100)
