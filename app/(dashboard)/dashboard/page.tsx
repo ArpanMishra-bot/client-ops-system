@@ -1,3 +1,4 @@
+// app/dashboard/page.tsx
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
@@ -40,17 +41,9 @@ function CollapsibleCard({ title, children, icon }: { title: string; children: R
   )
 }
 
-// Helper function to suppress trend when no prior data
-function shouldShowTrend(trend: number | null | undefined, hasPriorData: boolean): boolean {
-  if (!hasPriorData) return false
-  if (trend === null || trend === undefined) return false
-  return true
-}
-
 async function DashboardStats() {
   const stats = await getDashboardStats()
   
-  // Check if we have prior month data (more than 1 month of history)
   const hasPriorMonthData = stats.hasPriorMonthData ?? false
   
   const statCards = [
@@ -58,10 +51,9 @@ async function DashboardStats() {
       label: "Active Clients", 
       value: stats.totalClients.toString(), 
       icon: <Users className="h-5 w-5 text-white" />, 
-      iconBgColor: "bg-indigo-500", // Primary accent
+      iconBgColor: "bg-indigo-500",
       href: "/clients", 
       sub: "Total active clients", 
-      trend: stats.clientTrend,
       trendValue: stats.clientTrendRaw,
       hasPriorData: hasPriorMonthData && stats.clientTrendRaw !== undefined
     },
@@ -69,10 +61,9 @@ async function DashboardStats() {
       label: "Active Leads", 
       value: stats.activeLeads.toString(), 
       icon: <TrendingUp className="h-5 w-5 text-white" />, 
-      iconBgColor: "bg-indigo-500", // Primary accent
+      iconBgColor: "bg-indigo-500",
       href: "/leads", 
       sub: "In pipeline", 
-      trend: stats.leadsTrend,
       trendValue: stats.leadsTrendRaw,
       hasPriorData: hasPriorMonthData && stats.leadsTrendRaw !== undefined
     },
@@ -80,10 +71,9 @@ async function DashboardStats() {
       label: "Active Projects", 
       value: stats.activeProjects.toString(), 
       icon: <FolderKanban className="h-5 w-5 text-white" />, 
-      iconBgColor: "bg-violet-500", // Secondary accent
+      iconBgColor: "bg-violet-500",
       href: "/projects", 
       sub: "In progress", 
-      trend: stats.projectsTrend,
       trendValue: stats.projectsTrendRaw,
       hasPriorData: hasPriorMonthData && stats.projectsTrendRaw !== undefined
     },
@@ -91,10 +81,9 @@ async function DashboardStats() {
       label: "Total Revenue", 
       value: `$${stats.totalRevenue.toLocaleString()}`, 
       icon: <DollarSign className="h-5 w-5 text-white" />, 
-      iconBgColor: "bg-indigo-500", // Primary accent
+      iconBgColor: "bg-indigo-500",
       href: "/invoices", 
       sub: "From paid invoices", 
-      trend: stats.revenueTrend,
       trendValue: stats.revenueTrendRaw,
       hasPriorData: hasPriorMonthData && stats.revenueTrendRaw !== undefined
     },
@@ -102,10 +91,9 @@ async function DashboardStats() {
       label: "Outstanding", 
       value: `$${stats.outstanding.toLocaleString()}`, 
       icon: <FileText className="h-5 w-5 text-white" />, 
-      iconBgColor: "bg-violet-500", // Secondary accent
+      iconBgColor: "bg-violet-500",
       href: "/invoices", 
       sub: "Awaiting payment", 
-      trend: stats.outstandingTrend,
       trendValue: stats.outstandingTrendRaw,
       hasPriorData: hasPriorMonthData && stats.outstandingTrendRaw !== undefined
     },
@@ -113,10 +101,9 @@ async function DashboardStats() {
       label: "Pending Tasks", 
       value: stats.pendingTasks.toString(), 
       icon: <Clock className="h-5 w-5 text-white" />, 
-      iconBgColor: "bg-violet-500", // Secondary accent
+      iconBgColor: "bg-violet-500",
       href: "/tasks", 
       sub: "Across all projects", 
-      trend: stats.tasksTrend,
       trendValue: stats.tasksTrendRaw,
       hasPriorData: hasPriorMonthData && stats.tasksTrendRaw !== undefined
     },
@@ -133,7 +120,6 @@ async function DashboardStats() {
             iconBgColor={stat.iconBgColor}
             href={stat.href}
             sub={stat.sub}
-            trend={stat.trend}
             trendValue={stat.trendValue}
             hasPriorData={stat.hasPriorData}
           />
@@ -177,7 +163,6 @@ async function DashboardPipelineChart() {
   )
 }
 
-// Empty state component for charts
 function EmptyChartState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -198,7 +183,7 @@ async function TopClients() {
   return (
     <CollapsibleCard title="Top Clients by Revenue" icon={<Users className="h-4 w-4" />}>
       <div className="space-y-3">
-        {stats.topClients.map((client) => (
+        {stats.topClients.map((client: any) => (
           <Link
             key={client.id}
             href={`/clients/${client.id}`}
@@ -236,7 +221,7 @@ async function ActivityFeed() {
   return (
     <CollapsibleCard title="Activity Feed" icon={<Clock className="h-4 w-4" />}>
       <div className="space-y-4">
-        {stats.recentActivities.map((activity, i) => (
+        {stats.recentActivities.map((activity: any, i: number) => (
           <div key={i} className="flex items-start gap-3 group">
             <div className="relative">
               <div className="w-2 h-2 rounded-full bg-indigo-500 mt-2 ring-4 ring-indigo-100" />
@@ -362,17 +347,15 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Premium Welcome Section with Gradient Background */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-violet-50 to-pink-50 p-8 animate-rise">
-        {/* Decorative Blobs */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full blur-3xl -mr-32 -mt-32" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-100/40 rounded-full blur-3xl -ml-24 -mb-24" />
         
         <div className="relative">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-3xl">👋</span>
-            <h1 className="text-3xl font-serif font-light tracking-tight text-gray-900">
-              Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent font-medium">{user?.firstName ?? "there"}</span>
+            <h1 className="text-3xl font-medium tracking-tight text-gray-900">
+              Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">{user?.firstName ?? "there"}</span>
             </h1>
           </div>
           <p className="text-gray-600 text-sm max-w-2xl">
@@ -381,12 +364,10 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
       </Suspense>
 
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<div className="bg-white rounded-xl border border-gray-100 p-6 h-[520px] animate-pulse" />}>
           <DashboardRevenueChart />
@@ -396,9 +377,7 @@ export default async function DashboardPage() {
         </Suspense>
       </div>
 
-      {/* Premium Quick Actions Section */}
       <div className="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
-        {/* Background Gradient Decoration */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-50/50 to-violet-50/50 rounded-full blur-3xl -mr-48 -mt-48" />
         
         <div className="relative">
@@ -441,7 +420,6 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Clients & Activity Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<div className="bg-white rounded-xl border border-gray-100 p-6 h-80 animate-pulse" />}>
           <TopClients />
@@ -451,7 +429,6 @@ export default async function DashboardPage() {
         </Suspense>
       </div>
 
-      {/* Recent Clients & Reminders */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<div className="bg-white rounded-xl border border-gray-100 p-6 h-80 animate-pulse" />}>
           <RecentClients />
