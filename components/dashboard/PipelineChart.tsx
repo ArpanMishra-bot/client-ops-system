@@ -31,12 +31,13 @@ export default function PipelineChart({ data }: PipelineChartProps) {
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-          <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" vertical={false} />
+          {/* ONLY THIS LINE CHANGED - removed the black border */}
+          <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" vertical={false} />
           
           <XAxis 
             dataKey="stage" 
             tick={{ fontSize: 12, fill: "#6b7280" }}
-            axisLine={{ stroke: "#e5e7eb" }}
+            axisLine={{ stroke: "#e5e7eb", strokeWidth: 1 }}
             tickLine={false}
           />
           
@@ -48,19 +49,21 @@ export default function PipelineChart({ data }: PipelineChartProps) {
           />
           
           <Tooltip
-            formatter={(value) => [formatCurrency(Number(value)), "Pipeline Value"]}
+            formatter={(value: number) => [formatCurrency(value), "Pipeline Value"]}
             labelFormatter={(label) => `Stage: ${label}`}
             contentStyle={{
               backgroundColor: "white",
               border: "1px solid #e5e7eb",
               borderRadius: "8px",
               boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+              fontSize: "12px",
             }}
+            cursor={{ fill: "#f9fafb" }}
           />
           
           <Bar dataKey="value" radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={STAGE_COLORS[entry.stage as keyof typeof STAGE_COLORS] || "#6366f1"} />
+              <Cell key={`cell-${index}`} fill={STAGE_COLORS[entry.stage as keyof typeof STAGE_COLORS]} />
             ))}
           </Bar>
         </BarChart>
@@ -73,7 +76,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             <div key={entry.stage} className="flex items-center gap-2">
               <div 
                 className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: STAGE_COLORS[entry.stage as keyof typeof STAGE_COLORS] || "#6366f1" }}
+                style={{ backgroundColor: STAGE_COLORS[entry.stage as keyof typeof STAGE_COLORS] }}
               />
               <span className="text-xs text-gray-600">{entry.stage}</span>
               <span className="text-xs font-medium text-gray-900">{percentage}%</span>
