@@ -31,7 +31,6 @@ export default function PipelineChart({ data }: PipelineChartProps) {
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-          {/* ONLY THIS LINE CHANGED - removed the black border */}
           <CartesianGrid stroke="#f3f4f6" strokeDasharray="3 3" vertical={false} />
           
           <XAxis 
@@ -49,7 +48,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
           />
           
           <Tooltip
-            formatter={(value: number) => [formatCurrency(value), "Pipeline Value"]}
+            formatter={(value) => [formatCurrency(Number(value)), "Pipeline Value"]}
             labelFormatter={(label) => `Stage: ${label}`}
             contentStyle={{
               backgroundColor: "white",
