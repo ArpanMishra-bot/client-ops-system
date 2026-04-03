@@ -6,6 +6,7 @@ import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import RevenueChart from "@/components/dashboard/RevenueChart"
 import PipelineChart from "@/components/dashboard/PipelineChart"
 import StatCard from "@/components/dashboard/StatCard"
+import { formatCurrency } from "@/lib/utils"
 import {
   Users,
   TrendingUp,
@@ -90,7 +91,7 @@ async function DashboardStats() {
   const statCards = [
     { 
       label: "Active Clients", 
-      value: stats.totalClients.toString(), 
+      value: stats.totalClients.toString(),  // No decimals - count
       icon: <Users className="h-5 w-5 text-white" />, 
       href: "/clients", 
       sub: "Total active clients", 
@@ -98,7 +99,7 @@ async function DashboardStats() {
     },
     { 
       label: "Active Leads", 
-      value: stats.activeLeads.toString(), 
+      value: stats.activeLeads.toString(),  // No decimals - count
       icon: <TrendingUp className="h-5 w-5 text-white" />, 
       href: "/leads", 
       sub: "In pipeline", 
@@ -106,7 +107,7 @@ async function DashboardStats() {
     },
     { 
       label: "Active Projects", 
-      value: stats.activeProjects.toString(), 
+      value: stats.activeProjects.toString(),  // No decimals - count
       icon: <FolderKanban className="h-5 w-5 text-white" />, 
       href: "/projects", 
       sub: "In progress", 
@@ -114,7 +115,7 @@ async function DashboardStats() {
     },
     { 
       label: "Total Revenue", 
-      value: `$${stats.totalRevenue.toLocaleString()}`, 
+      value: formatCurrency(stats.totalRevenue),  // ✅ 2 decimals - money
       icon: <DollarSign className="h-5 w-5 text-white" />, 
       href: "/invoices", 
       sub: "From paid invoices", 
@@ -122,7 +123,7 @@ async function DashboardStats() {
     },
     { 
       label: "Outstanding", 
-      value: `$${stats.outstanding.toLocaleString()}`, 
+      value: formatCurrency(stats.outstanding),  // ✅ 2 decimals - money
       icon: <FileText className="h-5 w-5 text-white" />, 
       href: "/invoices", 
       sub: "Awaiting payment", 
@@ -130,7 +131,7 @@ async function DashboardStats() {
     },
     { 
       label: "Pending Tasks", 
-      value: stats.pendingTasks.toString(), 
+      value: stats.pendingTasks.toString(),  // No decimals - count
       icon: <Clock className="h-5 w-5 text-white" />, 
       href: "/tasks", 
       sub: "Across all projects", 
@@ -149,7 +150,7 @@ async function DashboardStats() {
         ))}
       </div>
 
-      {/* Business Health Score - New */}
+      {/* Business Health Score */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1">
           <BusinessHealthScore 
@@ -212,7 +213,7 @@ async function TopClients() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{client.name}</p>
-                  <p className="text-xs font-mono text-gray-500">${client.revenue.toLocaleString()}</p>
+                  <p className="text-xs font-mono text-gray-500">{formatCurrency(client.revenue)}</p>
                 </div>
               </div>
             </div>
@@ -248,7 +249,7 @@ async function ActivityFeed() {
               <p className="text-sm text-gray-700">
                 {activity.type === "invoice"
                   ? activity.action === "paid"
-                    ? `💰 Invoice paid: ${activity.name} - $${activity.amount?.toLocaleString()}`
+                    ? `💰 Invoice paid: ${activity.name} - ${formatCurrency(activity.amount)}`
                     : `📄 Created invoice for ${activity.name}`
                   : `👤 Added new client: ${activity.name}`}
               </p>
@@ -369,7 +370,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Welcome Section - Simplified */}
+      {/* Welcome Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 p-8">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full blur-3xl -mr-32 -mt-32" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-100/40 rounded-full blur-3xl -ml-24 -mb-24" />
@@ -404,7 +405,7 @@ export default async function DashboardPage() {
         </Suspense>
       </div>
 
-      {/* Quick Actions Section - Simplified colors */}
+      {/* Quick Actions Section */}
       <div className="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-full blur-3xl -mr-48 -mt-48" />
         
