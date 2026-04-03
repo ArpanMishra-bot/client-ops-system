@@ -12,7 +12,7 @@ interface StatCardProps {
   color?: string
   href: string
   sub?: string
-  trend?: number | null  // Updated to accept null
+  trend?: number | null  // Allow null
 }
 
 export default function StatCard({ 
@@ -24,6 +24,12 @@ export default function StatCard({
   sub, 
   trend 
 }: StatCardProps) {
+  // Determine if we should show trend
+  const showTrend = trend !== undefined && trend !== null
+  const isPositive = showTrend && trend > 0
+  const isNegative = showTrend && trend < 0
+  const isNeutral = showTrend && trend === 0
+
   return (
     <Link
       href={href}
@@ -69,33 +75,31 @@ export default function StatCard({
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
 
         {/* Trend Indicator - handles null values */}
-        {trend !== undefined && (
-          <div className="mt-3 flex items-center gap-1.5">
-            {trend === null ? (
-              <span className="text-xs text-gray-400">No prior data</span>
-            ) : (
-              <>
-                <div
-                  className={cn(
-                    "flex items-center gap-0.5 text-xs font-mono font-medium",
-                    trend > 0 && "text-emerald-600",
-                    trend < 0 && "text-rose-600",
-                    trend === 0 && "text-gray-400"
-                  )}
-                >
-                  {trend > 0 && <ArrowUpRight className="h-3.5 w-3.5" />}
-                  {trend < 0 && <ArrowDownRight className="h-3.5 w-3.5" />}
-                  {trend === 0 && <Minus className="h-3.5 w-3.5" />}
-                  <span className="font-semibold">
-                    {trend > 0 && "+"}
-                    {trend}%
-                  </span>
-                </div>
-                <span className="text-xs text-gray-400">vs last month</span>
-              </>
-            )}
-          </div>
-        )}
+        <div className="mt-3 flex items-center gap-1.5">
+          {!showTrend ? (
+            <span className="text-xs text-gray-400">No prior data</span>
+          ) : (
+            <>
+              <div
+                className={cn(
+                  "flex items-center gap-0.5 text-xs font-mono font-medium",
+                  isPositive && "text-emerald-600",
+                  isNegative && "text-rose-600",
+                  isNeutral && "text-gray-400"
+                )}
+              >
+                {isPositive && <ArrowUpRight className="h-3.5 w-3.5" />}
+                {isNegative && <ArrowDownRight className="h-3.5 w-3.5" />}
+                {isNeutral && <Minus className="h-3.5 w-3.5" />}
+                <span className="font-semibold">
+                  {isPositive && "+"}
+                  {trend}%
+                </span>
+              </div>
+              <span className="text-xs text-gray-400">vs last month</span>
+            </>
+          )}
+        </div>
       </div>
     </Link>
   )
