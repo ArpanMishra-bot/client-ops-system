@@ -7,13 +7,13 @@ import { db } from "@/lib/db"
 // Helper function to calculate trend safely
 function calculateTrend(thisMonth: number, lastMonth: number): number | null {
   if (lastMonth === 0 && thisMonth === 0) {
-    return null // No data in either period
+    return null
   }
   if (lastMonth === 0 && thisMonth > 0) {
-    return null // First month with data - show "No prior data" instead of 100%
+    return null
   }
   if (lastMonth > 0 && thisMonth === 0) {
-    return -100 // Dropped to zero
+    return -100
   }
   return Math.round(((thisMonth - lastMonth) / lastMonth) * 100)
 }
@@ -66,22 +66,30 @@ export async function getDashboardStats() {
     }),
   ])
 
-  // Calculate revenue chart data
+  // ========== FIXED: Revenue chart data with proper month mapping ==========
   const chartData = []
-  for (let i = 5; i >= 0; i--) {
+  const monthsToShow = 6 // Show last 6 months
+  
+  for (let i = monthsToShow - 1; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
     const monthName = date.toLocaleString('default', { month: 'short' })
     const year = date.getFullYear()
-    const startDate = new Date(date.getFullYear(), date.getMonth(), 1)
-    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
     
-    const monthlyRevenue = allInvoices
-      .filter(inv => inv.status === "PAID" && inv.createdAt >= startDate && inv.createdAt <= endDate)
-      .reduce((sum, inv) => sum + inv.total, 0)
+    // Get first and last day of the month for proper filtering
+    const startOfMonth = new Date(year, date.getMonth(), 1)
+    const endOfMonth = new Date(year, date.getMonth() + 1, 0, 23, 59, 59)
+    
+    // Filter invoices for this specific month
+    const monthlyInvoices = allInvoices.filter(inv => {
+      const invDate = new Date(inv.createdAt)
+      return inv.status === "PAID" && invDate >= startOfMonth && invDate <= endOfMonth
+    })
+    
+    const monthlyRevenue = monthlyInvoices.reduce((sum, inv) => sum + inv.total, 0)
     
     chartData.push({
       month: `${monthName} ${year}`,
-      revenue: monthlyRevenue
+      revenue: Number(monthlyRevenue.toFixed(2))
     })
   }
 
@@ -106,34 +114,27 @@ export async function getDashboardStats() {
   const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
   
-  // ========== TREND CALCULATIONS USING HELPER ==========
-  
-  // Leads Trend
+  // Trend calculations
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
   const leadsTrend = calculateTrend(leadsThisMonth, leadsLastMonth)
 
-  // Projects Trend
   const projectsThisMonth = projectsData.filter(p => p.createdAt >= firstDayThisMonth).length
   const projectsLastMonth = projectsData.filter(p => p.createdAt >= firstDayLastMonth && p.createdAt <= lastDayLastMonth).length
   const projectsTrend = calculateTrend(projectsThisMonth, projectsLastMonth)
 
-  // Tasks Trend
   const tasksThisMonth = tasksData.filter(t => t.createdAt >= firstDayThisMonth).length
   const tasksLastMonth = tasksData.filter(t => t.createdAt >= firstDayLastMonth && t.createdAt <= lastDayLastMonth).length
   const tasksTrend = calculateTrend(tasksThisMonth, tasksLastMonth)
 
-  // Revenue Trend
   const revenueThisMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayThisMonth).reduce((sum, i) => sum + i.total, 0)
   const revenueLastMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth).reduce((sum, i) => sum + i.total, 0)
   const revenueTrend = calculateTrend(revenueThisMonth, revenueLastMonth)
 
-  // Client Trend
   const clientsThisMonth = clients.filter(c => c.createdAt >= firstDayThisMonth).length
   const clientsLastMonth = clients.filter(c => c.createdAt >= firstDayLastMonth && c.createdAt <= lastDayLastMonth).length
   const clientTrend = calculateTrend(clientsThisMonth, clientsLastMonth)
   
-  // Outstanding Trend
   const outstandingThisMonth = allInvoices
     .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayThisMonth)
     .reduce((sum, i) => sum + i.total, 0)
@@ -170,20 +171,12 @@ export async function getDashboardStats() {
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 5)
 
-  // Calculate Business Health Score (0-100)
+  // Calculate Business Health Score
   let healthScore = 0
-  
-  // Client Score (max 25 points)
   const clientScore = Math.min(25, (totalClients / 20) * 25)
-  
-  // Revenue Score (max 25 points, based on $10k target)
   const revenueScore = Math.min(25, (totalRevenue / 10000) * 25)
-  
-  // Pipeline Score (max 25 points)
   const pipelineValue = pipelineData.reduce((sum, p) => sum + p.value, 0)
   const pipelineScore = Math.min(25, (pipelineValue / 20000) * 25)
-  
-  // Tasks Score (max 25 points, fewer pending tasks is better)
   const tasksScore = Math.min(25, Math.max(0, 25 - (pendingTasks / 10) * 5))
   
   healthScore = Math.round(clientScore + revenueScore + pipelineScore + tasksScore)
