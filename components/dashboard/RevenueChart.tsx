@@ -2,10 +2,10 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { formatCurrency, formatCompactCurrency } from "@/lib/utils"
 
 interface CustomRevenueChartProps {
   data: { month: string; revenue: number }[]
-  targetData?: { month: string; target: number }[]
 }
 
 interface Metrics {
@@ -14,23 +14,9 @@ interface Metrics {
   maxRevenue: number
   maxMonth: string
   yoyGrowth: number
-  targetAchievement: number
-  gapToTarget: number
 }
 
-const formatCurrency = (value: number) => {
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
-  return `$${value.toFixed(2)}`
-}
-
-const formatCompactCurrency = (value: number) => {
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
-  return `$${value.toFixed(2)}`
-}
-
-export default function CustomRevenueChart({ data, targetData }: CustomRevenueChartProps) {
+export default function CustomRevenueChart({ data }: CustomRevenueChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [period, setPeriod] = useState<"3M" | "6M" | "1Y" | "All">("1Y")
   const [tooltip, setTooltip] = useState<{
@@ -39,18 +25,14 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     y: number
     month: string
     revenue: number
-    target: number
     trend: number | null
-    vsTarget: number
   }>({
     visible: false,
     x: 0,
     y: 0,
     month: "",
     revenue: 0,
-    target: 0,
     trend: null,
-    vsTarget: 0,
   })
 
   // Filter data based on selected period
@@ -62,12 +44,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
   }
 
   const filteredData = getFilteredData()
-  
-  // Prepare chart data with targets
-  const chartData = filteredData.map((item, index) => ({
-    ...item,
-    target: targetData?.find(t => t.month === item.month)?.target || item.revenue * 0.95,
-  }))
+  const chartData = filteredData
 
   // Calculate metrics
   const calculateMetrics = (): Metrics => {
@@ -80,22 +57,23 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     const previous = chartData.slice(-6, -3).reduce((sum, d) => sum + d.revenue, 0)
     const yoyGrowth = previous > 0 ? ((recent - previous) / previous) * 100 : 0
     
-    const avgTarget = chartData.reduce((sum, d) => sum + d.target, 0) / chartData.length
-    const targetAchievement = avgTarget === 0 ? 0 : (avgMonthly / avgTarget) * 100
-    const gapToTarget = avgTarget - avgMonthly
-    
     return {
       totalRevenue,
       avgMonthly,
       maxRevenue,
       maxMonth,
       yoyGrowth,
-      targetAchievement,
-      gapToTarget,
     }
   }
 
   const metrics = calculateMetrics()
+
+  // Format date for footer
+  const formattedDate = new Date().toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  })
 
   // Draw chart when data or period changes
   useEffect(() => {
@@ -110,7 +88,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     const chartW = W - PAD.l - PAD.r
     const chartH = H - PAD.t - PAD.b
     
-    const allValues = [...chartData.map(d => d.revenue), ...chartData.map(d => d.target)]
+    const allValues = chartData.map(d => d.revenue)
     const maxVal = Math.max(...allValues) * 1.08
     const minVal = Math.min(...allValues) * 0.85
     
@@ -141,17 +119,6 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       txt.textContent = formatCompactCurrency(v)
       svg.appendChild(txt)
     })
-    
-    // Draw target line (dashed)
-    const targetPoints = chartData.map((d, i) => `${xPos(i)},${yPos(d.target)}`)
-    const targetPath = targetPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p}`).join(" ")
-    const targetLine = document.createElementNS("http://www.w3.org/2000/svg", "path")
-    targetLine.setAttribute("d", targetPath)
-    targetLine.setAttribute("fill", "none")
-    targetLine.setAttribute("stroke", "#cbd5e1")
-    targetLine.setAttribute("stroke-width", "1.5")
-    targetLine.setAttribute("stroke-dasharray", "5 5")
-    svg.appendChild(targetLine)
     
     // Draw area gradient
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
@@ -231,8 +198,6 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       
       const prevRevenue = i > 0 ? chartData[i - 1].revenue : null
       const trend = prevRevenue ? ((d.revenue - prevRevenue) / prevRevenue) * 100 : null
-      // FIX #2: Handle target === 0 to prevent NaN
-      const vsTarget = d.target === 0 ? 0 : ((d.revenue - d.target) / d.target) * 100
       
       hitRect.addEventListener("mouseenter", (e) => {
         dot.style.opacity = "1"
@@ -250,9 +215,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
           y: relY,
           month: d.month,
           revenue: d.revenue,
-          target: d.target,
           trend,
-          vsTarget,
         })
       })
       
@@ -326,13 +289,11 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
           <div className="text-xs text-gray-400">{metrics.maxMonth}</div>
         </div>
         <div>
-          <div className="text-xs font-mono text-gray-400 uppercase tracking-wider">vs Target</div>
+          <div className="text-xs font-mono text-gray-400 uppercase tracking-wider">Average Monthly</div>
           <div className="text-lg font-semibold mt-0.5 text-gray-900">
-            {metrics.targetAchievement.toFixed(0)}%
+            {formatCompactCurrency(metrics.avgMonthly)}
           </div>
-          <div className="text-xs text-gray-400">
-            {metrics.gapToTarget > 0 ? `↓ ${formatCompactCurrency(metrics.gapToTarget)} gap` : "above target"}
-          </div>
+          <div className="text-xs text-gray-400">over {chartData.length} months</div>
         </div>
       </div>
 
@@ -380,36 +341,29 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
             <p className="text-2xl font-semibold tracking-tight text-gray-900">
               {formatCurrency(tooltip.revenue)}
             </p>
-            <div className="mt-2 pt-2 border-t border-gray-100 space-y-1">
+            <div className="mt-2 pt-2 border-t border-gray-100">
               {tooltip.trend !== null && (
                 <p className={`text-xs font-mono flex items-center gap-1 ${tooltip.trend >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                  {tooltip.trend >= 0 ? '↑' : '↓'} {Math.abs(tooltip.trend).toFixed(1)}% vs previous
+                  {tooltip.trend >= 0 ? '↑' : '↓'} {Math.abs(tooltip.trend).toFixed(1)}% vs previous month
                 </p>
               )}
-              <p className={`text-xs font-mono flex items-center gap-1 ${tooltip.vsTarget >= 0 ? 'text-emerald-600' : 'text-amber-600'}`}>
-                {tooltip.vsTarget >= 0 ? '✓' : '⚠'} {tooltip.vsTarget >= 0 ? '+' : ''}{tooltip.vsTarget.toFixed(1)}% vs target
-              </p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Footer */}
+      {/* Footer - Fixed date format */}
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
         <div className="flex gap-4">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
             <span className="text-xs text-gray-500 font-mono">Revenue</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full border border-gray-300 bg-transparent" />
-            <span className="text-xs text-gray-500 font-mono">Target</span>
-          </div>
         </div>
         <div className="text-xs text-gray-400 font-mono">
-          Updated {new Date().toLocaleDateString()}
+          Updated {formattedDate}
         </div>
       </div>
     </div>
   )
-}
+                                                                                       }
