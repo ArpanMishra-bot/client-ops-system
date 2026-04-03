@@ -1,3 +1,4 @@
+// components/dashboard/StatCard.tsx
 "use client"
 
 import Link from "next/link"
@@ -8,13 +9,21 @@ interface StatCardProps {
   label: string
   value: string
   icon: React.ReactNode
-  color: string
+  color?: string  // Now optional - will use default primary gradient
   href: string
   sub?: string
   trend?: number
 }
 
-export default function StatCard({ label, value, icon, color, href, sub, trend }: StatCardProps) {
+export default function StatCard({ 
+  label, 
+  value, 
+  icon, 
+  color = "from-indigo-500 to-indigo-600", // Default primary gradient
+  href, 
+  sub, 
+  trend 
+}: StatCardProps) {
   const isPositive = trend && trend > 0
   const isNegative = trend && trend < 0
   const isNeutral = trend === 0
@@ -26,44 +35,44 @@ export default function StatCard({ label, value, icon, color, href, sub, trend }
         "group relative overflow-hidden rounded-xl",
         "bg-white border border-gray-100",
         "hover:border-indigo-200 hover:shadow-lg",
-        "active:scale-[0.98] active:bg-indigo-50/50",
+        "active:scale-[0.98] active:bg-indigo-50/30",
         "transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-400",
         "block"
       )}
     >
-      {/* Animated gradient border on top - matches revenue chart style */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-400 to-transparent 
+      {/* Animated gradient border on top */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Background gradient on hover */}
+      {/* Background gradient on hover - subtle */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/0 to-purple-50/0 
-                      group-hover:from-indigo-50/30 group-hover:to-purple-50/30
+                      group-hover:from-indigo-50/20 group-hover:to-purple-50/20
                       transition-all duration-300 rounded-xl" />
 
       <div className="relative z-10 p-5">
-        {/* Icon with enhanced styling - matches chart gradients */}
+        {/* Icon with consistent gradient */}
         <div className="mb-4">
           <div className={cn(
             "w-12 h-12 rounded-xl flex items-center justify-center",
-            "bg-gradient-to-br shadow-md",
+            "bg-gradient-to-r shadow-md",
             color
           )}>
             {icon}
           </div>
         </div>
 
-        {/* Value with premium typography - matches revenue chart numbers */}
-        <p className="text-3xl font-serif font-light tracking-tight text-gray-900">
+        {/* Value */}
+        <p className="text-3xl font-semibold tracking-tight text-gray-900">
           {value}
         </p>
 
         {/* Label */}
-        <p className="text-sm font-medium text-gray-700 mt-1">{label}</p>
+        <p className="text-sm font-medium text-gray-600 mt-1">{label}</p>
         
         {/* Subtext */}
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
 
-        {/* Trend Indicator with better styling - matches revenue chart trend */}
+        {/* Trend Indicator */}
         {trend !== undefined && (
           <div className="mt-3 flex items-center gap-1.5">
             <div
