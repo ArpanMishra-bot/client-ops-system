@@ -68,11 +68,21 @@ function CollapsibleCard({
   )
 }
 
-// Business Health Score Component
+// Business Health Score Component with Tooltip
 function BusinessHealthScore({ score, color, bg }: { score: number; color: string; bg: string }) {
   return (
-    <div className={`${bg} rounded-xl p-4 text-center transition-all hover:scale-[1.02] duration-200`}>
-      <p className="text-xs text-gray-500 mb-1">Business Health</p>
+    <div className={`${bg} rounded-xl p-4 text-center transition-all hover:scale-[1.02] duration-200 relative group`}>
+      <div className="flex items-center justify-center gap-1 mb-1">
+        <p className="text-xs text-gray-500">Business Health</p>
+        <button 
+          className="text-gray-400 hover:text-gray-600 transition-colors cursor-help"
+          title="Score is calculated from: Active clients (25%), Total revenue (25%), Pipeline value (25%), Task completion (25%)"
+        >
+          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      </div>
       <p className={`text-3xl font-bold ${color}`}>{score}</p>
       <p className="text-xs text-gray-400 mt-1">out of 100</p>
       <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
@@ -80,6 +90,14 @@ function BusinessHealthScore({ score, color, bg }: { score: number; color: strin
           className={`h-1.5 rounded-full transition-all duration-500 ${score >= 80 ? 'bg-emerald-500' : score >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
           style={{ width: `${score}%` }}
         />
+      </div>
+      
+      {/* Tooltip that appears on hover */}
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-50">
+        <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+          Score = (Clients × 25%) + (Revenue × 25%) + (Pipeline × 25%) + (Tasks × 25%)
+          <div className="absolute left-1/2 -translate-x-1/2 top-full border-4 border-transparent border-t-gray-900"></div>
+        </div>
       </div>
     </div>
   )
