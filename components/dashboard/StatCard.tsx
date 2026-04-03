@@ -24,11 +24,11 @@ export default function StatCard({
   sub, 
   trend 
 }: StatCardProps) {
-  // Determine if we should show trend
   const showTrend = trend !== undefined && trend !== null
   const isPositive = showTrend && trend > 0
   const isNegative = showTrend && trend < 0
   const isNeutral = showTrend && trend === 0
+  const isZeroActivity = isNegative && trend === -100
 
   return (
     <Link
@@ -46,13 +46,13 @@ export default function StatCard({
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Background gradient on hover - subtle */}
+      {/* Background gradient on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/0 to-purple-50/0 
                       group-hover:from-indigo-50/20 group-hover:to-purple-50/20
                       transition-all duration-300 rounded-xl" />
 
       <div className="relative z-10 p-5">
-        {/* Icon with consistent gradient - responsive size */}
+        {/* Icon - responsive size */}
         <div className="mb-4">
           <div className={cn(
             "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center",
@@ -74,10 +74,12 @@ export default function StatCard({
         {/* Subtext */}
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
 
-        {/* Trend Indicator - handles null values */}
+        {/* Trend Indicator - with -100% fix */}
         <div className="mt-3 flex items-center gap-1.5">
           {!showTrend ? (
             <span className="text-xs text-gray-400">No prior data</span>
+          ) : isZeroActivity ? (
+            <span className="text-xs text-amber-600">No activity this month</span>
           ) : (
             <>
               <div
