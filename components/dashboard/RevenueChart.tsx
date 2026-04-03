@@ -21,13 +21,13 @@ interface Metrics {
 const formatCurrency = (value: number) => {
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
-  return `$${value}`
+  return `$${value.toFixed(2)}`
 }
 
 const formatCompactCurrency = (value: number) => {
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
-  return `$${value}`
+  return `$${value.toFixed(2)}`
 }
 
 export default function CustomRevenueChart({ data, targetData }: CustomRevenueChartProps) {
@@ -81,7 +81,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     const yoyGrowth = previous > 0 ? ((recent - previous) / previous) * 100 : 0
     
     const avgTarget = chartData.reduce((sum, d) => sum + d.target, 0) / chartData.length
-    const targetAchievement = (avgMonthly / avgTarget) * 100
+    const targetAchievement = avgTarget === 0 ? 0 : (avgMonthly / avgTarget) * 100
     const gapToTarget = avgTarget - avgMonthly
     
     return {
@@ -142,7 +142,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       svg.appendChild(txt)
     })
     
-    // Draw target line (dashed) - using gray for consistency
+    // Draw target line (dashed)
     const targetPoints = chartData.map((d, i) => `${xPos(i)},${yPos(d.target)}`)
     const targetPath = targetPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p}`).join(" ")
     const targetLine = document.createElementNS("http://www.w3.org/2000/svg", "path")
@@ -153,7 +153,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     targetLine.setAttribute("stroke-dasharray", "5 5")
     svg.appendChild(targetLine)
     
-    // Draw area gradient - Updated to indigo/purple
+    // Draw area gradient
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
     defs.innerHTML = `
       <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
@@ -172,7 +172,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     area.setAttribute("fill", "url(#revenueGradient)")
     svg.appendChild(area)
     
-    // Draw revenue line - Updated to indigo
+    // Draw revenue line
     const linePath = revenuePoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p}`).join(" ")
     const line = document.createElementNS("http://www.w3.org/2000/svg", "path")
     line.setAttribute("d", linePath)
@@ -231,7 +231,8 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       
       const prevRevenue = i > 0 ? chartData[i - 1].revenue : null
       const trend = prevRevenue ? ((d.revenue - prevRevenue) / prevRevenue) * 100 : null
-      const vsTarget = ((d.revenue - d.target) / d.target) * 100
+      // FIX #2: Handle target === 0 to prevent NaN
+      const vsTarget = d.target === 0 ? 0 : ((d.revenue - d.target) / d.target) * 100
       
       hitRect.addEventListener("mouseenter", (e) => {
         dot.style.opacity = "1"
@@ -411,4 +412,4 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       </div>
     </div>
   )
-      }
+}
