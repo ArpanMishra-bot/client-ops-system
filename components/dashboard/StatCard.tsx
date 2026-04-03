@@ -12,7 +12,7 @@ interface StatCardProps {
   color?: string
   href: string
   sub?: string
-  trend?: number | null  // Allow null
+  trend?: number | null
 }
 
 export default function StatCard({ 
