@@ -1,3 +1,4 @@
+// app/(dashboard)/dashboard/page.tsx
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
@@ -17,22 +18,45 @@ import {
   Briefcase,
   Receipt,
   Calendar,
-  TrendingDown,
-  TrendingUp as TrendingUpIcon,
   Sparkles,
   ArrowUpRight,
   ArrowDownRight,
+  LayoutDashboard,
 } from "lucide-react"
 import Link from "next/link"
 
-// Collapsible wrapper for mobile with premium styling
-function CollapsibleCard({ title, children, icon }: { title: string; children: React.ReactNode; icon?: React.ReactNode }) {
+// Consistent gradient classes
+const gradients = {
+  primary: "from-indigo-500 to-indigo-600",
+  secondary: "from-purple-500 to-purple-600",
+  hero: "from-indigo-500 to-purple-600",
+  success: "from-emerald-500 to-emerald-600",
+  warning: "from-amber-500 to-amber-600",
+}
+
+// Collapsible wrapper for mobile
+function CollapsibleCard({ 
+  title, 
+  children, 
+  icon, 
+  defaultOpen = false 
+}: { 
+  title: string
+  children: React.ReactNode
+  icon?: React.ReactNode
+  defaultOpen?: boolean
+}) {
   return (
-    <details className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-indigo-200 transition-all duration-200">
+    <details 
+      className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-indigo-200 transition-all duration-200"
+      open={defaultOpen}
+    >
       <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-colors hover:bg-gray-50/50 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {icon && <span className="text-indigo-500">{icon}</span>}
-          <span className="gradient-text">{title}</span>
+          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            {title}
+          </span>
         </div>
         <span className="text-gray-400 text-xs group-open:rotate-180 transition-transform duration-200">▼</span>
       </summary>
@@ -43,14 +67,31 @@ function CollapsibleCard({ title, children, icon }: { title: string; children: R
   )
 }
 
+// Business Health Score Component
+function BusinessHealthScore({ score, color, bg }: { score: number; color: string; bg: string }) {
+  return (
+    <div className={`${bg} rounded-xl p-4 text-center transition-all hover:scale-[1.02] duration-200`}>
+      <p className="text-xs text-gray-500 mb-1">Business Health</p>
+      <p className={`text-3xl font-bold ${color}`}>{score}</p>
+      <p className="text-xs text-gray-400 mt-1">out of 100</p>
+      <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+        <div 
+          className={`h-1.5 rounded-full transition-all duration-500 ${score >= 80 ? 'bg-emerald-500' : score >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
+          style={{ width: `${score}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
 async function DashboardStats() {
   const stats = await getDashboardStats()
+  
   const statCards = [
     { 
       label: "Active Clients", 
       value: stats.totalClients.toString(), 
       icon: <Users className="h-5 w-5 text-white" />, 
-      color: "from-purple-500 to-indigo-600", 
       href: "/clients", 
       sub: "Total active clients", 
       trend: stats.clientTrend 
@@ -59,7 +100,6 @@ async function DashboardStats() {
       label: "Active Leads", 
       value: stats.activeLeads.toString(), 
       icon: <TrendingUp className="h-5 w-5 text-white" />, 
-      color: "from-teal-500 to-blue-600", 
       href: "/leads", 
       sub: "In pipeline", 
       trend: stats.leadsTrend 
@@ -68,7 +108,6 @@ async function DashboardStats() {
       label: "Active Projects", 
       value: stats.activeProjects.toString(), 
       icon: <FolderKanban className="h-5 w-5 text-white" />, 
-      color: "from-pink-500 to-rose-600", 
       href: "/projects", 
       sub: "In progress", 
       trend: stats.projectsTrend 
@@ -77,7 +116,6 @@ async function DashboardStats() {
       label: "Total Revenue", 
       value: `$${stats.totalRevenue.toLocaleString()}`, 
       icon: <DollarSign className="h-5 w-5 text-white" />, 
-      color: "from-indigo-500 to-purple-600", 
       href: "/invoices", 
       sub: "From paid invoices", 
       trend: stats.revenueTrend 
@@ -86,7 +124,6 @@ async function DashboardStats() {
       label: "Outstanding", 
       value: `$${stats.outstanding.toLocaleString()}`, 
       icon: <FileText className="h-5 w-5 text-white" />, 
-      color: "from-blue-500 to-indigo-600", 
       href: "/invoices", 
       sub: "Awaiting payment", 
       trend: stats.outstandingTrend 
@@ -95,7 +132,6 @@ async function DashboardStats() {
       label: "Pending Tasks", 
       value: stats.pendingTasks.toString(), 
       icon: <Clock className="h-5 w-5 text-white" />, 
-      color: "from-green-500 to-teal-600", 
       href: "/tasks", 
       sub: "Across all projects", 
       trend: stats.tasksTrend 
@@ -103,20 +139,44 @@ async function DashboardStats() {
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {statCards.map((stat, index) => (
-        <div key={stat.label} style={{ animationDelay: `${index * 50}ms` }} className="animate-rise">
-          <StatCard {...stat} />
+    <>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {statCards.map((stat, index) => (
+          <div key={stat.label} style={{ animationDelay: `${index * 50}ms` }} className="animate-rise">
+            <StatCard {...stat} color={gradients.primary} />
+          </div>
+        ))}
+      </div>
+
+      {/* Business Health Score - New */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="md:col-span-1">
+          <BusinessHealthScore 
+            score={stats.healthScore} 
+            color={stats.healthColor}
+            bg={stats.healthBg}
+          />
         </div>
-      ))}
-    </div>
+        <div className="md:col-span-3">
+          <div className="bg-white rounded-xl border border-gray-100 p-4">
+            <p className="text-xs text-gray-400 mb-2">Quick Tip</p>
+            <p className="text-sm text-gray-600">
+              💡 {stats.pendingTasks > 0 
+                ? `You have ${stats.pendingTasks} pending tasks. Focus on completing them to improve your health score.`
+                : "Great job! All tasks are complete. Consider adding more leads to grow your pipeline."}
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
 async function DashboardRevenueChart() {
   const stats = await getDashboardStats()
   return (
-    <CollapsibleCard title="Revenue Overview" icon={<DollarSign className="h-4 w-4" />}>
+    <CollapsibleCard title="Revenue Overview" icon={<DollarSign className="h-4 w-4" />} defaultOpen>
       <RevenueChart data={stats.revenueChartData} />
     </CollapsibleCard>
   )
@@ -126,7 +186,7 @@ async function DashboardPipelineChart() {
   const stats = await getDashboardStats()
   if (stats.pipelineData.length === 0) return null
   return (
-    <CollapsibleCard title="Pipeline Value by Stage" icon={<TrendingUp className="h-4 w-4" />}>
+    <CollapsibleCard title="Pipeline Value by Stage" icon={<TrendingUp className="h-4 w-4" />} defaultOpen={false}>
       <PipelineChart data={stats.pipelineData} />
     </CollapsibleCard>
   )
@@ -136,18 +196,18 @@ async function TopClients() {
   const stats = await getDashboardStats()
   if (stats.topClients.length === 0) return null
   return (
-    <CollapsibleCard title="Top Clients by Revenue" icon={<Users className="h-4 w-4" />}>
+    <CollapsibleCard title="Top Clients by Revenue" icon={<Users className="h-4 w-4" />} defaultOpen>
       <div className="space-y-3">
         {stats.topClients.map((client) => (
           <Link
             key={client.id}
             href={`/clients/${client.id}`}
             className="group flex items-center justify-between p-3 rounded-xl transition-all duration-200 
-                       hover:bg-gray-50 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-indigo-400"
+                       hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             <div className="flex-1">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-medium shadow-sm">
                   {client.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -174,7 +234,7 @@ async function ActivityFeed() {
   const stats = await getDashboardStats()
   if (stats.recentActivities.length === 0) return null
   return (
-    <CollapsibleCard title="Activity Feed" icon={<Clock className="h-4 w-4" />}>
+    <CollapsibleCard title="Activity Feed" icon={<Clock className="h-4 w-4" />} defaultOpen>
       <div className="space-y-4">
         {stats.recentActivities.map((activity, i) => (
           <div key={i} className="flex items-start gap-3 group">
@@ -206,7 +266,7 @@ async function ActivityFeed() {
 async function RecentClients() {
   const stats = await getDashboardStats()
   return (
-    <CollapsibleCard title="Recent Clients" icon={<UserPlus className="h-4 w-4" />}>
+    <CollapsibleCard title="Recent Clients" icon={<UserPlus className="h-4 w-4" />} defaultOpen>
       {stats.recentClients.length === 0 ? (
         <div className="text-center py-12">
           <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
@@ -215,7 +275,7 @@ async function RecentClients() {
           <p className="text-sm text-gray-500">No clients yet</p>
           <Link 
             href="/clients/new" 
-            className="inline-flex items-center gap-1 text-sm gradient-text font-medium mt-3 hover:gap-2 transition-all"
+            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all"
           >
             Add your first client
             <ArrowUpRight className="h-3 w-3" />
@@ -228,9 +288,9 @@ async function RecentClients() {
               key={client.id}
               href={`/clients/${client.id}`}
               className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 
-                         hover:bg-gray-50 active:scale-[0.98]"
+                         hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
             >
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
                 <span className="text-white text-sm font-medium">{client.name.charAt(0).toUpperCase()}</span>
               </div>
               <div className="flex-1">
@@ -254,7 +314,7 @@ async function UpcomingReminders() {
   const stats = await getDashboardStats()
   const reminderCount = stats.upcomingReminders.length
   return (
-    <CollapsibleCard title="Reminders" icon={<Calendar className="h-4 w-4" />}>
+    <CollapsibleCard title="Reminders" icon={<Calendar className="h-4 w-4" />} defaultOpen>
       {reminderCount === 0 ? (
         <Link 
           href="/reminders"
@@ -264,7 +324,9 @@ async function UpcomingReminders() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="h-4 w-4 text-indigo-500" />
-                <p className="text-sm font-semibold gradient-text">No pending reminders</p>
+                <p className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  No pending reminders
+                </p>
               </div>
               <p className="text-xs text-gray-500">Create your first reminder to stay organized</p>
             </div>
@@ -280,7 +342,9 @@ async function UpcomingReminders() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                <p className="text-sm font-semibold gradient-text">{reminderCount} Pending Reminder{reminderCount !== 1 ? "s" : ""}</p>
+                <p className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  {reminderCount} Pending Reminder{reminderCount !== 1 ? "s" : ""}
+                </p>
               </div>
               <p className="text-xs text-gray-500">Click to view and manage</p>
             </div>
@@ -296,35 +360,36 @@ export default async function DashboardPage() {
   const user = await currentUser()
 
   const quickActions = [
-    { label: "Add Client", icon: UserPlus, href: "/clients/new", color: "from-purple-500 to-indigo-600", description: "Create new client profile" },
-    { label: "Add Lead", icon: TrendingUp, href: "/leads/new", color: "from-teal-500 to-blue-600", description: "Track new opportunity" },
-    { label: "Create Project", icon: Briefcase, href: "/projects/new", color: "from-pink-500 to-rose-600", description: "Start a new project" },
-    { label: "Create Invoice", icon: Receipt, href: "/invoices/new", color: "from-indigo-500 to-purple-600", description: "Send an invoice" },
-    { label: "Add Reminder", icon: Calendar, href: "/reminders", color: "from-green-500 to-teal-600", description: "Set a reminder" },
+    { label: "Add Client", icon: UserPlus, href: "/clients/new", description: "Create new client profile" },
+    { label: "Add Lead", icon: TrendingUp, href: "/leads/new", description: "Track new opportunity" },
+    { label: "Create Project", icon: Briefcase, href: "/projects/new", description: "Start a new project" },
+    { label: "Create Invoice", icon: Receipt, href: "/invoices/new", description: "Send an invoice" },
+    { label: "Add Reminder", icon: Calendar, href: "/reminders", description: "Set a reminder" },
   ]
 
   return (
-    <div className="space-y-8">
-      {/* Premium Welcome Section with Gradient Background */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 p-8 animate-rise">
-        {/* Decorative Blobs */}
+    <div className="space-y-8 animate-fadeIn">
+      {/* Welcome Section - Simplified */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 p-8">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full blur-3xl -mr-32 -mt-32" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-100/40 rounded-full blur-3xl -ml-24 -mb-24" />
         
         <div className="relative">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-3xl">👋</span>
-            <h1 className="text-3xl font-serif font-light tracking-tight text-gray-900">
-              Welcome back, <span className="gradient-text font-medium">{user?.firstName ?? "there"}</span>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
+              <LayoutDashboard className="h-5 w-5 text-white" />
+            </div>
+            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-gray-900">
+              Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{user?.firstName ?? "there"}</span>
             </h1>
           </div>
-          <p className="text-gray-600 text-sm max-w-2xl">
-            Here's what's happening with your business today. Track your performance, manage clients, and stay on top of tasks all in one place.
+          <p className="text-gray-500 text-sm max-w-2xl pl-12">
+            Here's what's happening with your business today. Track performance, manage clients, and stay on top of tasks.
           </p>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats + Health Score */}
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
       </Suspense>
@@ -339,18 +404,19 @@ export default async function DashboardPage() {
         </Suspense>
       </div>
 
-      {/* Premium Quick Actions Section */}
+      {/* Quick Actions Section - Simplified colors */}
       <div className="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
-        {/* Background Gradient Decoration */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-full blur-3xl -mr-48 -mt-48" />
         
         <div className="relative">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md">
+            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
               <Zap className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold gradient-text">Quick Actions</h2>
+              <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Quick Actions
+              </h2>
               <p className="text-xs text-gray-500">Common tasks to help you move faster</p>
             </div>
           </div>
@@ -369,7 +435,7 @@ export default async function DashboardPage() {
                              transition-all duration-200"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} 
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600
                                    flex items-center justify-center mb-3 
                                    group-hover:scale-110 transition-transform duration-300 
                                    shadow-sm`}>
@@ -405,4 +471,4 @@ export default async function DashboardPage() {
       </div>
     </div>
   )
-          }
+}
