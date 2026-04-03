@@ -1,3 +1,4 @@
+// components/dashboard/RevenueChart.tsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -20,13 +21,13 @@ interface Metrics {
 const formatCurrency = (value: number) => {
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
-  return `$${value}`
+  return `$${value.toFixed(2)}`
 }
 
 const formatCompactCurrency = (value: number) => {
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
-  return `$${value}`
+  return `$${value.toFixed(2)}`
 }
 
 export default function CustomRevenueChart({ data, targetData }: CustomRevenueChartProps) {
@@ -80,7 +81,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     const yoyGrowth = previous > 0 ? ((recent - previous) / previous) * 100 : 0
     
     const avgTarget = chartData.reduce((sum, d) => sum + d.target, 0) / chartData.length
-    const targetAchievement = (avgMonthly / avgTarget) * 100
+    const targetAchievement = avgTarget === 0 ? 0 : (avgMonthly / avgTarget) * 100
     const gapToTarget = avgTarget - avgMonthly
     
     return {
@@ -147,7 +148,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
     const targetLine = document.createElementNS("http://www.w3.org/2000/svg", "path")
     targetLine.setAttribute("d", targetPath)
     targetLine.setAttribute("fill", "none")
-    targetLine.setAttribute("stroke", "#d1d5db")
+    targetLine.setAttribute("stroke", "#cbd5e1")
     targetLine.setAttribute("stroke-width", "1.5")
     targetLine.setAttribute("stroke-dasharray", "5 5")
     svg.appendChild(targetLine)
@@ -230,7 +231,8 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       
       const prevRevenue = i > 0 ? chartData[i - 1].revenue : null
       const trend = prevRevenue ? ((d.revenue - prevRevenue) / prevRevenue) * 100 : null
-      const vsTarget = ((d.revenue - d.target) / d.target) * 100
+      // FIX #2: Handle target === 0 to prevent NaN
+      const vsTarget = d.target === 0 ? 0 : ((d.revenue - d.target) / d.target) * 100
       
       hitRect.addEventListener("mouseenter", (e) => {
         dot.style.opacity = "1"
@@ -279,7 +281,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
             Revenue Overview
           </div>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-3xl font-serif font-light tracking-tight text-gray-900">
+            <h3 className="text-3xl font-semibold tracking-tight text-gray-900">
               {formatCompactCurrency(metrics.totalRevenue)}
             </h3>
             <span className="text-sm text-gray-400">total</span>
@@ -318,14 +320,14 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       <div className="flex flex-wrap gap-6 mb-6 pb-4 border-b border-gray-100">
         <div>
           <div className="text-xs font-mono text-gray-400 uppercase tracking-wider">Best Month</div>
-          <div className="text-lg font-serif font-light mt-0.5 text-gray-900">
+          <div className="text-lg font-semibold mt-0.5 text-gray-900">
             {formatCompactCurrency(metrics.maxRevenue)}
           </div>
           <div className="text-xs text-gray-400">{metrics.maxMonth}</div>
         </div>
         <div>
           <div className="text-xs font-mono text-gray-400 uppercase tracking-wider">vs Target</div>
-          <div className="text-lg font-serif font-light mt-0.5 text-gray-900">
+          <div className="text-lg font-semibold mt-0.5 text-gray-900">
             {metrics.targetAchievement.toFixed(0)}%
           </div>
           <div className="text-xs text-gray-400">
@@ -375,7 +377,7 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
             <p className="text-xs font-mono text-indigo-600 font-semibold mb-1 tracking-wide">
               {tooltip.month}
             </p>
-            <p className="text-2xl font-serif font-light tracking-tight text-gray-900">
+            <p className="text-2xl font-semibold tracking-tight text-gray-900">
               {formatCurrency(tooltip.revenue)}
             </p>
             <div className="mt-2 pt-2 border-t border-gray-100 space-y-1">
@@ -410,4 +412,4 @@ export default function CustomRevenueChart({ data, targetData }: CustomRevenueCh
       </div>
     </div>
   )
-      }
+}
