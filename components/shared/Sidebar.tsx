@@ -1,3 +1,4 @@
+// components/shared/Sidebar.tsx
 "use client"
 
 import { useState } from "react"
@@ -77,31 +78,34 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 h-screen glass-card flex-col fixed left-0 top-0">
+      {/* Desktop Sidebar - Width changed from w-64 to w-56 */}
+      <div className="hidden md:flex w-56 h-screen glass-card flex-col fixed left-0 top-0">
         <NavContent />
       </div>
 
-      {/* Mobile Bottom Nav */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 
-                      bg-white/70 backdrop-blur-md border-t border-gray-200 
-                      flex items-center justify-around z-30 rounded-t-2xl">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 py-2 
-                          ${isActive ? "text-indigo-600" : "text-gray-500"} 
-                          active:scale-95 focus-visible:ring-2 focus-visible:ring-indigo-400`}
-            >
-              <Icon className={`h-5 w-5 ${isActive ? "drop-shadow-glow" : ""}`} />
-              <span className="text-[10px] font-medium">{item.label}</span>
-            </Link>
-          )
-        })}
+      {/* Main content margin - Updated to match w-56 */}
+      <div className="md:ml-56">
+        {/* Mobile Bottom Nav */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 
+                        bg-white/70 backdrop-blur-md border-t border-gray-200 
+                        flex items-center justify-around z-30 rounded-t-2xl">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex flex-col items-center justify-center flex-1 py-2 
+                            ${isActive ? "text-indigo-600" : "text-gray-500"} 
+                            active:scale-95 focus-visible:ring-2 focus-visible:ring-indigo-400`}
+              >
+                <Icon className={`h-5 w-5 ${isActive ? "drop-shadow-glow" : ""}`} />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </>
   )
