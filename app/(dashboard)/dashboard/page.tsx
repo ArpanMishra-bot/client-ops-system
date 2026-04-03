@@ -64,7 +64,7 @@ function CollapsibleCard({
       <div className="p-6 pt-0 border-t border-gray-100">
         {children}
       </div>
-    </details/>
+    </details>
   )
 }
 
