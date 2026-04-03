@@ -1,4 +1,5 @@
 // app/(dashboard)/dashboard/page.tsx
+import BusinessHealthScore from "@/components/dashboard/BusinessHealthScore"
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
