@@ -37,9 +37,11 @@ export default function StatCard({
         "group relative overflow-hidden rounded-xl",
         "bg-white border border-gray-100",
         "hover:border-indigo-200 hover:shadow-lg",
-        "active:scale-[0.98] active:bg-indigo-50/30",
-        "transition-all duration-200 focus-visible:ring-2 focus-visible:ring-indigo-400",
-        "block"
+        // Mobile tap effects - added these
+        "active:scale-[0.97] active:bg-indigo-50/50 active:shadow-md",
+        "transition-all duration-200 ease-out",
+        "focus-visible:ring-2 focus-visible:ring-indigo-400",
+        "block cursor-pointer touch-manipulation"
       )}
     >
       {/* Animated gradient border on top */}
@@ -74,7 +76,7 @@ export default function StatCard({
         {/* Subtext */}
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
 
-        {/* Trend Indicator - with -100% fix */}
+        {/* Trend Indicator */}
         <div className="mt-3 flex items-center gap-1.5">
           {!showTrend ? (
             <span className="text-xs text-gray-400">No prior data</span>
