@@ -4,6 +4,20 @@
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 
+// Helper function to calculate trend safely
+function calculateTrend(thisMonth: number, lastMonth: number): number | null {
+  if (lastMonth === 0 && thisMonth === 0) {
+    return null // No data in either period
+  }
+  if (lastMonth === 0 && thisMonth > 0) {
+    return null // First month with data - show "No prior data" instead of 100%
+  }
+  if (lastMonth > 0 && thisMonth === 0) {
+    return -100 // Dropped to zero
+  }
+  return Math.round(((thisMonth - lastMonth) / lastMonth) * 100)
+}
+
 export async function getDashboardStats() {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
@@ -92,21 +106,8 @@ export async function getDashboardStats() {
   const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
   
-  // ========== FIXED TREND CALCULATIONS ==========
-  // Helper function to calculate trend safely
-  function calculateTrend(thisMonth: number, lastMonth: number): number | null {
-    if (lastMonth === 0 && thisMonth === 0) {
-      return null // No data in either period
-    }
-    if (lastMonth === 0 && thisMonth > 0) {
-      return 100 // First month with data
-    }
-    if (lastMonth > 0 && thisMonth === 0) {
-      return -100 // Dropped to zero
-    }
-    return Math.round(((thisMonth - lastMonth) / lastMonth) * 100)
-  }
-
+  // ========== TREND CALCULATIONS USING HELPER ==========
+  
   // Leads Trend
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
@@ -141,7 +142,7 @@ export async function getDashboardStats() {
     .reduce((sum, i) => sum + i.total, 0)
   const outstandingTrend = calculateTrend(outstandingThisMonth, outstandingLastMonth)
 
-  // Calculate top clients
+  // Calculate top clients with trend
   const clientRevenue = new Map<string, { name: string; total: number; lastMonthTotal: number }>()
   
   allInvoices.forEach(invoice => {
@@ -210,17 +211,17 @@ export async function getDashboardStats() {
 
   return {
     totalClients,
-    clientTrend,  // Can be number | null now
+    clientTrend,
     activeLeads,
-    leadsTrend,   // Can be number | null now
+    leadsTrend,
     activeProjects,
-    projectsTrend, // Can be number | null now
+    projectsTrend,
     totalRevenue,
-    revenueTrend,  // Can be number | null now
+    revenueTrend,
     outstanding,
-    outstandingTrend, // Can be number | null now
+    outstandingTrend,
     pendingTasks,
-    tasksTrend,    // Can be number | null now
+    tasksTrend,
     upcomingReminders: reminders,
     recentClients,
     topClients,
