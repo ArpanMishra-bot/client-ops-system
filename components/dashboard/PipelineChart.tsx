@@ -22,7 +22,7 @@ const calculateMetrics = (data: { stage: string; value: number }[]) => {
   const totalPipeline = data.reduce((sum, d) => sum + d.value, 0)
   const avgStageValue = totalPipeline / data.length
   const maxStage = data.reduce((max, d) => d.value > max.value ? d : max, data[0])
-  const conversionRate = 68 // This could come from your actual data
+  const conversionRate = 68
   
   return {
     totalPipeline,
@@ -36,7 +36,6 @@ export default function PipelineChart({ data }: PipelineChartProps) {
   const [view, setView] = useState<"value" | "percentage">("value")
   const metrics = calculateMetrics(data)
   
-  // Calculate percentages if needed
   const chartData = view === "percentage" 
     ? data.map(d => ({
         ...d,
@@ -55,9 +54,6 @@ export default function PipelineChart({ data }: PipelineChartProps) {
           className="rounded-xl px-4 py-3 min-w-[140px]
                      bg-white/95 backdrop-blur-md border border-gray-200
                      shadow-xl shadow-indigo-500/10"
-          style={{
-            fontFamily: "'Geist', sans-serif",
-          }}
         >
           <p className="text-xs font-mono text-indigo-600 font-semibold mb-1 tracking-wide">
             {stage}
@@ -155,7 +151,6 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
           >
             <defs>
-              {/* Single gradient - indigo */}
               <linearGradient id="pipelineGradient" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0%" stopColor="#6366f1" />
                 <stop offset="100%" stopColor="#4f46e5" />
