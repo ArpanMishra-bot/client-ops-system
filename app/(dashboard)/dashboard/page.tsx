@@ -178,38 +178,51 @@ async function DashboardPipelineChart() {
 }
 
 async function TopClients() {
+async function TopClients() {
   const stats = await getDashboardStats()
   if (stats.topClients.length === 0) return null
   return (
     <CollapsibleCard title="Top Clients by Revenue" icon={<Users className="h-4 w-4" />} defaultOpen>
       <div className="space-y-3">
-        {stats.topClients.map((client) => (
-          <Link
-            key={client.id}
-            href={`/clients/${client.id}`}
-            className="group flex items-center justify-between p-3 rounded-xl transition-all duration-200 
-                       hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-indigo-400"
-          >
-            <div className="flex-1">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-medium shadow-sm">
-                  {client.name.charAt(0).toUpperCase()}
+        {stats.topClients.map((client) => {
+          // Find max revenue to calculate percentage for progress bar
+          const maxRevenue = Math.max(...stats.topClients.map(c => c.revenue), 1)
+          const percentage = (client.revenue / maxRevenue) * 100
+          
+          return (
+            <Link
+              key={client.id}
+              href={`/clients/${client.id}`}
+              className="group block p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-medium shadow-sm">
+                    {client.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{client.name}</p>
+                    <p className="text-xs font-mono text-gray-500">{formatCurrency(client.revenue)}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{client.name}</p>
-                  <p className="text-xs font-mono text-gray-500">{formatCurrency(client.revenue)}</p>
+                <div className={`flex items-center gap-1 text-xs font-mono font-medium ${
+                  client.trend > 0 ? 'text-emerald-600' : client.trend < 0 ? 'text-rose-600' : 'text-gray-400'
+                }`}>
+                  {client.trend > 0 && <ArrowUpRight className="h-3 w-3" />}
+                  {client.trend < 0 && <ArrowDownRight className="h-3 w-3" />}
+                  <span>{client.trend > 0 ? '+' : ''}{client.trend}%</span>
                 </div>
               </div>
-            </div>
-            <div className={`flex items-center gap-1 text-xs font-mono font-medium ${
-              client.trend > 0 ? 'text-emerald-600' : client.trend < 0 ? 'text-rose-600' : 'text-gray-400'
-            }`}>
-              {client.trend > 0 && <ArrowUpRight className="h-3 w-3" />}
-              {client.trend < 0 && <ArrowDownRight className="h-3 w-3" />}
-              <span>{client.trend > 0 ? '+' : ''}{client.trend}%</span>
-            </div>
-          </Link>
-        ))}
+              {/* Progress bar instead of just showing 0% */}
+              <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <div 
+                  className="h-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500"
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </CollapsibleCard>
   )
