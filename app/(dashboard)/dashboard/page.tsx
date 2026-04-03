@@ -1,5 +1,4 @@
 // app/(dashboard)/dashboard/page.tsx
-import BusinessHealthScore from "@/components/dashboard/BusinessHealthScore"
 import { Suspense } from "react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
@@ -7,6 +6,7 @@ import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import RevenueChart from "@/components/dashboard/RevenueChart"
 import PipelineChart from "@/components/dashboard/PipelineChart"
 import StatCard from "@/components/dashboard/StatCard"
+import BusinessHealthScore from "@/components/dashboard/BusinessHealthScore"
 import { formatCurrency } from "@/lib/utils"
 import {
   Users,
@@ -36,6 +36,27 @@ const gradients = {
   warning: "from-amber-500 to-amber-600",
 }
 
+// Helper function to get user industry/category
+function getUserCategory(email?: string): string {
+  // In a real app, this would come from user metadata or database
+  // For now, using email to pseudo-randomly assign for demo variety
+  const categories = [
+    { label: "Creative Director", emoji: "🎨", color: "text-purple-600" },
+    { label: "Agency Owner", emoji: "💼", color: "text-indigo-600" },
+    { label: "Startup Founder", emoji: "🚀", color: "text-blue-600" },
+    { label: "Marketing Consultant", emoji: "📊", color: "text-emerald-600" },
+    { label: "Freelance Developer", emoji: "💻", color: "text-cyan-600" },
+    { label: "Product Manager", emoji: "📱", color: "text-rose-600" },
+    { label: "Business Coach", emoji: "🎯", color: "text-amber-600" },
+    { label: "Design Agency", emoji: "✨", color: "text-pink-600" },
+  ]
+  
+  // Use email hash to pseudo-randomly assign (remove when you have real user data)
+  const hash = email?.length || 0
+  const category = categories[hash % categories.length]
+  return `${category.emoji} ${category.label}`
+}
+
 // Collapsible wrapper for mobile
 function CollapsibleCard({ 
   title, 
@@ -53,7 +74,7 @@ function CollapsibleCard({
       className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-indigo-200 transition-all duration-200"
       open={defaultOpen}
     >
-      <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-colors hover:bg-gray-50/50 flex items-center justify-between">
+      <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-all duration-200 hover:bg-gray-50/50 active:scale-[0.99] active:bg-gray-100/50 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {icon && <span className="text-indigo-500">{icon}</span>}
           <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -69,13 +90,13 @@ function CollapsibleCard({
   )
 }
 
- async function DashboardStats() {
+async function DashboardStats() {
   const stats = await getDashboardStats()
   
   const statCards = [
     { 
       label: "Active Clients", 
-      value: stats.totalClients.toString(),  // No decimals - count
+      value: stats.totalClients.toString(),
       icon: <Users className="h-5 w-5 text-white" />, 
       href: "/clients", 
       sub: "Total active clients", 
@@ -83,7 +104,7 @@ function CollapsibleCard({
     },
     { 
       label: "Active Leads", 
-      value: stats.activeLeads.toString(),  // No decimals - count
+      value: stats.activeLeads.toString(),
       icon: <TrendingUp className="h-5 w-5 text-white" />, 
       href: "/leads", 
       sub: "In pipeline", 
@@ -91,7 +112,7 @@ function CollapsibleCard({
     },
     { 
       label: "Active Projects", 
-      value: stats.activeProjects.toString(),  // No decimals - count
+      value: stats.activeProjects.toString(),
       icon: <FolderKanban className="h-5 w-5 text-white" />, 
       href: "/projects", 
       sub: "In progress", 
@@ -99,7 +120,7 @@ function CollapsibleCard({
     },
     { 
       label: "Total Revenue", 
-      value: formatCurrency(stats.totalRevenue),  // ✅ 2 decimals - money
+      value: formatCurrency(stats.totalRevenue),
       icon: <DollarSign className="h-5 w-5 text-white" />, 
       href: "/invoices", 
       sub: "From paid invoices", 
@@ -107,7 +128,7 @@ function CollapsibleCard({
     },
     { 
       label: "Outstanding", 
-      value: formatCurrency(stats.outstanding),  // ✅ 2 decimals - money
+      value: formatCurrency(stats.outstanding),
       icon: <FileText className="h-5 w-5 text-white" />, 
       href: "/invoices", 
       sub: "Awaiting payment", 
@@ -115,7 +136,7 @@ function CollapsibleCard({
     },
     { 
       label: "Pending Tasks", 
-      value: stats.pendingTasks.toString(),  // No decimals - count
+      value: stats.pendingTasks.toString(),
       icon: <Clock className="h-5 w-5 text-white" />, 
       href: "/tasks", 
       sub: "Across all projects", 
@@ -133,7 +154,6 @@ function CollapsibleCard({
           </div>
         ))}
       </div>
-
       {/* Business Health Score */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1">
@@ -212,7 +232,7 @@ async function TopClients() {
                   <span>{client.trend > 0 ? '+' : ''}{client.trend}%</span>
                 </div>
               </div>
-              {/* Progress bar instead of just showing 0% */}
+              {/* Progress bar */}
               <div className="w-full bg-gray-100 rounded-full h-1.5">
                 <div 
                   className="h-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500"
@@ -250,7 +270,7 @@ async function ActivityFeed() {
                   : `👤 Added new client: ${activity.name}`}
               </p>
               <p className="text-xs font-mono text-gray-400 mt-1">
-                {new Date(activity.timestamp).toLocaleDateString()} at {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date(activity.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
           </div>
@@ -272,7 +292,7 @@ async function RecentClients() {
           <p className="text-sm text-gray-500">No clients yet</p>
           <Link 
             href="/clients/new" 
-            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all"
+            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all active:scale-95"
           >
             Add your first client
             <ArrowUpRight className="h-3 w-3" />
@@ -284,8 +304,7 @@ async function RecentClients() {
             <Link
               key={client.id}
               href={`/clients/${client.id}`}
-              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 
-                         hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
+              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
             >
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
                 <span className="text-white text-sm font-medium">{client.name.charAt(0).toUpperCase()}</span>
@@ -296,7 +315,7 @@ async function RecentClients() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-mono text-gray-400">
-                  {new Date(client.createdAt).toLocaleDateString()}
+                  {new Date(client.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
             </Link>
@@ -315,7 +334,7 @@ async function UpcomingReminders() {
       {reminderCount === 0 ? (
         <Link 
           href="/reminders"
-          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200"
+          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98]"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -333,7 +352,7 @@ async function UpcomingReminders() {
       ) : (
         <Link 
           href="/reminders#pending"
-          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200"
+          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98]"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -355,6 +374,7 @@ async function UpcomingReminders() {
 
 export default async function DashboardPage() {
   const user = await currentUser()
+  const userCategory = getUserCategory(user?.emailAddresses[0]?.emailAddress)
 
   const quickActions = [
     { label: "Add Client", icon: UserPlus, href: "/clients/new", description: "Create new client profile" },
@@ -367,26 +387,37 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* Welcome Section - Collapsible on Mobile */}
-<details className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 group md:block">
-  <summary className="cursor-pointer p-6 md:p-8 list-none">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
-          <LayoutDashboard className="h-5 w-5 text-white" />
+      <details className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 group md:block">
+        <summary className="cursor-pointer p-6 md:p-8 list-none">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
+                <LayoutDashboard className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-gray-900">
+                  Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{user?.firstName ?? "Guest"}</span>
+                </h1>
+                <p className="text-sm text-gray-500 mt-0.5 hidden md:block">
+                  {userCategory}
+                </p>
+              </div>
+            </div>
+            <span className="text-gray-400 text-sm md:hidden group-open:rotate-180 transition-transform duration-200">▼</span>
+          </div>
+          <p className="text-gray-500 text-sm mt-2 md:hidden group-open:block hidden">
+            {userCategory}
+          </p>
+          <p className="text-gray-500 text-sm max-w-2xl mt-2 hidden md:block">
+            Here's what's happening with your business today. Track performance, manage clients, and stay on top of tasks.
+          </p>
+        </summary>
+        <div className="px-6 pb-6 md:px-8 md:pb-8 -mt-2 md:mt-0">
+          <p className="text-gray-500 text-sm max-w-2xl md:hidden">
+            Here's what's happening with your business today. Track performance, manage clients, and stay on top of tasks.
+          </p>
         </div>
-        <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-gray-900">
-          Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{user?.firstName ?? "there"}</span>
-        </h1>
-      </div>
-      <span className="text-gray-400 text-sm md:hidden group-open:rotate-180 transition-transform duration-200">▼</span>
-    </div>
-    <div className="pl-0 md:pl-12 mt-2 md:block group-open:block hidden md:group-open:block">
-      <p className="text-gray-500 text-sm max-w-2xl">
-        Here's what's happening with your business today. Track performance, manage clients, and stay on top of tasks.
-      </p>
-    </div>
-  </summary>
-</details>
+      </details>
 
       {/* Stats + Health Score */}
       <Suspense fallback={<StatsSkeleton />}>
@@ -470,4 +501,6 @@ export default async function DashboardPage() {
       </div>
     </div>
   )
-}
+      }
+            
+      
