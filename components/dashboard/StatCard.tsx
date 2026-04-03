@@ -9,25 +9,21 @@ interface StatCardProps {
   label: string
   value: string
   icon: React.ReactNode
-  color?: string  // Now optional - will use default primary gradient
+  color?: string
   href: string
   sub?: string
-  trend?: number
+  trend?: number | null  // Updated to accept null
 }
 
 export default function StatCard({ 
   label, 
   value, 
   icon, 
-  color = "from-indigo-500 to-indigo-600", // Default primary gradient
+  color = "from-indigo-500 to-indigo-600",
   href, 
   sub, 
   trend 
 }: StatCardProps) {
-  const isPositive = trend && trend > 0
-  const isNegative = trend && trend < 0
-  const isNeutral = trend === 0
-
   return (
     <Link
       href={href}
@@ -50,10 +46,10 @@ export default function StatCard({
                       transition-all duration-300 rounded-xl" />
 
       <div className="relative z-10 p-5">
-        {/* Icon with consistent gradient */}
+        {/* Icon with consistent gradient - responsive size */}
         <div className="mb-4">
           <div className={cn(
-            "w-12 h-12 rounded-xl flex items-center justify-center",
+            "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center",
             "bg-gradient-to-r shadow-md",
             color
           )}>
@@ -61,8 +57,8 @@ export default function StatCard({
           </div>
         </div>
 
-        {/* Value */}
-        <p className="text-3xl font-semibold tracking-tight text-gray-900">
+        {/* Value - responsive text size */}
+        <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
           {value}
         </p>
 
@@ -72,26 +68,32 @@ export default function StatCard({
         {/* Subtext */}
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
 
-        {/* Trend Indicator */}
+        {/* Trend Indicator - handles null values */}
         {trend !== undefined && (
           <div className="mt-3 flex items-center gap-1.5">
-            <div
-              className={cn(
-                "flex items-center gap-0.5 text-xs font-mono font-medium",
-                isPositive && "text-emerald-600",
-                isNegative && "text-rose-600",
-                isNeutral && "text-gray-400"
-              )}
-            >
-              {isPositive && <ArrowUpRight className="h-3.5 w-3.5" />}
-              {isNegative && <ArrowDownRight className="h-3.5 w-3.5" />}
-              {isNeutral && <Minus className="h-3.5 w-3.5" />}
-              <span className="font-semibold">
-                {isPositive && "+"}
-                {trend}%
-              </span>
-            </div>
-            <span className="text-xs text-gray-400">vs last month</span>
+            {trend === null ? (
+              <span className="text-xs text-gray-400">No prior data</span>
+            ) : (
+              <>
+                <div
+                  className={cn(
+                    "flex items-center gap-0.5 text-xs font-mono font-medium",
+                    trend > 0 && "text-emerald-600",
+                    trend < 0 && "text-rose-600",
+                    trend === 0 && "text-gray-400"
+                  )}
+                >
+                  {trend > 0 && <ArrowUpRight className="h-3.5 w-3.5" />}
+                  {trend < 0 && <ArrowDownRight className="h-3.5 w-3.5" />}
+                  {trend === 0 && <Minus className="h-3.5 w-3.5" />}
+                  <span className="font-semibold">
+                    {trend > 0 && "+"}
+                    {trend}%
+                  </span>
+                </div>
+                <span className="text-xs text-gray-400">vs last month</span>
+              </>
+            )}
           </div>
         )}
       </div>
