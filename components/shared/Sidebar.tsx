@@ -78,13 +78,13 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop Sidebar - Width changed from w-64 to w-56 */}
-      <div className="hidden md:flex w-56 h-screen glass-card flex-col fixed left-0 top-0">
+      {/* Desktop Sidebar - Width changed from w-56 to w-52 (208px) */}
+      <div className="hidden md:flex w-52 h-screen glass-card flex-col fixed left-0 top-0">
         <NavContent />
       </div>
 
-      {/* Main content margin - Updated to match w-56 */}
-      <div className="md:ml-56">
+      {/* Main content margin - Updated to match w-52 */}
+      <div className="md:ml-52">
         {/* Mobile Bottom Nav */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 
                         bg-white/70 backdrop-blur-md border-t border-gray-200 
