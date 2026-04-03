@@ -38,8 +38,6 @@ const gradients = {
 
 // Helper function to get user industry/category
 function getUserCategory(email?: string): string {
-  // In a real app, this would come from user metadata or database
-  // For now, using email to pseudo-randomly assign for demo variety
   const categories = [
     { label: "Creative Director", emoji: "🎨", color: "text-purple-600" },
     { label: "Agency Owner", emoji: "💼", color: "text-indigo-600" },
@@ -51,13 +49,12 @@ function getUserCategory(email?: string): string {
     { label: "Design Agency", emoji: "✨", color: "text-pink-600" },
   ]
   
-  // Use email hash to pseudo-randomly assign (remove when you have real user data)
   const hash = email?.length || 0
   const category = categories[hash % categories.length]
   return `${category.emoji} ${category.label}`
 }
 
-// Collapsible wrapper for mobile
+// Collapsible wrapper for mobile - with tap effect
 function CollapsibleCard({ 
   title, 
   children, 
@@ -74,7 +71,7 @@ function CollapsibleCard({
       className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-indigo-200 transition-all duration-200"
       open={defaultOpen}
     >
-      <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-all duration-200 hover:bg-gray-50/50 active:scale-[0.99] active:bg-gray-100/50 flex items-center justify-between">
+      <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-all duration-200 hover:bg-gray-50/50 active:scale-[0.99] active:bg-gray-100/50 flex items-center justify-between touch-manipulation">
         <div className="flex items-center gap-2">
           {icon && <span className="text-indigo-500">{icon}</span>}
           <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -154,6 +151,7 @@ async function DashboardStats() {
           </div>
         ))}
       </div>
+
       {/* Business Health Score */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1">
@@ -196,7 +194,6 @@ async function DashboardPipelineChart() {
     </CollapsibleCard>
   )
 }
-
 async function TopClients() {
   const stats = await getDashboardStats()
   if (stats.topClients.length === 0) return null
@@ -204,7 +201,6 @@ async function TopClients() {
     <CollapsibleCard title="Top Clients by Revenue" icon={<Users className="h-4 w-4" />} defaultOpen>
       <div className="space-y-3">
         {stats.topClients.map((client) => {
-          // Find max revenue to calculate percentage for progress bar
           const maxRevenue = Math.max(...stats.topClients.map(c => c.revenue), 1)
           const percentage = (client.revenue / maxRevenue) * 100
           
@@ -212,7 +208,7 @@ async function TopClients() {
             <Link
               key={client.id}
               href={`/clients/${client.id}`}
-              className="group block p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
+              className="group block p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] active:bg-gray-100/50 touch-manipulation"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
@@ -232,7 +228,6 @@ async function TopClients() {
                   <span>{client.trend > 0 ? '+' : ''}{client.trend}%</span>
                 </div>
               </div>
-              {/* Progress bar */}
               <div className="w-full bg-gray-100 rounded-full h-1.5">
                 <div 
                   className="h-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500"
@@ -292,7 +287,7 @@ async function RecentClients() {
           <p className="text-sm text-gray-500">No clients yet</p>
           <Link 
             href="/clients/new" 
-            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all active:scale-95"
+            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all active:scale-95 touch-manipulation"
           >
             Add your first client
             <ArrowUpRight className="h-3 w-3" />
@@ -304,7 +299,7 @@ async function RecentClients() {
             <Link
               key={client.id}
               href={`/clients/${client.id}`}
-              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
+              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] active:bg-gray-100/50 touch-manipulation"
             >
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
                 <span className="text-white text-sm font-medium">{client.name.charAt(0).toUpperCase()}</span>
@@ -334,7 +329,7 @@ async function UpcomingReminders() {
       {reminderCount === 0 ? (
         <Link 
           href="/reminders"
-          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98]"
+          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98] touch-manipulation"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -352,7 +347,7 @@ async function UpcomingReminders() {
       ) : (
         <Link 
           href="/reminders#pending"
-          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98]"
+          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98] touch-manipulation"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -388,7 +383,7 @@ export default async function DashboardPage() {
     <div className="space-y-8 animate-fadeIn">
       {/* Welcome Section - Collapsible on Mobile */}
       <details className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 group md:block">
-        <summary className="cursor-pointer p-6 md:p-8 list-none">
+        <summary className="cursor-pointer p-6 md:p-8 list-none touch-manipulation">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
@@ -461,8 +456,8 @@ export default async function DashboardPage() {
                   className="group relative flex flex-col items-center text-center p-4 rounded-xl 
                              bg-white border border-gray-100
                              hover:border-indigo-200 hover:shadow-md
-                             hover:-translate-y-1 active:scale-95
-                             transition-all duration-200"
+                             hover:-translate-y-1 active:scale-95 active:bg-indigo-50/50
+                             transition-all duration-200 touch-manipulation"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600
@@ -501,6 +496,4 @@ export default async function DashboardPage() {
       </div>
     </div>
   )
-      }
-            
-      
+}
