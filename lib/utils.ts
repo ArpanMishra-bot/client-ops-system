@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Add this function
+// Full currency with 2 decimal places
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -16,7 +16,7 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// Add this for compact currency (K, M)
+// Compact currency (K, M) for large numbers, 2 decimals for small numbers
 export function formatCompactCurrency(value: number): string {
   if (value >= 1000000) {
     return `$${(value / 1000000).toFixed(1)}M`
@@ -24,5 +24,6 @@ export function formatCompactCurrency(value: number): string {
   if (value >= 1000) {
     return `$${(value / 1000).toFixed(0)}K`
   }
+  // For values under 1000, show with 2 decimal places
   return `$${value.toFixed(2)}`
 }
