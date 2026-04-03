@@ -178,7 +178,6 @@ async function DashboardPipelineChart() {
 }
 
 async function TopClients() {
-async function TopClients() {
   const stats = await getDashboardStats()
   if (stats.topClients.length === 0) return null
   return (
