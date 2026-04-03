@@ -1,3 +1,4 @@
+// components/dashboard/PipelineChart.tsx
 "use client"
 
 import { useState } from "react"
@@ -72,7 +73,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
           <p className="text-xs font-mono text-indigo-600 font-semibold mb-1 tracking-wide">
             {stage}
           </p>
-          <p className="text-2xl font-serif font-light tracking-tight text-gray-900">
+          <p className="text-2xl font-semibold tracking-tight text-gray-900">
             {view === "value" ? formatCurrency(value) : `${value.toFixed(1)}%`}
           </p>
           {view === "value" && (
@@ -95,7 +96,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             Pipeline Value
           </div>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-3xl font-serif font-light tracking-tight text-gray-900">
+            <h3 className="text-3xl font-semibold tracking-tight text-gray-900">
               {formatCompactCurrency(metrics.totalPipeline)}
             </h3>
             <span className="text-sm text-gray-400">total</span>
@@ -143,14 +144,14 @@ export default function PipelineChart({ data }: PipelineChartProps) {
       <div className="flex flex-wrap gap-6 mb-6 pb-4 border-b border-gray-100">
         <div>
           <div className="text-xs font-mono text-gray-400 uppercase tracking-wider">Largest Stage</div>
-          <div className="text-lg font-serif font-light mt-0.5 text-gray-900">
+          <div className="text-lg font-semibold mt-0.5 text-gray-900">
             {metrics.maxStage.stage}
           </div>
           <div className="text-xs text-gray-400">{formatCompactCurrency(metrics.maxStage.value)}</div>
         </div>
         <div>
           <div className="text-xs font-mono text-gray-400 uppercase tracking-wider">Avg per Stage</div>
-          <div className="text-lg font-serif font-light mt-0.5 text-gray-900">
+          <div className="text-lg font-semibold mt-0.5 text-gray-900">
             {formatCompactCurrency(metrics.avgStageValue)}
           </div>
           <div className="text-xs text-gray-400">across {data.length} stages</div>
@@ -165,10 +166,10 @@ export default function PipelineChart({ data }: PipelineChartProps) {
             margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
           >
             <defs>
-              {/* Same gradient as revenue chart - purple to indigo */}
+              {/* Single gradient - indigo */}
               <linearGradient id="pipelineGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#a78bfa" />
-                <stop offset="100%" stopColor="#6366f1" />
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#4f46e5" />
               </linearGradient>
             </defs>
             
@@ -220,11 +221,11 @@ export default function PipelineChart({ data }: PipelineChartProps) {
         </ResponsiveContainer>
       </div>
 
-      {/* Footer with legend - matches revenue chart exactly */}
+      {/* Footer */}
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
         <div className="flex gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-purple-400 to-indigo-500" />
+            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
             <span className="text-xs text-gray-500 font-mono">
               {view === "value" ? "Pipeline Value" : "Percentage Distribution"}
             </span>
