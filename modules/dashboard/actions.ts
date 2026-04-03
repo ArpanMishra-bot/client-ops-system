@@ -1,3 +1,4 @@
+// modules/dashboard/actions.ts
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
@@ -91,37 +92,54 @@ export async function getDashboardStats() {
   const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
   
-  // Calculate trends
+  // ========== FIXED TREND CALCULATIONS ==========
+  // Helper function to calculate trend safely
+  function calculateTrend(thisMonth: number, lastMonth: number): number | null {
+    if (lastMonth === 0 && thisMonth === 0) {
+      return null // No data in either period
+    }
+    if (lastMonth === 0 && thisMonth > 0) {
+      return 100 // First month with data
+    }
+    if (lastMonth > 0 && thisMonth === 0) {
+      return -100 // Dropped to zero
+    }
+    return Math.round(((thisMonth - lastMonth) / lastMonth) * 100)
+  }
+
+  // Leads Trend
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
-  const leadsTrend = leadsLastMonth === 0 ? (leadsThisMonth > 0 ? 100 : 0) : Math.round(((leadsThisMonth - leadsLastMonth) / leadsLastMonth) * 100)
+  const leadsTrend = calculateTrend(leadsThisMonth, leadsLastMonth)
 
+  // Projects Trend
   const projectsThisMonth = projectsData.filter(p => p.createdAt >= firstDayThisMonth).length
   const projectsLastMonth = projectsData.filter(p => p.createdAt >= firstDayLastMonth && p.createdAt <= lastDayLastMonth).length
-  const projectsTrend = projectsLastMonth === 0 ? (projectsThisMonth > 0 ? 100 : 0) : Math.round(((projectsThisMonth - projectsLastMonth) / projectsLastMonth) * 100)
+  const projectsTrend = calculateTrend(projectsThisMonth, projectsLastMonth)
 
+  // Tasks Trend
   const tasksThisMonth = tasksData.filter(t => t.createdAt >= firstDayThisMonth).length
   const tasksLastMonth = tasksData.filter(t => t.createdAt >= firstDayLastMonth && t.createdAt <= lastDayLastMonth).length
-  const tasksTrend = tasksLastMonth === 0 ? (tasksThisMonth > 0 ? 100 : 0) : Math.round(((tasksThisMonth - tasksLastMonth) / tasksLastMonth) * 100)
+  const tasksTrend = calculateTrend(tasksThisMonth, tasksLastMonth)
 
+  // Revenue Trend
   const revenueThisMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayThisMonth).reduce((sum, i) => sum + i.total, 0)
   const revenueLastMonth = allInvoices.filter(i => i.status === "PAID" && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth).reduce((sum, i) => sum + i.total, 0)
-  const revenueTrend = revenueLastMonth === 0 ? (revenueThisMonth > 0 ? 100 : 0) : Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100)
+  const revenueTrend = calculateTrend(revenueThisMonth, revenueLastMonth)
 
+  // Client Trend
   const clientsThisMonth = clients.filter(c => c.createdAt >= firstDayThisMonth).length
   const clientsLastMonth = clients.filter(c => c.createdAt >= firstDayLastMonth && c.createdAt <= lastDayLastMonth).length
-  const clientTrend = clientsLastMonth === 0 ? (clientsThisMonth > 0 ? 100 : 0) : Math.round(((clientsThisMonth - clientsLastMonth) / clientsLastMonth) * 100)
+  const clientTrend = calculateTrend(clientsThisMonth, clientsLastMonth)
   
-// Calculate outstanding trend
-const outstandingThisMonth = allInvoices
-  .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayThisMonth)
-  .reduce((sum, i) => sum + i.total, 0)
-const outstandingLastMonth = allInvoices
-  .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth)
-  .reduce((sum, i) => sum + i.total, 0)
-const outstandingTrend = outstandingLastMonth === 0 
-  ? (outstandingThisMonth > 0 ? 100 : 0) 
-  : Math.round(((outstandingThisMonth - outstandingLastMonth) / outstandingLastMonth) * 100)
+  // Outstanding Trend
+  const outstandingThisMonth = allInvoices
+    .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayThisMonth)
+    .reduce((sum, i) => sum + i.total, 0)
+  const outstandingLastMonth = allInvoices
+    .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status) && i.createdAt >= firstDayLastMonth && i.createdAt <= lastDayLastMonth)
+    .reduce((sum, i) => sum + i.total, 0)
+  const outstandingTrend = calculateTrend(outstandingThisMonth, outstandingLastMonth)
 
   // Calculate top clients
   const clientRevenue = new Map<string, { name: string; total: number; lastMonthTotal: number }>()
@@ -146,7 +164,7 @@ const outstandingTrend = outstandingLastMonth === 0
       id,
       name: data.name,
       revenue: data.total,
-      trend: data.lastMonthTotal === 0 ? (data.total > 0 ? 100 : 0) : Math.round(((data.total - data.lastMonthTotal) / data.lastMonthTotal) * 100)
+      trend: calculateTrend(data.total, data.lastMonthTotal) ?? 0
     }))
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 5)
@@ -170,8 +188,8 @@ const outstandingTrend = outstandingLastMonth === 0
   healthScore = Math.round(clientScore + revenueScore + pipelineScore + tasksScore)
   healthScore = Math.min(100, Math.max(0, healthScore))
 
-  const healthColor = healthScore >= 80 ? "text-green-600" : healthScore >= 50 ? "text-yellow-600" : "text-red-600"
-  const healthBg = healthScore >= 80 ? "bg-green-50" : healthScore >= 50 ? "bg-yellow-50" : "bg-red-50"
+  const healthColor = healthScore >= 80 ? "text-emerald-600" : healthScore >= 50 ? "text-amber-600" : "text-rose-600"
+  const healthBg = healthScore >= 80 ? "bg-emerald-50" : healthScore >= 50 ? "bg-amber-50" : "bg-rose-50"
 
   // Activity feed
   const recentActivities = [
@@ -192,17 +210,17 @@ const outstandingTrend = outstandingLastMonth === 0
 
   return {
     totalClients,
-    clientTrend,
+    clientTrend,  // Can be number | null now
     activeLeads,
-    leadsTrend,
+    leadsTrend,   // Can be number | null now
     activeProjects,
-    projectsTrend,
+    projectsTrend, // Can be number | null now
     totalRevenue,
-    revenueTrend,
+    revenueTrend,  // Can be number | null now
     outstanding,
-  outstandingTrend,
+    outstandingTrend, // Can be number | null now
     pendingTasks,
-    tasksTrend,
+    tasksTrend,    // Can be number | null now
     upcomingReminders: reminders,
     recentClients,
     topClients,
