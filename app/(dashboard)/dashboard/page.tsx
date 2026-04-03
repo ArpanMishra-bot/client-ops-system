@@ -354,25 +354,27 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 p-8">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full blur-3xl -mr-32 -mt-32" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-100/40 rounded-full blur-3xl -ml-24 -mb-24" />
-        
-        <div className="relative">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
-              <LayoutDashboard className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-gray-900">
-              Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{user?.firstName ?? "there"}</span>
-            </h1>
-          </div>
-          <p className="text-gray-500 text-sm max-w-2xl pl-12">
-            Here's what's happening with your business today. Track performance, manage clients, and stay on top of tasks.
-          </p>
+      {/* Welcome Section - Collapsible on Mobile */}
+<details className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 group md:block">
+  <summary className="cursor-pointer p-6 md:p-8 list-none">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
+          <LayoutDashboard className="h-5 w-5 text-white" />
         </div>
+        <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-gray-900">
+          Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{user?.firstName ?? "there"}</span>
+        </h1>
       </div>
+      <span className="text-gray-400 text-sm md:hidden group-open:rotate-180 transition-transform duration-200">▼</span>
+    </div>
+    <div className="pl-0 md:pl-12 mt-2 md:block group-open:block hidden md:group-open:block">
+      <p className="text-gray-500 text-sm max-w-2xl">
+        Here's what's happening with your business today. Track performance, manage clients, and stay on top of tasks.
+      </p>
+    </div>
+  </summary>
+</details>
 
       {/* Stats + Health Score */}
       <Suspense fallback={<StatsSkeleton />}>
