@@ -41,7 +41,7 @@ async function ProjectsList() {
           <Link
             key={project.id}
             href={`/projects/${project.id}`}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 block group"
+            className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] active:shadow-lg transition-all duration-200 block group"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
