@@ -85,7 +85,7 @@ export default function NewLeadPage() {
         <p className="text-sm text-gray-500 mt-1">Fill in the details to add a new lead to your pipeline.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700">Full Name *</label>
