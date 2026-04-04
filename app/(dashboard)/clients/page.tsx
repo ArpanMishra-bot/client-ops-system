@@ -81,7 +81,7 @@ async function ClientsList() {
           <Link
             key={client.id}
             href={`/clients/${client.id}`}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4 hover:shadow-md transition-all duration-200 active:scale-[0.98] block"
+            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-4 hover:shadow-lg active:shadow-lg active:scale-[0.98] transition-all duration-200 block"
           >
             <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center shrink-0">
               <span className="text-white text-sm font-medium">
