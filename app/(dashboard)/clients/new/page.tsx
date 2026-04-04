@@ -44,16 +44,17 @@ export default function NewClientPage() {
     }
 
     const result = await createClient({
-      name: name,
-      email: email,
-      phone: formData.get("phone") as string,
-      company: formData.get("company") as string,
-      address: formData.get("address") as string,
-      city: formData.get("city") as string,
-      country: formData.get("country") as string,
-      website: website,
-      notes: formData.get("notes") as string,
-    })
+  name: name,
+  email: email,
+  phone: formData.get("phone") as string,
+  company: formData.get("company") as string,
+  address: formData.get("address") as string,
+  city: formData.get("city") as string,
+  country: formData.get("country") as string,
+  website: website,
+  notes: formData.get("notes") as string,
+  isActive: true,
+})
 
     if (result.success) {
       toast.success("Client created successfully")
