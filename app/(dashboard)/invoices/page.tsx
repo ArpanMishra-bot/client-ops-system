@@ -41,20 +41,25 @@ async function InvoicesList() {
     <>
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-          <p className="text-xs text-gray-500">Revenue</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">${totalRevenue.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-          <p className="text-xs text-gray-500">Outstanding</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">${outstanding.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-          <p className="text-xs text-gray-500">Total</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">{invoices.length}</p>
-        </div>
-      </div>
-
+  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+    <p className="text-sm font-medium text-gray-600">Revenue</p>
+    <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mt-1">
+      ${totalRevenue.toLocaleString()}
+    </p>
+  </div>
+  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+    <p className="text-sm font-medium text-gray-600">Outstanding</p>
+    <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mt-1">
+      ${outstanding.toLocaleString()}
+    </p>
+  </div>
+  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+    <p className="text-sm font-medium text-gray-600">Total Invoices</p>
+    <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mt-1">
+      {invoices.length}
+    </p>
+  </div>
+</div>
       {/* Desktop Table */}
       <div className="hidden md:block bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         <table className="w-full">
