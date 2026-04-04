@@ -19,17 +19,17 @@ export default function EditClientForm({ client }: { client: Client }) {
     const formData = new FormData(form)
 
     const result = await updateClient(client.id, {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      phone: formData.get("phone") as string,
-      company: formData.get("company") as string,
-      address: formData.get("address") as string,
-      city: formData.get("city") as string,
-      country: formData.get("country") as string,
-      website: formData.get("website") as string,
-      notes: formData.get("notes") as string,
-    })
-
+  name: formData.get("name") as string,
+  email: formData.get("email") as string,
+  phone: formData.get("phone") as string,
+  company: formData.get("company") as string,
+  address: formData.get("address") as string,
+  city: formData.get("city") as string,
+  country: formData.get("country") as string,
+  website: formData.get("website") as string,
+  notes: formData.get("notes") as string,
+  isActive: client.isActive,
+})
     if (result.success) {
       toast.success("Client updated successfully")
       router.push(`/clients/${client.id}`)
