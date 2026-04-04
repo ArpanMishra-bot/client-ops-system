@@ -73,7 +73,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-100 p-5">
+    <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
