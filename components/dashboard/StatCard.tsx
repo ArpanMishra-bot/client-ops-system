@@ -53,7 +53,7 @@ export default function StatCard({
                       group-hover:from-indigo-50/20 group-hover:to-purple-50/20
                       transition-all duration-300 rounded-xl" />
 
-      <div className="relative z-10 p-5">
+      <div className="relative z-10 p-6">
         {/* Icon - responsive size */}
         <div className="mb-4">
           <div className={cn(
