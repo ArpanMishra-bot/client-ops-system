@@ -69,7 +69,7 @@ export default function NewProjectForm({ clients }: { clients: Client[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-6">
       {clients.length === 0 && (
         <div className="bg-yellow-50 text-yellow-700 text-sm px-4 py-3 rounded-lg">
           You need to <Link href="/clients/new" className="font-semibold underline">add a client</Link> before creating a project.
