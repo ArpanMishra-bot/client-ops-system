@@ -57,7 +57,7 @@ export default function LeadBoard({ leads, stages }: Props) {
         return (
           <div
             key={stage.status}
-            className="flex-shrink-0 w-72 bg-white rounded-xl border border-gray-100 shadow-sm"
+            className="flex-shrink-0 w-72 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg active:shadow-lg transition-all duration-200"
             onDrop={() => handleDrop(stage.status)}
             onDragOver={handleDragOver}
           >
