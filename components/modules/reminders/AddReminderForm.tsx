@@ -73,12 +73,12 @@ export default function AddReminderForm() {
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-900">New Reminder</h2>
         <button
-          type="button"
-          onClick={() => setShowForm(false)}
-          className="p-1 text-gray-400 hover:text-gray-600"
-        >
-          <X className="h-4 w-4" />
-        </button>
+  onClick={() => setShowForm(true)}
+  className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+>
+  <Plus className="h-4 w-4" />
+  Add Reminder
+</button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5 md:col-span-2">
