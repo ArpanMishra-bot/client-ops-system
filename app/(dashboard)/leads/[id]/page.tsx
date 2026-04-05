@@ -37,12 +37,12 @@ export default async function LeadDetailPage({
         </Link>
         <div className="flex items-center gap-2">
           <Link
-            href={`/leads/${lead.id}/edit`}
-            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-2"
-          >
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Link>
+  href={`/leads/${lead.id}/edit`}
+  className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 flex items-center gap-2"
+>
+  <Pencil className="h-4 w-4" />
+  Edit
+</Link>
           {isWon && !alreadyConverted && (
             <ConvertToClientButton leadId={lead.id} />
           )}
