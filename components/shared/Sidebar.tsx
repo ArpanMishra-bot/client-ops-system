@@ -46,13 +46,12 @@ export default function Sidebar() {
               onMouseEnter={() => setTooltip(item.label)}
               onMouseLeave={() => setTooltip(null)}
               className={cn(
-                "relative flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg group",
+                "relative flex items-center gap-3 py-2 text-sm font-medium rounded-lg group",
                 "transition-all duration-200 ease-out",
-                // Active state styles
+                // Active state with left border
                 isActive
-                  ? "bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-700 shadow-inner"
-                  : "text-gray-600 hover:bg-white/60 hover:text-gray-900",
-                // Mobile tap effects - added these
+                  ? "bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-700 shadow-inner border-l-2 border-indigo-500 pl-2.5 pr-3"
+                  : "text-gray-600 hover:bg-white/60 hover:text-gray-900 px-3",
                 "active:scale-[0.97] active:bg-indigo-100/80 active:text-indigo-800",
                 "cursor-pointer touch-manipulation",
                 "focus-visible:ring-2 focus-visible:ring-indigo-400"
@@ -97,7 +96,7 @@ export default function Sidebar() {
 
       {/* Main content margin */}
       <div className="md:ml-52">
-        {/* Mobile Bottom Nav - with tap effects */}
+        {/* Mobile Bottom Nav */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 
                         bg-white/95 backdrop-blur-md border-t border-gray-200 
                         flex items-center justify-around z-30 rounded-t-2xl
@@ -112,8 +111,7 @@ export default function Sidebar() {
                 className={cn(
                   "flex flex-col items-center justify-center flex-1 py-2 rounded-lg",
                   "transition-all duration-150 ease-out",
-                  // Mobile tap effects
-                  "active:scale-90 active:bg-indigo-100/50",
+                  "active:scale-90 active:bg-indigo-100/50 active:shadow-lg",
                   "cursor-pointer touch-manipulation",
                   isActive ? "text-indigo-600" : "text-gray-500 hover:text-gray-700"
                 )}
