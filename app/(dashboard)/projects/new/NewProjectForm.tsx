@@ -148,10 +148,12 @@ export default function NewProjectForm({ clients }: { clients: Client[] }) {
 >
   {loading ? "Creating..." : "Create Project"}
 </button>
-        <Link href="/projects"
-          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
-          Cancel
-        </Link>
+        <Link
+  href="/projects"
+  className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+>
+  Cancel
+</Link>
       </div>
     </form>
   )
