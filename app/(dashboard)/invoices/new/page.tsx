@@ -5,8 +5,13 @@ import NewInvoiceForm from "./NewInvoiceForm"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
-export default async function NewInvoicePage() {
+export default async function NewInvoicePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ clientId?: string; projectId?: string }>
+}) {
   const { userId } = await auth()
+  const { clientId, projectId } = await searchParams
   const clients = await getClients()
   const invoiceNumber = await generateInvoiceNumber(userId!)
 
@@ -22,7 +27,12 @@ export default async function NewInvoicePage() {
         <h1 className="text-2xl font-semibold text-gray-900">New Invoice</h1>
         <p className="text-sm text-gray-500 mt-1">Create a new invoice for a client.</p>
       </div>
-      <NewInvoiceForm clients={clients} invoiceNumber={invoiceNumber} />
+      <NewInvoiceForm 
+        clients={clients} 
+        invoiceNumber={invoiceNumber} 
+        preselectedClientId={clientId}
+        preselectedProjectId={projectId}
+      />
     </div>
   )
 }
