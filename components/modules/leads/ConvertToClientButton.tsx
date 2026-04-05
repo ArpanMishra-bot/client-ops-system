@@ -17,7 +17,7 @@ export default function ConvertToClientButton({ leadId }: { leadId: string }) {
     try {
       const result = await convertLeadToClient(leadId)
       if (result.success) {
-        setClientId(result.clientId)
+        setClientId(result.clientId!)
         toast.success(result.message || "Lead converted to client successfully")
       } else {
         toast.error(result.error || "Failed to convert lead")
