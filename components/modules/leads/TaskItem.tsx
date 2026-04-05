@@ -88,12 +88,12 @@ export default function TaskItem({ task, projectId }: Props) {
   <Pencil className="h-3.5 w-3.5" />
 </button>
             <button
-              onClick={() => setDeleteDialogOpen(true)}
-              className="p-1 text-gray-500 hover:text-red-600 transition-colors"
-              title="Delete task"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
+  onClick={() => setDeleteDialogOpen(true)}
+  className="p-1 text-gray-500 hover:text-red-600 active:scale-90 active:bg-red-50 rounded transition-all duration-150"
+  title="Delete task"
+>
+  <Trash2 className="h-3.5 w-3.5" />
+</button>
           </div>
         </div>
 
