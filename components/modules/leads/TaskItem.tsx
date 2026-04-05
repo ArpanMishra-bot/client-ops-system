@@ -78,15 +78,15 @@ export default function TaskItem({ task, projectId }: Props) {
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <button
-              onClick={() => {
-                setEditingTitle(task.title)
-                setEditModalOpen(true)
-              }}
-              className="p-1 text-gray-500 hover:text-gray-900 transition-colors"
-              title="Edit task"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </button>
+  onClick={() => {
+    setEditingTitle(task.title)
+    setEditModalOpen(true)
+  }}
+  className="p-1 text-gray-500 hover:text-gray-900 active:scale-90 active:bg-gray-100 rounded transition-all duration-150"
+  title="Edit task"
+>
+  <Pencil className="h-3.5 w-3.5" />
+</button>
             <button
               onClick={() => setDeleteDialogOpen(true)}
               className="p-1 text-gray-500 hover:text-red-600 transition-colors"
