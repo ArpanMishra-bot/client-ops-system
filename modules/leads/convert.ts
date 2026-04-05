@@ -14,32 +14,46 @@ export async function convertLeadToClient(leadId: string) {
   })
 
   if (!lead) {
-    throw new Error("Lead not found")
+    return { success: false, error: "Lead not found" }
   }
 
-  // Create a new client from lead data
-  const client = await db.client.create({
-    data: {
-      userId,
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      company: lead.company,
-      notes: lead.notes,
-      isActive: true,
-    },
-  })
+  // Check if already converted
+  if (lead.convertedToId) {
+    return { success: false, error: "Lead already converted to a client" }
+  }
 
-  // Update the lead to mark it as converted
-  await db.lead.update({
-    where: { id: leadId },
-    data: {
-      convertedToId: client.id,
-    },
-  })
+  try {
+    // Create a new client from lead data
+    const client = await db.client.create({
+      data: {
+        userId,
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        company: lead.company,
+        notes: lead.notes,
+        isActive: true,
+      },
+    })
 
-  revalidatePath("/leads")
-  revalidatePath("/clients")
+    // Update the lead to mark it as converted
+    await db.lead.update({
+      where: { id: leadId },
+      data: {
+        convertedToId: client.id,
+      },
+    })
 
-  return client
+    revalidatePath("/leads")
+    revalidatePath("/clients")
+
+    return { 
+      success: true, 
+      clientId: client.id,
+      message: `✅ "${lead.name}" has been converted to a client` 
+    }
+  } catch (error) {
+    console.error("Convert lead error:", error)
+    return { success: false, error: "Failed to convert lead to client" }
+  }
 }
