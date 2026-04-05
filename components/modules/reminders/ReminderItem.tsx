@@ -133,19 +133,19 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
           </div>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setEditModalOpen(true)}
-              className="p-1 text-gray-400 hover:text-gray-700 transition-colors"
-              title="Edit reminder"
-            >
-              <Pencil className="h-4 w-4" />
-            </button>
+  onClick={() => setEditModalOpen(true)}
+  className="p-1 text-gray-400 hover:text-gray-700 active:scale-90 active:bg-gray-100 rounded transition-all duration-150"
+  title="Edit reminder"
+>
+  <Pencil className="h-4 w-4" />
+</button>
             <button
-              onClick={() => setDeleteDialogOpen(true)}
-              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-              title="Delete reminder"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+  onClick={() => setDeleteDialogOpen(true)}
+  className="p-1 text-gray-400 hover:text-red-500 active:scale-90 active:bg-red-50 rounded transition-all duration-150"
+  title="Delete reminder"
+>
+  <Trash2 className="h-4 w-4" />
+</button>
           </div>
         </div>
       </div>
