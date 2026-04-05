@@ -122,9 +122,10 @@ export default function AddReminderForm() {
       </div>
       <div className="flex items-center gap-3">
         <button type="submit" disabled={loading}
-          className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50">
-          {loading ? "Adding..." : "Add Reminder"}
-        </button>
+  className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
+>
+  {loading ? "Adding..." : "Add Reminder"}
+</button>
         <button type="button" onClick={() => setShowForm(false)}
           className="px-5 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
           Cancel
