@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { getProjectById } from "@/modules/projects/actions"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Plus, Calendar, DollarSign, Pencil } from "lucide-react"
+import { ArrowLeft, Plus, Calendar, DollarSign, Pencil, FileText } from "lucide-react"
 import Link from "next/link"
 import { PROJECT_STATUS_CONFIG, TASK_STATUS_CONFIG } from "@/modules/projects/types"
 import TaskItem from "@/components/modules/leads/TaskItem"
@@ -39,12 +39,19 @@ export default async function ProjectDetailPage({
         </Link>
         <div className="flex items-center gap-2">
           <Link
-  href={`/projects/${project.id}/edit`}
-  className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 flex items-center gap-2"
->
-  <Pencil className="h-4 w-4" />
-  Edit
-</Link>
+            href={`/invoices/new?clientId=${project.clientId}&projectId=${project.id}`}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Create Invoice
+          </Link>
+          <Link
+            href={`/projects/${project.id}/edit`}
+            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 flex items-center gap-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Edit
+          </Link>
           <DeleteProjectButton projectId={project.id} projectName={project.name} />
         </div>
       </div>
