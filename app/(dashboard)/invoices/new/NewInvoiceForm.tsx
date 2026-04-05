@@ -24,9 +24,13 @@ type FormErrors = {
 export default function NewInvoiceForm({
   clients,
   invoiceNumber,
+  preselectedClientId,
+  preselectedProjectId,
 }: {
   clients: Client[]
   invoiceNumber: string
+  preselectedClientId?: string
+  preselectedProjectId?: string
 }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -61,17 +65,14 @@ export default function NewInvoiceForm({
     const newErrors: FormErrors = {}
     const itemErrors: any[] = []
 
-    // Validate client
     if (!clientId) {
       newErrors.clientId = "Please select a client"
     }
 
-    // Validate due date
     if (!dueDate) {
       newErrors.dueDate = "Due date is required"
     }
 
-    // Validate items
     let hasValidItem = false
     items.forEach((item, idx) => {
       const itemErr: any = {}
@@ -133,7 +134,7 @@ export default function NewInvoiceForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
         <h2 className="text-sm font-semibold text-gray-900">Invoice Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -146,6 +147,7 @@ export default function NewInvoiceForm({
             <label className="text-sm font-medium text-gray-700">Client *</label>
             <select 
               name="clientId" 
+              defaultValue={preselectedClientId || ""}
               className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
                 errors.clientId ? "border-red-500" : "border-gray-200"
               }`}
@@ -211,6 +213,7 @@ export default function NewInvoiceForm({
                     value={item.rate}
                     onChange={(e) => updateItem(index, "rate", Number(e.target.value))}
                     min="0"
+                    step="0.01"
                     className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
                       errors.itemErrors?.[index]?.rate ? "border-red-500" : "border-gray-200"
                     }`}
@@ -276,17 +279,14 @@ export default function NewInvoiceForm({
 
       <div className="flex items-center gap-3">
         <button type="submit" disabled={loading}
-  className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
->
-  {loading ? "Creating..." : "Create Invoice"}
-</button>
-        <Link
-  href="/invoices"
-  className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
->
-  Cancel
-</Link>
+          className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50">
+          {loading ? "Creating..." : "Create Invoice"}
+        </button>
+        <Link href="/invoices"
+          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200">
+          Cancel
+        </Link>
       </div>
     </form>
   )
-}
+              }
