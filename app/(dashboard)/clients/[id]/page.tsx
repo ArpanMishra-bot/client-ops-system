@@ -51,15 +51,20 @@ export default async function ClientDetailPage({
             </div>
           </div>
           <div className="flex gap-2">
-            <Link
-  href={`/clients/${client.id}/edit`}
-  className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
->
-  Edit Client
-</Link>
-            <DeleteButton clientId={client.id} clientName={client.name} />
-          </div>
-        </div>
+  <Link
+    href={`/projects/new?clientId=${client.id}`}
+    className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+  >
+    Create Project
+  </Link>
+  <Link
+    href={`/clients/${client.id}/edit`}
+    className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+  >
+    Edit Client
+  </Link>
+  <DeleteButton clientId={client.id} clientName={client.name} />
+</div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-100">
           {client.email && (
