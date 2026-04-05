@@ -20,7 +20,7 @@ async function ProjectsList() {
         </p>
         <Link
           href="/projects/new"
-          className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all"
+          className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
         >
           <Briefcase className="h-4 w-4" />
           Create your first project
