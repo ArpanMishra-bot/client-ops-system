@@ -21,9 +21,9 @@ async function LeadsContent() {
           Add your first lead to start tracking opportunities and building your sales pipeline.
         </p>
         <Link
-          href="/leads/new"
-          className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all"
-        >
+  href="/leads/new"
+  className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+>
           <UserPlus className="h-4 w-4" />
           Add your first lead
         </Link>
@@ -69,9 +69,9 @@ export default async function LeadsPage() {
           <p className="text-sm text-gray-500 mt-1">Track and manage your sales pipeline</p>
         </div>
         <Link
-          href="/leads/new"
-          className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-        >
+  href="/leads/new"
+  className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+>
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Add Lead</span>
         </Link>
