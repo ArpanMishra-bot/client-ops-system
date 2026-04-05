@@ -169,10 +169,12 @@ export default function NewLeadPage() {
 >
             {loading ? "Creating..." : "Create Lead"}
           </button>
-          <Link href="/leads"
-            className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
-            Cancel
-          </Link>
+          <Link
+  href="/leads"
+  className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+>
+  Cancel
+</Link>
         </div>
       </form>
     </div>
