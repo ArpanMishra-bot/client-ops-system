@@ -6,15 +6,23 @@ import { db } from "@/lib/db"
 
 // Helper function to calculate trend safely
 function calculateTrend(thisMonth: number, lastMonth: number): number | null {
+  // Both zero - no data ever
   if (lastMonth === 0 && thisMonth === 0) {
     return null
   }
+  // First month with data (0 → positive)
   if (lastMonth === 0 && thisMonth > 0) {
-    return null
+    return 100
   }
+  // Dropped to zero (positive → 0)
   if (lastMonth > 0 && thisMonth === 0) {
     return -100
   }
+  // Same as last month
+  if (thisMonth === lastMonth) {
+    return 0
+  }
+  // Calculate percentage change
   return Math.round(((thisMonth - lastMonth) / lastMonth) * 100)
 }
 
@@ -66,20 +74,18 @@ export async function getDashboardStats() {
     }),
   ])
 
-  // ========== FIXED: Revenue chart data with proper month mapping ==========
+  // Revenue chart data with proper month mapping
   const chartData = []
-  const monthsToShow = 6 // Show last 6 months
+  const monthsToShow = 6
   
   for (let i = monthsToShow - 1; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
     const monthName = date.toLocaleString('default', { month: 'short' })
     const year = date.getFullYear()
     
-    // Get first and last day of the month for proper filtering
     const startOfMonth = new Date(year, date.getMonth(), 1)
     const endOfMonth = new Date(year, date.getMonth() + 1, 0, 23, 59, 59)
     
-    // Filter invoices for this specific month
     const monthlyInvoices = allInvoices.filter(inv => {
       const invDate = new Date(inv.createdAt)
       return inv.status === "PAID" && invDate >= startOfMonth && invDate <= endOfMonth
@@ -96,7 +102,8 @@ export async function getDashboardStats() {
   // Calculate pipeline data
   const stageOrder = ["NEW", "CONTACTED", "QUALIFIED", "PROPOSAL", "NEGOTIATION", "WON", "LOST"]
   const stageLabels: Record<string, string> = {
-    NEW: "New", CONTACTED: "Contacted", QUALIFIED: "Qualified", PROPOSAL: "Proposal", NEGOTIATION: "Negotiation", WON: "Won", LOST: "Lost"
+    NEW: "New", CONTACTED: "Contacted", QUALIFIED: "Qualified", PROPOSAL: "Proposal", 
+    NEGOTIATION: "Negotiation", WON: "Won", LOST: "Lost"
   }
 
   const pipelineData = stageOrder.map(status => ({
@@ -114,7 +121,7 @@ export async function getDashboardStats() {
   const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
   
-  // Trend calculations
+  // Trend calculations using fixed calculateTrend function
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
   const leadsTrend = calculateTrend(leadsThisMonth, leadsLastMonth)
