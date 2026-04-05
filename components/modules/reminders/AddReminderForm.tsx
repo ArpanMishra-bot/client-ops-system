@@ -127,9 +127,10 @@ export default function AddReminderForm() {
   {loading ? "Adding..." : "Add Reminder"}
 </button>
         <button type="button" onClick={() => setShowForm(false)}
-          className="px-5 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100">
-          Cancel
-        </button>
+  className="px-5 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+>
+  Cancel
+</button>
       </div>
     </form>
   )
