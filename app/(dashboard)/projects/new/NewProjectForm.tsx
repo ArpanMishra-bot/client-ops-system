@@ -7,7 +7,13 @@ import { toast } from "sonner"
 import type { Client } from "@/modules/clients/types"
 import Link from "next/link"
 
-export default function NewProjectForm({ clients }: { clients: Client[] }) {
+export default function NewProjectForm({ 
+  clients, 
+  preselectedClientId 
+}: { 
+  clients: Client[], 
+  preselectedClientId?: string 
+}) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -26,17 +32,14 @@ export default function NewProjectForm({ clients }: { clients: Client[] }) {
 
     const newErrors: Record<string, string> = {}
 
-    // Validate project name
     if (!name || name.trim().length < 2) {
       newErrors.name = "Project name must be at least 2 characters"
     }
 
-    // Validate client selection
     if (!clientId) {
       newErrors.clientId = "Please select a client"
     }
 
-    // Validate budget (if provided, must be positive number)
     if (budget && isNaN(Number(budget))) {
       newErrors.budget = "Please enter a valid number"
     }
@@ -69,7 +72,7 @@ export default function NewProjectForm({ clients }: { clients: Client[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
       {clients.length === 0 && (
         <div className="bg-yellow-50 text-yellow-700 text-sm px-4 py-3 rounded-lg">
           You need to <Link href="/clients/new" className="font-semibold underline">add a client</Link> before creating a project.
@@ -80,6 +83,7 @@ export default function NewProjectForm({ clients }: { clients: Client[] }) {
           <label className="text-sm font-medium text-gray-700">Client *</label>
           <select 
             name="clientId"
+            defaultValue={preselectedClientId || ""}
             className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
               errors.clientId ? "border-red-500" : "border-gray-200"
             }`}
@@ -144,16 +148,15 @@ export default function NewProjectForm({ clients }: { clients: Client[] }) {
       </div>
       <div className="flex items-center gap-3 pt-2">
         <button type="submit" disabled={loading || clients.length === 0}
-  className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
->
-  {loading ? "Creating..." : "Create Project"}
-</button>
-        <Link
-  href="/projects"
-  className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
->
-  Cancel
-</Link>
+          className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
+        >
+          {loading ? "Creating..." : "Create Project"}
+        </button>
+        <Link href="/projects"
+          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+        >
+          Cancel
+        </Link>
       </div>
     </form>
   )
