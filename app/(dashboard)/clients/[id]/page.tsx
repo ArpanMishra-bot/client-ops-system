@@ -65,6 +65,7 @@ export default async function ClientDetailPage({
   </Link>
   <DeleteButton clientId={client.id} clientName={client.name} />
 </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-100">
           {client.email && (
