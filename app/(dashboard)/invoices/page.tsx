@@ -27,9 +27,9 @@ async function InvoicesList() {
           Create your first invoice to start getting paid for your work. Track payments and manage outstanding balances.
         </p>
         <Link
-          href="/invoices/new"
-          className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all"
-        >
+  href="/invoices/new"
+  className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+>
           <FileText className="h-4 w-4" />
           Create your first invoice
         </Link>
