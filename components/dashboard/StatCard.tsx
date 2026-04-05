@@ -53,7 +53,7 @@ export default function StatCard({
   }
   // Case 5: Zero change (same as last month)
   else if (trend === 0) {
-    displayText = `0% vs last month`
+    displayText = `Steady`
     displayColor = "text-gray-400"
     displayIcon = <Minus className="h-3.5 w-3.5" />
   }
