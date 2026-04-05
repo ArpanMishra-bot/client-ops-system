@@ -172,13 +172,11 @@ export default function NewClientPage() {
         </div>
 
         <div className="flex items-center gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-          >
-            {loading ? "Creating..." : "Create Client"}
-          </button>
+          <button type="submit" disabled={loading}
+  className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
+>
+  {loading ? "Creating..." : "Create Client"}
+</button>
           <Link
             href="/clients"
             className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all active:scale-95"
