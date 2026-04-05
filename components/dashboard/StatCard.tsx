@@ -38,7 +38,7 @@ export default function StatCard({
         "bg-white border border-gray-100",
         "hover:border-indigo-200 hover:shadow-lg",
         // Mobile tap effects - added these
-        "active:scale-[0.97] active:bg-indigo-50/50 active:shadow-1g",
+        "active:scale-[0.97] active:bg-indigo-50/50 active:shadow-lg",
         "transition-all duration-200 ease-out",
         "focus-visible:ring-2 focus-visible:ring-indigo-400",
         "block cursor-pointer touch-manipulation"
