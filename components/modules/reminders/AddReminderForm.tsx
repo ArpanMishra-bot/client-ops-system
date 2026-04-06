@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createReminder } from "@/modules/reminders/actions"
+import { getClients } from "@/modules/clients/actions"
+import { getLeads } from "@/modules/leads/actions"
 import { toast } from "sonner"
 import { Plus, X } from "lucide-react"
 
@@ -9,6 +11,16 @@ export default function AddReminderForm() {
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [clients, setClients] = useState<any[]>([])
+  const [leads, setLeads] = useState<any[]>([])
+
+  useEffect(() => {
+    if (showForm) {
+      // Load clients and leads when form opens
+      getClients().then(setClients)
+      getLeads().then(setLeads)
+    }
+  }, [showForm])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -42,6 +54,8 @@ export default function AddReminderForm() {
       description: formData.get("description") as string,
       type: formData.get("type") as string,
       dueDate: dueDate,
+      clientId: formData.get("clientId") as string || null,
+      leadId: formData.get("leadId") as string || null,
     })
 
     if (result.success) {
@@ -73,12 +87,12 @@ export default function AddReminderForm() {
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-900">New Reminder</h2>
         <button
-  type="button"
-  onClick={() => setShowForm(false)}
-  className="p-1 text-gray-400 hover:text-gray-600"
->
-  <X className="h-4 w-4" />
-</button>
+          type="button"
+          onClick={() => setShowForm(false)}
+          className="p-1 text-gray-400 hover:text-gray-600"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5 md:col-span-2">
@@ -113,6 +127,26 @@ export default function AddReminderForm() {
           />
           {errors.dueDate && <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>}
         </div>
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700">Client</label>
+          <select name="clientId"
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+            <option value="">Select client (optional)</option>
+            {clients.map((client) => (
+              <option key={client.id} value={client.id}>{client.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-gray-700">Lead</label>
+          <select name="leadId"
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+            <option value="">Select lead (optional)</option>
+            {leads.map((lead) => (
+              <option key={lead.id} value={lead.id}>{lead.name}</option>
+            ))}
+          </select>
+        </div>
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Description</label>
           <textarea name="description" rows={2}
@@ -122,15 +156,13 @@ export default function AddReminderForm() {
       </div>
       <div className="flex items-center gap-3">
         <button type="submit" disabled={loading}
-  className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
->
-  {loading ? "Adding..." : "Add Reminder"}
-</button>
+          className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50">
+          {loading ? "Adding..." : "Add Reminder"}
+        </button>
         <button type="button" onClick={() => setShowForm(false)}
-  className="px-5 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200"
->
-  Cancel
-</button>
+          className="px-5 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200">
+          Cancel
+        </button>
       </div>
     </form>
   )
