@@ -8,6 +8,7 @@ import PipelineChart from "@/components/dashboard/PipelineChart"
 import StatCard from "@/components/dashboard/StatCard"
 import BusinessHealthScore from "@/components/dashboard/BusinessHealthScore"
 import { formatCurrency } from "@/lib/utils"
+import Link from "next/link"
 import {
   Users,
   TrendingUp,
@@ -84,6 +85,36 @@ function CollapsibleCard({
         {children}
       </div>
     </details>
+  )
+}
+// Overdue Invoices Alert Component
+async function OverdueInvoicesAlert() {
+  const stats = await getDashboardStats()
+  
+  const overdueCount = stats.upcomingReminders?.filter(r => 
+    r.type === "PAYMENT" && new Date(r.dueDate) < new Date() && !r.isDone
+  ).length || 0
+  
+  if (overdueCount === 0) return null
+  
+  return (
+    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+          <span className="text-red-600 text-xl">⚠️</span>
+        </div>
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-red-800">Overdue Invoices</h3>
+          <p className="text-sm text-red-600">
+            You have {overdueCount} overdue invoice{overdueCount !== 1 ? 's' : ''}. 
+            Please follow up with your clients.
+          </p>
+        </div>
+        <Link href="/invoices" className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all active:scale-95">
+          View Invoices
+        </Link>
+      </div>
+    </div>
   )
 }
 
@@ -374,7 +405,11 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+  <div className="space-y-8 animate-fadeIn">
+    <Suspense fallback={null}>
+      <OverdueInvoicesAlert />
+    </Suspense>
+
       {/* Welcome Section */}
       <details className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 group md:block">
         <summary className="cursor-pointer p-6 md:p-8 list-none">
