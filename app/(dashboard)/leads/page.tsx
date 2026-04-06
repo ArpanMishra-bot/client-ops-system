@@ -6,6 +6,7 @@ import LeadMobileList from "@/components/modules/leads/LeadMobileList"
 import { Plus, TrendingUp, UserPlus } from "lucide-react"
 import Link from "next/link"
 import LeadsSkeleton from "@/components/shared/LeadsSkeleton"
+import BulkStatusUpdate from "@/components/modules/leads/BulkStatusUpdate"
 
 async function LeadsContent() {
   const leads = await getLeads()
@@ -21,9 +22,9 @@ async function LeadsContent() {
           Add your first lead to start tracking opportunities and building your sales pipeline.
         </p>
         <Link
-  href="/leads/new"
-  className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
->
+          href="/leads/new"
+          className="mt-6 inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all"
+        >
           <UserPlus className="h-4 w-4" />
           Add your first lead
         </Link>
@@ -36,15 +37,20 @@ async function LeadsContent() {
 
   return (
     <>
-      <div className="flex gap-1 text-sm text-gray-500">
-        <span className="font-medium text-gray-900">{leads.length}</span>
-        <span>total leads</span>
-        <span className="mx-2">·</span>
-        <span className="font-medium text-green-600">{wonCount}</span>
-        <span>won</span>
-        <span className="mx-2">·</span>
-        <span className="font-medium text-gray-900">${totalValue.toLocaleString()}</span>
-        <span>pipeline value</span>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex gap-1 text-sm text-gray-500">
+          <span className="font-medium text-gray-900">{leads.length}</span>
+          <span>total leads</span>
+          <span className="mx-2">·</span>
+          <span className="font-medium text-green-600">{wonCount}</span>
+          <span>won</span>
+          <span className="mx-2">·</span>
+          <span className="font-medium text-gray-900">${totalValue.toLocaleString()}</span>
+          <span>pipeline value</span>
+        </div>
+        
+        {/* Bulk Status Update Component */}
+        <BulkStatusUpdate leads={leads} />
       </div>
 
       {/* Desktop Kanban */}
@@ -69,9 +75,9 @@ export default async function LeadsPage() {
           <p className="text-sm text-gray-500 mt-1">Track and manage your sales pipeline</p>
         </div>
         <Link
-  href="/leads/new"
-  className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
->
+          href="/leads/new"
+          className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
+        >
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Add Lead</span>
         </Link>
