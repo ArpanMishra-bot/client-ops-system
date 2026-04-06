@@ -1,6 +1,7 @@
 // app/(dashboard)/dashboard/page.tsx
+import { auth, currentUser } from "@clerk/nextjs/server"
+import { db } from "@/lib/db"
 import { Suspense } from "react"
-import { currentUser } from "@clerk/nextjs/server"
 import { getDashboardStats } from "@/modules/dashboard/actions"
 import StatsSkeleton from "@/components/shared/StatsSkeleton"
 import RevenueChart from "@/components/dashboard/RevenueChart"
@@ -88,16 +89,22 @@ function CollapsibleCard({
 }
 // Overdue Invoices Alert Component
 async function OverdueInvoicesAlert() {
-  const stats = await getDashboardStats()
+  const { userId } = await auth()
+  if (!userId) return null
   
-  const overdueCount = stats.upcomingReminders?.filter(r => 
-    r.type === "PAYMENT" && new Date(r.dueDate) < new Date() && !r.isDone
-  ).length || 0
+  const overdueInvoices = await db.invoice.findMany({
+    where: {
+      userId,
+      status: { not: "PAID" },
+      dueDate: { lt: new Date() }
+    },
+    select: { id: true, number: true, dueDate: true }
+  })
   
-  if (overdueCount === 0) return null
+  if (overdueInvoices.length === 0) return null
   
   return (
-    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 animate-rise">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
           <span className="text-red-600 text-xl">⚠️</span>
@@ -105,7 +112,7 @@ async function OverdueInvoicesAlert() {
         <div className="flex-1">
           <h3 className="text-sm font-semibold text-red-800">Overdue Invoices</h3>
           <p className="text-sm text-red-600">
-            You have {overdueCount} overdue invoice{overdueCount !== 1 ? 's' : ''}. 
+            You have {overdueInvoices.length} overdue invoice{overdueInvoices.length !== 1 ? 's' : ''}. 
             Please follow up with your clients.
           </p>
         </div>
