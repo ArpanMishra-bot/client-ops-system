@@ -258,11 +258,7 @@ async function ActivityFeed() {
             </div>
             <div className="flex-1">
               <p className="text-sm text-gray-700">
-                {activity.type === "invoice"
-                  ? activity.action === "paid"
-                    ? `💰 Invoice paid: ${activity.name} - ${formatCurrency(activity.amount)}`
-                    : `📄 Created invoice for ${activity.name}`
-                  : `👤 Added new client: ${activity.name}`}
+                {activity.displayText}
               </p>
               <p className="text-xs font-mono text-gray-400 mt-1">
                 {new Date(activity.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
