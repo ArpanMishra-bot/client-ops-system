@@ -8,29 +8,21 @@ import { toast } from "sonner"
 
 interface BulkStatusUpdateProps {
   leads: any[]
+  selectedLeads: Set<string>
+  onClearSelection: () => void
 }
 
-export default function BulkStatusUpdate({ leads }: BulkStatusUpdateProps) {
-  const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set())
+export default function BulkStatusUpdate({ leads, selectedLeads, onClearSelection }: BulkStatusUpdateProps) {
   const [showStatusMenu, setShowStatusMenu] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
 
   const toggleSelectAll = () => {
     if (selectedLeads.size === leads.length) {
-      setSelectedLeads(new Set())
+      onClearSelection()
     } else {
-      setSelectedLeads(new Set(leads.map(l => l.id)))
+      // Select all - need to add all leads to selectedLeads
+      // This is handled in parent
     }
-  }
-
-  const toggleSelectLead = (leadId: string) => {
-    const newSelected = new Set(selectedLeads)
-    if (newSelected.has(leadId)) {
-      newSelected.delete(leadId)
-    } else {
-      newSelected.add(leadId)
-    }
-    setSelectedLeads(newSelected)
   }
 
   const handleBulkStatusUpdate = async (newStatus: string) => {
@@ -53,7 +45,7 @@ export default function BulkStatusUpdate({ leads }: BulkStatusUpdateProps) {
     }
 
     setShowStatusMenu(false)
-    setSelectedLeads(new Set())
+    onClearSelection()
     
     if (successCount > 0) {
       toast.success(`Updated ${successCount} lead${successCount !== 1 ? 's' : ''} to ${newStatus}`)
@@ -69,19 +61,6 @@ export default function BulkStatusUpdate({ leads }: BulkStatusUpdateProps) {
 
   return (
     <div className="flex items-center gap-3">
-      {/* Select All Button */}
-      <button
-        onClick={toggleSelectAll}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
-      >
-        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-          selectedLeads.size === leads.length ? "bg-indigo-600 border-indigo-600" : "border-gray-300"
-        }`}>
-          {selectedLeads.size === leads.length && <Check className="h-3 w-3 text-white" />}
-        </div>
-        <span>Select All</span>
-      </button>
-
       {/* Selected Count */}
       {selectedLeads.size > 0 && (
         <div className="flex items-center gap-3">
