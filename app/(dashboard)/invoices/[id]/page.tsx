@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
 import InvoiceStatusUpdater from "@/components/modules/invoices/InvoiceStatusUpdater"
+import InvoiceDownloadButton from "@/components/modules/invoices/InvoiceDownloadButton"
 import { DeleteInvoiceButton } from "./delete-invoice-button"
 import { DuplicateInvoiceButton } from "./duplicate-invoice-button"
 
@@ -33,7 +34,7 @@ export default async function InvoiceDetailPage({
         </Link>
         <div className="flex items-center gap-2">
           <DuplicateInvoiceButton invoiceId={invoice.id} />
-          {/* InvoiceDownloadButton temporarily disabled */}
+          <InvoiceDownloadButton invoice={invoice} />
           <InvoiceStatusUpdater invoiceId={invoice.id} currentStatus={invoice.status} />
           <DeleteInvoiceButton invoiceId={invoice.id} invoiceNumber={invoice.number} />
         </div>
@@ -84,7 +85,7 @@ export default async function InvoiceDetailPage({
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Qty</th>
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Rate</th>
                 <th className="text-right py-2 text-xs font-medium text-gray-500 uppercase">Amount</th>
-                </tr>
+              </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {items.map((item: any, index: number) => (
