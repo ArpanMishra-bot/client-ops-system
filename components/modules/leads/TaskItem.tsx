@@ -69,7 +69,10 @@ export default function TaskItem({ task, projectId }: Props) {
       <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
+            {/* Fixed: Removed truncate, added word wrapping */}
+            <p className="text-sm font-medium text-gray-900 break-words whitespace-normal">
+              {task.title}
+            </p>
             {task.dueDate && (
               <p className="text-xs text-gray-400 mt-1">
                 Due: {new Date(task.dueDate).toLocaleDateString()}
@@ -78,22 +81,22 @@ export default function TaskItem({ task, projectId }: Props) {
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <button
-  onClick={() => {
-    setEditingTitle(task.title)
-    setEditModalOpen(true)
-  }}
-  className="p-1 text-gray-500 hover:text-gray-900 active:scale-90 active:bg-gray-100 rounded transition-all duration-150"
-  title="Edit task"
->
-  <Pencil className="h-3.5 w-3.5" />
-</button>
+              onClick={() => {
+                setEditingTitle(task.title)
+                setEditModalOpen(true)
+              }}
+              className="p-1 text-gray-500 hover:text-gray-900 active:scale-90 active:bg-gray-100 rounded transition-all duration-150"
+              title="Edit task"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
             <button
-  onClick={() => setDeleteDialogOpen(true)}
-  className="p-1 text-gray-500 hover:text-red-600 active:scale-90 active:bg-red-50 rounded transition-all duration-150"
-  title="Delete task"
->
-  <Trash2 className="h-3.5 w-3.5" />
-</button>
+              onClick={() => setDeleteDialogOpen(true)}
+              className="p-1 text-gray-500 hover:text-red-600 active:scale-90 active:bg-red-50 rounded transition-all duration-150"
+              title="Delete task"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
 
@@ -139,11 +142,11 @@ export default function TaskItem({ task, projectId }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Edit Task</h2>
-            <input
-              type="text"
+            <textarea
               value={editingTitle}
               onChange={(e) => setEditingTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-4"
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-4 resize-none"
               autoFocus
             />
             <div className="flex justify-end gap-2">
