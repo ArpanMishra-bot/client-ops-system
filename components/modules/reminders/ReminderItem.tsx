@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { toggleReminder, deleteReminder, updateReminder } from "@/modules/reminders/actions"
 import { toast } from "sonner"
-import { Check, Trash2, Pencil, Calendar } from "lucide-react"
+import { Check, Trash2, Pencil, Calendar, Users, TrendingUp } from "lucide-react"
 import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog"
 import type { Reminder, ReminderType } from "@/modules/reminders/types"
 
@@ -123,29 +123,35 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
                   <span>{new Date(reminder.dueDate).toLocaleString()}</span>
                 </div>
                 {reminder.client && (
-                  <span>Client: {reminder.client.name}</span>
+                  <div className="flex items-center gap-1">
+                    <Users className="h-3 w-3" />
+                    <span>Client: {reminder.client.name}</span>
+                  </div>
                 )}
                 {reminder.lead && (
-                  <span>Lead: {reminder.lead.name}</span>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>Lead: {reminder.lead.name}</span>
+                  </div>
                 )}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <button
-  onClick={() => setEditModalOpen(true)}
-  className="p-1 text-gray-400 hover:text-gray-700 active:scale-90 active:bg-gray-100 rounded transition-all duration-150"
-  title="Edit reminder"
->
-  <Pencil className="h-4 w-4" />
-</button>
+              onClick={() => setEditModalOpen(true)}
+              className="p-1 text-gray-400 hover:text-gray-700 active:scale-90 active:bg-gray-100 rounded transition-all duration-150"
+              title="Edit reminder"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
             <button
-  onClick={() => setDeleteDialogOpen(true)}
-  className="p-1 text-gray-400 hover:text-red-500 active:scale-90 active:bg-red-50 rounded transition-all duration-150"
-  title="Delete reminder"
->
-  <Trash2 className="h-4 w-4" />
-</button>
+              onClick={() => setDeleteDialogOpen(true)}
+              className="p-1 text-gray-400 hover:text-red-500 active:scale-90 active:bg-red-50 rounded transition-all duration-150"
+              title="Delete reminder"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -227,4 +233,4 @@ export default function ReminderItem({ reminder }: { reminder: Reminder }) {
       )}
     </>
   )
-}
+        }
