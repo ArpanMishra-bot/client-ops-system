@@ -59,14 +59,13 @@ async function LeadsContent() {
       </div>
 
       {/* Mobile List */}
-<div className="md:hidden">
-  <LeadMobileList 
-    leads={leads} 
-    stages={LEAD_STAGES}
-    selectedLeads={selectedLeads}
-    onToggleSelect={toggleSelectLead}
-  />
-</div>
+      <div className="md:hidden">
+        <LeadMobileList leads={leads} stages={LEAD_STAGES} />
+      </div>
+    </>
+  )
+}
+
 export default async function LeadsPage() {
   return (
     <div className="space-y-6 h-full">
