@@ -2,15 +2,17 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Plus, TrendingUp, UserPlus } from "lucide-react"
+import { Plus, TrendingUp, UserPlus, BarChart3 } from "lucide-react"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import LeadBoard from "@/components/modules/leads/LeadBoard"
 import LeadMobileList from "@/components/modules/leads/LeadMobileList"
 import BulkStatusUpdate from "@/components/modules/leads/BulkStatusUpdate"
+import LeadSourceAnalytics from "@/components/modules/leads/LeadSourceAnalytics"
 
 export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
   const [leads, setLeads] = useState(initialLeads)
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set())
+  const [showAnalytics, setShowAnalytics] = useState(false)
 
   const toggleSelectLead = (leadId: string) => {
     const newSelected = new Set(selectedLeads)
@@ -69,6 +71,15 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
         </div>
         
         <div className="flex items-center gap-3">
+          {/* Toggle Analytics Button */}
+          <button
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
+          >
+            <BarChart3 className="h-4 w-4" />
+            <span>{showAnalytics ? "Hide Analytics" : "Show Analytics"}</span>
+          </button>
+
           {/* Select All Button */}
           <button
             onClick={toggleSelectAll}
@@ -90,6 +101,13 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
           />
         </div>
       </div>
+
+      {/* Lead Source Analytics Section */}
+      {showAnalytics && (
+        <div className="mt-4">
+          <LeadSourceAnalytics leads={leads} />
+        </div>
+      )}
 
       {/* Add Lead Button */}
       <div className="flex justify-end">
