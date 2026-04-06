@@ -3,7 +3,7 @@
 
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react"
+import { ArrowUpRight, Minus } from "lucide-react"
 
 interface StatCardProps {
   label: string
@@ -45,11 +45,10 @@ export default function StatCard({
     displayColor = "text-emerald-600"
     displayIcon = <ArrowUpRight className="h-3.5 w-3.5" />
   }
-  // Case 4: Negative decline (but not complete drop)
+  // Case 4: Negative decline - show friendly message instead of percentage
   else if (trend < 0 && trend > -100) {
-    displayText = `${trend}% vs last month`
-    displayColor = "text-rose-600"
-    displayIcon = <ArrowDownRight className="h-3.5 w-3.5" />
+    displayText = `Room for growth`
+    displayColor = "text-amber-600"
   }
   // Case 5: Zero change (same as last month)
   else if (trend === 0) {
