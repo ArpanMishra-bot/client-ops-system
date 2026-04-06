@@ -4,12 +4,14 @@ import { useState } from "react"
 import type { Lead, LeadStatus } from "@/modules/leads/types"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import { updateLeadStatus } from "@/modules/leads/actions"
-import { Building, DollarSign, ChevronRight } from "lucide-react"
+import { Building, DollarSign, ChevronRight, Check } from "lucide-react"
 import Link from "next/link"
 
 type Props = {
   lead: Lead
   onDragStart: () => void
+  isSelected?: boolean
+  onToggleSelect?: (leadId: string) => void
 }
 
 const priorityConfig = {
@@ -18,7 +20,7 @@ const priorityConfig = {
   HIGH: { label: "High", class: "bg-red-50 text-red-600" },
 }
 
-export default function LeadCard({ lead, onDragStart }: Props) {
+export default function LeadCard({ lead, onDragStart, isSelected, onToggleSelect }: Props) {
   const priority = priorityConfig[lead.priority]
   const [showMove, setShowMove] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -39,10 +41,25 @@ export default function LeadCard({ lead, onDragStart }: Props) {
     <div
       draggable
       onDragStart={onDragStart}
-      className="bg-white rounded-lg border border-gray-100 shadow-sm p-3 cursor-grab active:cursor-grabbing hover:shadow-lg active:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 group"
-      >
-    
-      <div className="flex items-start justify-between gap-2">
+      className="bg-white rounded-lg border border-gray-100 shadow-sm p-3 cursor-grab active:cursor-grabbing hover:shadow-lg active:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 group relative"
+    >
+      {/* Checkbox for bulk selection */}
+      {onToggleSelect && (
+        <div className="absolute top-2 left-2 z-10">
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onToggleSelect(lead.id)
+            }}
+            className="w-4 h-4 rounded border-2 flex items-center justify-center bg-white hover:bg-gray-50"
+          >
+            {isSelected && <Check className="h-3 w-3 text-indigo-600" />}
+          </button>
+        </div>
+      )}
+      
+      <div className="flex items-start justify-between gap-2 ml-5">
         <div className="flex-1 min-w-0">
           <Link href={`/leads/${lead.id}`}>
             <p className="text-sm font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
@@ -62,7 +79,7 @@ export default function LeadCard({ lead, onDragStart }: Props) {
       </div>
 
       {lead.value && (
-        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-50">
+        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-50 ml-5">
           <DollarSign className="h-3 w-3 text-gray-400" />
           <span className="text-xs font-medium text-gray-700">
             ${lead.value.toLocaleString()}
@@ -70,7 +87,7 @@ export default function LeadCard({ lead, onDragStart }: Props) {
         </div>
       )}
 
-      <div className="mt-2 pt-2 border-t border-gray-50 relative">
+      <div className="mt-2 pt-2 border-t border-gray-50 relative ml-5">
         <button
           onClick={() => setShowMove(!showMove)}
           disabled={loading}
