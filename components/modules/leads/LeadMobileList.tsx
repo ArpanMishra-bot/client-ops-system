@@ -4,7 +4,7 @@ import { useState } from "react"
 import type { Lead, LeadStatus } from "@/modules/leads/types"
 import { updateLeadStatus } from "@/modules/leads/actions"
 import { LEAD_STAGES } from "@/modules/leads/types"
-import { Building, DollarSign, ChevronDown } from "lucide-react"
+import { Building, DollarSign, ChevronDown, Check } from "lucide-react"
 import Link from "next/link"
 
 type Stage = {
@@ -17,6 +17,8 @@ type Stage = {
 type Props = {
   leads: Lead[]
   stages: Stage[]
+  selectedLeads?: Set<string>
+  onToggleSelect?: (leadId: string) => void
 }
 
 const priorityConfig = {
@@ -25,7 +27,17 @@ const priorityConfig = {
   HIGH: { label: "High", class: "bg-red-50 text-red-600" },
 }
 
-function MobileLeadCard({ lead, stages }: { lead: Lead; stages: Stage[] }) {
+function MobileLeadCard({ 
+  lead, 
+  stages, 
+  isSelected, 
+  onToggleSelect 
+}: { 
+  lead: Lead
+  stages: Stage[]
+  isSelected?: boolean
+  onToggleSelect?: (leadId: string) => void
+}) {
   const [showMove, setShowMove] = useState(false)
   const [loading, setLoading] = useState(false)
   const priority = priorityConfig[lead.priority]
@@ -42,68 +54,86 @@ function MobileLeadCard({ lead, stages }: { lead: Lead; stages: Stage[] }) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <Link href={`/leads/${lead.id}`}>
-            <p className="text-sm font-semibold text-gray-900">{lead.name}</p>
-          </Link>
-          {lead.company && (
-            <div className="flex items-center gap-1 mt-1">
-              <Building className="h-3 w-3 text-gray-400" />
-              <p className="text-xs text-gray-500">{lead.company}</p>
-            </div>
-          )}
-        </div>
-        <span className={`text-xs px-2 py-0.5 rounded font-medium shrink-0 ${priority.class}`}>
-          {priority.label}
-        </span>
-      </div>
-
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-50">
-        <div className="flex items-center gap-3">
-          {stage && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${stage.bg} ${stage.color}`}>
-              {stage.label}
-            </span>
-          )}
-          {lead.value && (
-            <div className="flex items-center gap-1">
-              <DollarSign className="h-3 w-3 text-gray-400" />
-              <span className="text-xs font-medium text-gray-700">${lead.value.toLocaleString()}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="relative">
+    <div className="bg-white rounded-xl border border-gray-100 p-4 relative">
+      {/* Checkbox for bulk selection */}
+      {onToggleSelect && (
+        <div className="absolute top-4 left-4 z-10">
           <button
-            onClick={() => setShowMove(!showMove)}
-            disabled={loading}
-            className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onToggleSelect(lead.id)
+            }}
+            className="w-5 h-5 rounded border-2 flex items-center justify-center bg-white hover:bg-gray-50"
           >
-            <span>{loading ? "Moving..." : "Move"}</span>
-            <ChevronDown className="h-3 w-3" />
+            {isSelected && <Check className="h-3 w-3 text-indigo-600" />}
           </button>
-          {showMove && (
-            <div className="absolute right-0 bottom-6 z-20 bg-white border border-gray-200 rounded-lg shadow-lg py-1 w-36">
-              {stages.filter((s) => s.status !== lead.status).map((stage) => (
-                <button
-                  key={stage.status}
-                  onClick={() => handleMove(stage.status)}
-                  className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
-                >
-                  <span className={`font-medium ${stage.color}`}>{stage.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
+        </div>
+      )}
+      
+      <div className="ml-7">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <Link href={`/leads/${lead.id}`}>
+              <p className="text-sm font-semibold text-gray-900">{lead.name}</p>
+            </Link>
+            {lead.company && (
+              <div className="flex items-center gap-1 mt-1">
+                <Building className="h-3 w-3 text-gray-400" />
+                <p className="text-xs text-gray-500">{lead.company}</p>
+              </div>
+            )}
+          </div>
+          <span className={`text-xs px-2 py-0.5 rounded font-medium shrink-0 ${priority.class}`}>
+            {priority.label}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-50">
+          <div className="flex items-center gap-3">
+            {stage && (
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${stage.bg} ${stage.color}`}>
+                {stage.label}
+              </span>
+            )}
+            {lead.value && (
+              <div className="flex items-center gap-1">
+                <DollarSign className="h-3 w-3 text-gray-400" />
+                <span className="text-xs font-medium text-gray-700">${lead.value.toLocaleString()}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => setShowMove(!showMove)}
+              disabled={loading}
+              className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              <span>{loading ? "Moving..." : "Move"}</span>
+              <ChevronDown className="h-3 w-3" />
+            </button>
+            {showMove && (
+              <div className="absolute right-0 bottom-6 z-20 bg-white border border-gray-200 rounded-lg shadow-lg py-1 w-36">
+                {stages.filter((s) => s.status !== lead.status).map((stage) => (
+                  <button
+                    key={stage.status}
+                    onClick={() => handleMove(stage.status)}
+                    className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
+                  >
+                    <span className={`font-medium ${stage.color}`}>{stage.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-export default function LeadMobileList({ leads, stages }: Props) {
+export default function LeadMobileList({ leads, stages, selectedLeads, onToggleSelect }: Props) {
   const [activeStage, setActiveStage] = useState<LeadStatus | "ALL">("ALL")
 
   const filteredLeads =
@@ -145,7 +175,13 @@ export default function LeadMobileList({ leads, stages }: Props) {
       ) : (
         <div className="space-y-3">
           {filteredLeads.map((lead) => (
-            <MobileLeadCard key={lead.id} lead={lead} stages={stages} />
+            <MobileLeadCard
+              key={lead.id}
+              lead={lead}
+              stages={stages}
+              isSelected={selectedLeads?.has(lead.id)}
+              onToggleSelect={onToggleSelect}
+            />
           ))}
         </div>
       )}
