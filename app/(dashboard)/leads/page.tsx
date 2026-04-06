@@ -1,4 +1,6 @@
-import { Suspense } from "react"
+"use client"
+
+import { Suspense, useState } from "react"
 import { getLeads } from "@/modules/leads/actions"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import LeadBoard from "@/components/modules/leads/LeadBoard"
@@ -8,8 +10,19 @@ import Link from "next/link"
 import LeadsSkeleton from "@/components/shared/LeadsSkeleton"
 import BulkStatusUpdate from "@/components/modules/leads/BulkStatusUpdate"
 
-async function LeadsContent() {
-  const leads = await getLeads()
+function LeadsContent({ initialLeads }: { initialLeads: any[] }) {
+  const [leads, setLeads] = useState(initialLeads)
+  const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set())
+
+  const toggleSelectLead = (leadId: string) => {
+    const newSelected = new Set(selectedLeads)
+    if (newSelected.has(leadId)) {
+      newSelected.delete(leadId)
+    } else {
+      newSelected.add(leadId)
+    }
+    setSelectedLeads(newSelected)
+  }
 
   if (leads.length === 0) {
     return (
@@ -50,23 +63,39 @@ async function LeadsContent() {
         </div>
         
         {/* Bulk Status Update Component */}
-        <BulkStatusUpdate leads={leads} />
+        <BulkStatusUpdate 
+          leads={leads} 
+          selectedLeads={selectedLeads}
+          onClearSelection={() => setSelectedLeads(new Set())}
+        />
       </div>
 
       {/* Desktop Kanban */}
       <div className="hidden md:block">
-        <LeadBoard leads={leads} stages={LEAD_STAGES} />
+        <LeadBoard 
+          leads={leads} 
+          stages={LEAD_STAGES}
+          selectedLeads={selectedLeads}
+          onToggleSelect={toggleSelectLead}
+        />
       </div>
 
       {/* Mobile List */}
       <div className="md:hidden">
-        <LeadMobileList leads={leads} stages={LEAD_STAGES} />
+        <LeadMobileList 
+          leads={leads} 
+          stages={LEAD_STAGES}
+          selectedLeads={selectedLeads}
+          onToggleSelect={toggleSelectLead}
+        />
       </div>
     </>
   )
 }
 
 export default async function LeadsPage() {
+  const leads = await getLeads()
+
   return (
     <div className="space-y-6 h-full">
       <div className="flex items-center justify-between">
@@ -84,7 +113,7 @@ export default async function LeadsPage() {
       </div>
 
       <Suspense fallback={<LeadsSkeleton />}>
-        <LeadsContent />
+        <LeadsContent initialLeads={leads} />
       </Suspense>
     </div>
   )
