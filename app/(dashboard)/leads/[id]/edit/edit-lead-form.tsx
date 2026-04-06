@@ -26,19 +26,16 @@ export default function EditLeadForm({ lead }: { lead: Lead }) {
 
     const newErrors: Record<string, string> = {}
 
-    // Validate name
     if (!name || name.trim().length < 2) {
       newErrors.name = "Name must be at least 2 characters"
     }
 
-    // Validate email
     if (!email) {
       newErrors.email = "Email is required"
     } else if (!email.includes("@")) {
       newErrors.email = "Please enter a valid email address"
     }
 
-    // Validate value (if provided, must be positive number)
     if (value && isNaN(Number(value))) {
       newErrors.value = "Please enter a valid number"
     }
@@ -71,7 +68,7 @@ export default function EditLeadForm({ lead }: { lead: Lead }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Full Name *</label>
@@ -136,12 +133,12 @@ export default function EditLeadForm({ lead }: { lead: Lead }) {
             defaultValue={lead.source ?? ""}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
             <option value="">Select source</option>
-            <option value="Website">Website</option>
-            <option value="Referral">Referral</option>
-            <option value="LinkedIn">LinkedIn</option>
-            <option value="Cold Outreach">Cold Outreach</option>
-            <option value="Social Media">Social Media</option>
-            <option value="Other">Other</option>
+            <option value="Website">🌐 Website</option>
+            <option value="Referral">🤝 Referral</option>
+            <option value="LinkedIn">💼 LinkedIn</option>
+            <option value="Cold Outreach">📧 Cold Outreach</option>
+            <option value="Social Media">📱 Social Media</option>
+            <option value="Other">📌 Other</option>
           </select>
         </div>
         <div className="space-y-1.5">
@@ -167,17 +164,18 @@ export default function EditLeadForm({ lead }: { lead: Lead }) {
         />
       </div>
       <div className="flex items-center gap-3 pt-2">
-        <button type="submit" disabled={loading}
-  className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
->
-  {loading ? "Saving..." : "Save Changes"}
-</button>
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50">
+          {loading ? "Saving..." : "Save Changes"}
+        </button>
         <Link 
           href={`/leads/${lead.id}`}
-          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200">
           Cancel
         </Link>
       </div>
     </form>
   )
-}
+            }
