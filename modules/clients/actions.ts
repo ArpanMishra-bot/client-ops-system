@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { createClientSchema, updateClientSchema } from "./schemas"
 import type { CreateClientInput, UpdateClientInput } from "./types"
+import { logActivity } from "@/lib/activity"
 
 export async function getClients() {
   const { userId } = await auth()
@@ -30,7 +31,6 @@ export async function createClient(input: CreateClientInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  // Zod validation
   const validated = createClientSchema.safeParse(input)
   if (!validated.success) {
     const errorMessage = validated.error.issues[0]?.message || "Validation failed"
@@ -58,6 +58,15 @@ export async function createClient(input: CreateClientInput) {
       },
     })
     revalidatePath("/clients")
+    
+    // Log activity
+    await logActivity({
+      type: "client",
+      action: "created",
+      itemId: client.id,
+      itemName: client.name,
+    })
+    
     return { success: true, data: client, message: `✅ Client "${client.name}" created successfully` }
   } catch (error) {
     console.error("Create client error:", error)
@@ -69,7 +78,6 @@ export async function updateClient(id: string, input: UpdateClientInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
-  // Zod validation
   const validated = updateClientSchema.safeParse(input)
   if (!validated.success) {
     const errorMessage = validated.error.issues[0]?.message || "Validation failed"
@@ -98,6 +106,15 @@ export async function updateClient(id: string, input: UpdateClientInput) {
     })
     revalidatePath("/clients")
     revalidatePath(`/clients/${id}`)
+    
+    // Log activity
+    await logActivity({
+      type: "client",
+      action: "updated",
+      itemId: client.id,
+      itemName: client.name,
+    })
+    
     return { success: true, data: client, message: `✅ Client "${client.name}" updated successfully` }
   } catch (error) {
     console.error("Update client error:", error)
@@ -116,6 +133,15 @@ export async function deleteClient(id: string) {
     await db.client.delete({
       where: { id, userId },
     })
+    
+    // Log activity
+    await logActivity({
+      type: "client",
+      action: "deleted",
+      itemId: id,
+      itemName: clientName,
+    })
+    
     revalidatePath("/clients")
     return { success: true, message: `✅ Client "${clientName}" deleted successfully` }
   } catch (error) {
