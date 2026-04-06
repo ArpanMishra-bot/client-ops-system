@@ -27,17 +27,14 @@ export default function EditProjectForm({ project, clients }: { project: Project
 
     const newErrors: Record<string, string> = {}
 
-    // Validate project name
     if (!name || name.trim().length < 2) {
       newErrors.name = "Project name must be at least 2 characters"
     }
 
-    // Validate client selection
     if (!clientId) {
       newErrors.clientId = "Please select a client"
     }
 
-    // Validate budget (if provided, must be positive number)
     if (budget && isNaN(Number(budget))) {
       newErrors.budget = "Please enter a valid number"
     }
@@ -70,7 +67,7 @@ export default function EditProjectForm({ project, clients }: { project: Project
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Client *</label>
@@ -155,12 +152,11 @@ export default function EditProjectForm({ project, clients }: { project: Project
       </div>
       <div className="flex items-center gap-3 pt-2">
         <button type="submit" disabled={loading}
-  className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50"
->
-  {loading ? "Saving..." : "Save Changes"}
-</button>
+          className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200 disabled:opacity-50">
+          {loading ? "Saving..." : "Save Changes"}
+        </button>
         <Link href={`/projects/${project.id}`}
-          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+          className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-200">
           Cancel
         </Link>
       </div>
