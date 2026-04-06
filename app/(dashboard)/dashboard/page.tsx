@@ -54,7 +54,7 @@ function getUserCategory(email?: string): string {
   return `${category.emoji} ${category.label}`
 }
 
-// Collapsible wrapper for mobile - with tap effect
+// Collapsible wrapper for mobile
 function CollapsibleCard({ 
   title, 
   children, 
@@ -71,7 +71,7 @@ function CollapsibleCard({
       className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-indigo-200 transition-all duration-200"
       open={defaultOpen}
     >
-      <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-all duration-200 hover:bg-gray-50/50 active:scale-[0.99] active:bg-gray-100/50 flex items-center justify-between touch-manipulation">
+      <summary className="cursor-pointer px-6 py-4 text-sm font-semibold select-none transition-all duration-200 hover:bg-gray-50/50 active:scale-[0.99] active:bg-gray-100/50 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {icon && <span className="text-indigo-500">{icon}</span>}
           <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -143,7 +143,6 @@ async function DashboardStats() {
 
   return (
     <>
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {statCards.map((stat, index) => (
           <div key={stat.label} style={{ animationDelay: `${index * 50}ms` }} className="animate-rise">
@@ -152,7 +151,6 @@ async function DashboardStats() {
         ))}
       </div>
 
-      {/* Business Health Score */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1">
           <BusinessHealthScore 
@@ -194,6 +192,7 @@ async function DashboardPipelineChart() {
     </CollapsibleCard>
   )
 }
+
 async function TopClients() {
   const stats = await getDashboardStats()
   if (stats.topClients.length === 0) return null
@@ -208,7 +207,7 @@ async function TopClients() {
             <Link
               key={client.id}
               href={`/clients/${client.id}`}
-              className="group block p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] active:bg-gray-100/50 touch-manipulation"
+              className="group block p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
@@ -240,8 +239,7 @@ async function TopClients() {
       </div>
     </CollapsibleCard>
   )
-}
-
+            }
 async function ActivityFeed() {
   const stats = await getDashboardStats()
   if (stats.recentActivities.length === 0) return null
@@ -283,7 +281,7 @@ async function RecentClients() {
           <p className="text-sm text-gray-500">No clients yet</p>
           <Link 
             href="/clients/new" 
-            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-3 hover:gap-2 transition-all active:scale-95"
           >
             Add your first client
             <ArrowUpRight className="h-3 w-3" />
@@ -295,7 +293,7 @@ async function RecentClients() {
             <Link
               key={client.id}
               href={`/clients/${client.id}`}
-              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] active:bg-gray-100/50 touch-manipulation"
+              className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98]"
             >
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
                 <span className="text-white text-sm font-medium">{client.name.charAt(0).toUpperCase()}</span>
@@ -325,7 +323,7 @@ async function UpcomingReminders() {
       {reminderCount === 0 ? (
         <Link 
           href="/reminders"
-          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98] touch-manipulation"
+          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98]"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -343,7 +341,7 @@ async function UpcomingReminders() {
       ) : (
         <Link 
           href="/reminders#pending"
-          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98] touch-manipulation"
+          className="group block p-6 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 active:scale-[0.98]"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -377,9 +375,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Welcome Section - Collapsible on Mobile */}
+      {/* Welcome Section */}
       <details className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 group md:block">
-        <summary className="cursor-pointer p-6 md:p-8 list-none touch-manipulation">
+        <summary className="cursor-pointer p-6 md:p-8 list-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md">
@@ -410,12 +408,10 @@ export default async function DashboardPage() {
         </div>
       </details>
 
-      {/* Stats + Health Score */}
       <Suspense fallback={<StatsSkeleton />}>
         <DashboardStats />
       </Suspense>
 
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<div className="bg-white rounded-xl border border-gray-100 p-6 h-[520px] animate-pulse" />}>
           <DashboardRevenueChart />
@@ -452,8 +448,8 @@ export default async function DashboardPage() {
                   className="group relative flex flex-col items-center text-center p-4 rounded-xl 
                              bg-white border border-gray-100
                              hover:border-indigo-200 hover:shadow-md
-                             hover:-translate-y-1 active:scale-95 active:bg-indigo-50/50
-                             transition-all duration-200 touch-manipulation"
+                             hover:-translate-y-1 active:scale-95
+                             transition-all duration-200"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600
@@ -492,4 +488,4 @@ export default async function DashboardPage() {
       </div>
     </div>
   )
-}
+          }
