@@ -1,8 +1,10 @@
+// modules/leads/convert.ts
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
+import { logActivity } from "@/lib/activity"
 
 export async function convertLeadToClient(leadId: string) {
   const { userId } = await auth()
@@ -42,6 +44,24 @@ export async function convertLeadToClient(leadId: string) {
       data: {
         convertedToId: client.id,
       },
+    })
+
+    // Log activity for lead conversion
+    await logActivity({
+      type: "lead",
+      action: "converted",
+      itemId: lead.id,
+      itemName: lead.name,
+      details: `Converted to client: ${client.name}`,
+    })
+
+    // Log activity for client creation from lead
+    await logActivity({
+      type: "client",
+      action: "created",
+      itemId: client.id,
+      itemName: client.name,
+      details: `Created from lead: ${lead.name}`,
     })
 
     revalidatePath("/leads")
