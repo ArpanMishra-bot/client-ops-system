@@ -1,3 +1,4 @@
+// modules/invoices/actions.ts
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
@@ -5,6 +6,7 @@ import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { createInvoiceSchema, updateInvoiceSchema } from "./schemas"
 import type { InvoiceStatus } from "./types"
+import { logActivity } from "@/lib/activity"
 
 export async function getInvoices() {
   const { userId } = await auth()
@@ -90,7 +92,16 @@ export async function createInvoice(input: any) {
     })
 
     revalidatePath("/invoices")
-    return { success: true, data: invoice }
+    
+    // Log activity
+    await logActivity({
+      type: "invoice",
+      action: "created",
+      itemId: invoice.id,
+      itemName: invoice.number,
+    })
+    
+    return { success: true, data: invoice, message: `✅ Invoice ${invoice.number} created successfully` }
   } catch (error) {
     console.error("Create invoice error:", error)
     return { success: false, error: "Failed to create invoice" }
@@ -112,7 +123,17 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
 
     revalidatePath("/invoices")
     revalidatePath(`/invoices/${id}`)
-    return { success: true, data: invoice }
+    
+    // Log activity
+    await logActivity({
+      type: "invoice",
+      action: status === "PAID" ? "paid" : "updated",
+      itemId: invoice.id,
+      itemName: invoice.number,
+      details: `Status changed to ${status}`,
+    })
+    
+    return { success: true, data: invoice, message: `✅ Invoice ${invoice.number} status updated to ${status}` }
   } catch (error) {
     console.error("Update invoice status error:", error)
     return { success: false, error: "Failed to update invoice status" }
@@ -124,11 +145,23 @@ export async function deleteInvoice(id: string) {
   if (!userId) throw new Error("Unauthorized")
 
   try {
+    const invoice = await db.invoice.findFirst({ where: { id, userId } })
+    const invoiceNumber = invoice?.number || "Invoice"
+    
     await db.invoice.delete({
       where: { id, userId },
     })
+    
+    // Log activity
+    await logActivity({
+      type: "invoice",
+      action: "deleted",
+      itemId: id,
+      itemName: invoiceNumber,
+    })
+    
     revalidatePath("/invoices")
-    return { success: true }
+    return { success: true, message: `✅ Invoice ${invoiceNumber} deleted successfully` }
   } catch (error) {
     console.error("Delete invoice error:", error)
     return { success: false, error: "Failed to delete invoice" }
@@ -178,7 +211,17 @@ export async function duplicateInvoice(id: string) {
     })
 
     revalidatePath("/invoices")
-    return { success: true, data: newInvoice }
+    
+    // Log activity
+    await logActivity({
+      type: "invoice",
+      action: "created",
+      itemId: newInvoice.id,
+      itemName: newInvoice.number,
+      details: `Duplicated from ${original.number}`,
+    })
+    
+    return { success: true, data: newInvoice, message: `✅ Invoice duplicated as ${newInvoice.number}` }
   } catch (error) {
     console.error("Duplicate invoice error:", error)
     return { success: false, error: "Failed to duplicate invoice" }
