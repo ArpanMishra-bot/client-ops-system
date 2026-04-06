@@ -3,26 +3,22 @@
 
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logActivity } from "@/lib/activity"
 
 // Helper function to calculate trend safely
 function calculateTrend(thisMonth: number, lastMonth: number): number | null {
-  // Both zero - no data ever
   if (lastMonth === 0 && thisMonth === 0) {
     return null
   }
-  // First month with data (0 → positive)
   if (lastMonth === 0 && thisMonth > 0) {
     return 100
   }
-  // Dropped to zero (positive → 0)
   if (lastMonth > 0 && thisMonth === 0) {
     return -100
   }
-  // Same as last month
   if (thisMonth === lastMonth) {
     return 0
   }
-  // Calculate percentage change
   return Math.round(((thisMonth - lastMonth) / lastMonth) * 100)
 }
 
@@ -74,7 +70,7 @@ export async function getDashboardStats() {
     }),
   ])
 
-  // Revenue chart data with proper month mapping
+  // Revenue chart data
   const chartData = []
   const monthsToShow = 6
   
@@ -99,7 +95,7 @@ export async function getDashboardStats() {
     })
   }
 
-  // Calculate pipeline data
+  // Pipeline data
   const stageOrder = ["NEW", "CONTACTED", "QUALIFIED", "PROPOSAL", "NEGOTIATION", "WON", "LOST"]
   const stageLabels: Record<string, string> = {
     NEW: "New", CONTACTED: "Contacted", QUALIFIED: "Qualified", PROPOSAL: "Proposal", 
@@ -121,7 +117,7 @@ export async function getDashboardStats() {
   const totalRevenue = allInvoices.filter(i => i.status === "PAID").reduce((sum, i) => sum + i.total, 0)
   const outstanding = allInvoices.filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status)).reduce((sum, i) => sum + i.total, 0)
   
-  // Trend calculations using fixed calculateTrend function
+  // Trend calculations
   const leadsThisMonth = leadsData.filter(l => l.createdAt >= firstDayThisMonth).length
   const leadsLastMonth = leadsData.filter(l => l.createdAt >= firstDayLastMonth && l.createdAt <= lastDayLastMonth).length
   const leadsTrend = calculateTrend(leadsThisMonth, leadsLastMonth)
@@ -150,7 +146,7 @@ export async function getDashboardStats() {
     .reduce((sum, i) => sum + i.total, 0)
   const outstandingTrend = calculateTrend(outstandingThisMonth, outstandingLastMonth)
 
-  // Calculate top clients with trend
+  // Top clients
   const clientRevenue = new Map<string, { name: string; total: number; lastMonthTotal: number }>()
   
   allInvoices.forEach(invoice => {
@@ -178,7 +174,7 @@ export async function getDashboardStats() {
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 5)
 
-  // Calculate Business Health Score
+  // Business Health Score
   let healthScore = 0
   const clientScore = Math.min(25, (totalClients / 20) * 25)
   const revenueScore = Math.min(25, (totalRevenue / 10000) * 25)
@@ -192,22 +188,52 @@ export async function getDashboardStats() {
   const healthColor = healthScore >= 80 ? "text-emerald-600" : healthScore >= 50 ? "text-amber-600" : "text-rose-600"
   const healthBg = healthScore >= 80 ? "bg-emerald-50" : healthScore >= 50 ? "bg-amber-50" : "bg-rose-50"
 
-  // Activity feed
-  const recentActivities = [
-    ...allInvoices.slice(0, 2).map(i => ({
-      type: "invoice" as const,
-      action: i.status === "PAID" ? "paid" : "created",
-      name: i.client?.name || "Unknown",
-      amount: i.total,
-      timestamp: i.createdAt
-    })),
-    ...clients.slice(0, 2).map(c => ({
-      type: "client" as const,
-      action: "created",
-      name: c.name,
-      timestamp: c.createdAt
-    }))
-  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 5)
+  // Get recent activities from Activity table
+  const recentActivitiesRaw = await db.activity.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  })
+
+  // Format activities for display
+  const recentActivities = recentActivitiesRaw.map((activity) => {
+    let displayText = ""
+    
+    switch (activity.type) {
+      case "client":
+        displayText = `${activity.action === "created" ? "➕ Created" : activity.action === "updated" ? "✏️ Updated" : "🗑️ Deleted"} client: ${activity.itemName}`
+        break
+      case "lead":
+        displayText = `${activity.action === "created" ? "➕ Created" : activity.action === "updated" ? "✏️ Updated" : activity.action === "converted" ? "🔄 Converted" : "🗑️ Deleted"} lead: ${activity.itemName}`
+        break
+      case "project":
+        displayText = `${activity.action === "created" ? "➕ Created" : activity.action === "updated" ? "✏️ Updated" : "🗑️ Deleted"} project: ${activity.itemName}`
+        break
+      case "task":
+        displayText = `${activity.action === "created" ? "➕ Created" : activity.action === "updated" ? "✓ Completed" : "🗑️ Deleted"} task: ${activity.itemName}`
+        break
+      case "invoice":
+        displayText = `${activity.action === "created" ? "📄 Created" : activity.action === "paid" ? "💰 Paid" : "🗑️ Deleted"} invoice: ${activity.itemName}`
+        break
+      case "reminder":
+        displayText = `${activity.action === "created" ? "⏰ Created" : activity.action === "completed" ? "✅ Completed" : "🗑️ Deleted"} reminder: ${activity.itemName}`
+        break
+      default:
+        displayText = `${activity.action}: ${activity.itemName}`
+    }
+    
+    if (activity.details) {
+      displayText += ` (${activity.details})`
+    }
+    
+    return {
+      type: activity.type,
+      action: activity.action,
+      name: activity.itemName,
+      timestamp: activity.createdAt,
+      displayText,
+    }
+  })
 
   return {
     totalClients,
@@ -232,4 +258,4 @@ export async function getDashboardStats() {
     healthColor,
     healthBg,
   }
-}
+                                          }
