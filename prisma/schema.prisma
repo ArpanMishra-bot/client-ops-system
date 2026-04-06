@@ -159,6 +159,20 @@ model Reminder {
   @@index([isDone])
 }
 
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // client, lead, project, task, invoice, reminder
+  action    String   // created, updated, deleted, converted, paid, completed, moved
+  itemId    String
+  itemName  String
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
 enum LeadStatus {
   NEW
   CONTACTED
