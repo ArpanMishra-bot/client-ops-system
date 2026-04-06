@@ -74,6 +74,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
             onClick={toggleSelectAll}
             className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
           >
+          </button>
             <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
               selectedLeads.size === leads.length ? "bg-indigo-600 border-indigo-600" : "border-gray-300"
             }`}>
