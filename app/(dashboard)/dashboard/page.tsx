@@ -26,7 +26,6 @@ import {
   ArrowDownRight,
   LayoutDashboard,
 } from "lucide-react"
-import Link from "next/link"
 
 // Consistent gradient classes
 const gradients = {
