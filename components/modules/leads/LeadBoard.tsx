@@ -15,9 +15,11 @@ type Stage = {
 type Props = {
   leads: Lead[]
   stages: Stage[]
+  selectedLeads?: Set<string>
+  onToggleSelect?: (leadId: string) => void
 }
 
-export default function LeadBoard({ leads, stages }: Props) {
+export default function LeadBoard({ leads, stages, selectedLeads, onToggleSelect }: Props) {
   const [localLeads, setLocalLeads] = useState(leads)
   const [draggingId, setDraggingId] = useState<string | null>(null)
 
@@ -93,6 +95,8 @@ export default function LeadBoard({ leads, stages }: Props) {
                       key={lead.id}
                       lead={lead}
                       onDragStart={() => handleDragStart(lead.id)}
+                      isSelected={selectedLeads?.has(lead.id)}
+                      onToggleSelect={onToggleSelect}
                     />
                   ))}
                 </div>
