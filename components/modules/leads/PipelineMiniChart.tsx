@@ -7,6 +7,28 @@ interface PipelineMiniChartProps {
   leads: any[]
 }
 
+// Explicit color mapping for each stage (background colors)
+const stageColors: Record<string, string> = {
+  NEW: "bg-blue-500",
+  CONTACTED: "bg-purple-500",
+  QUALIFIED: "bg-yellow-500",
+  PROPOSAL: "bg-orange-500",
+  NEGOTIATION: "bg-amber-500",
+  WON: "bg-green-500",
+  LOST: "bg-red-400",
+}
+
+// Lighter versions for the text
+const stageTextColors: Record<string, string> = {
+  NEW: "text-blue-600",
+  CONTACTED: "text-purple-600",
+  QUALIFIED: "text-yellow-600",
+  PROPOSAL: "text-orange-600",
+  NEGOTIATION: "text-amber-600",
+  WON: "text-green-600",
+  LOST: "text-red-600",
+}
+
 export default function PipelineMiniChart({ leads }: PipelineMiniChartProps) {
   // Calculate total value per stage
   const stageValues = LEAD_STAGES.map((stage) => ({
@@ -15,7 +37,8 @@ export default function PipelineMiniChart({ leads }: PipelineMiniChartProps) {
     value: leads
       .filter((lead) => lead.status === stage.status)
       .reduce((sum, lead) => sum + (lead.value || 0), 0),
-    color: stage.color.replace("text-", "bg-"),
+    color: stageColors[stage.status] || "bg-gray-500",
+    textColor: stageTextColors[stage.status] || "text-gray-600",
   }))
 
   const totalValue = stageValues.reduce((sum, s) => sum + s.value, 0)
@@ -52,7 +75,7 @@ export default function PipelineMiniChart({ leads }: PipelineMiniChartProps) {
             <div key={stage.status} className="group">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-medium ${stage.color.replace("bg-", "text-")}`}>
+                  <span className={`text-xs font-medium ${stage.textColor}`}>
                     {stage.stage}
                   </span>
                   <span className="text-xs text-gray-400">${stage.value.toLocaleString()}</span>
@@ -63,7 +86,7 @@ export default function PipelineMiniChart({ leads }: PipelineMiniChartProps) {
               </div>
               <div className="relative w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className={`absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-out ${stage.color.replace("text-", "bg-")} opacity-70 group-hover:opacity-100`}
+                  className={`absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-out ${stage.color} opacity-70 group-hover:opacity-100`}
                   style={{ width: `${percentage}%` }}
                 />
               </div>
