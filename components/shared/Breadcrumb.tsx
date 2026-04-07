@@ -6,8 +6,17 @@ import { ChevronRight, Home } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export default function Breadcrumb() {
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const [names, setNames] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
   
   // Skip breadcrumbs on dashboard root
   if (pathname === "/dashboard") return null
