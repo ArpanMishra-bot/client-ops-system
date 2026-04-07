@@ -133,7 +133,7 @@ export default async function DashboardLayout({
         {/* Main Content */}
         <main className="p-6 md:p-8">
           <div className="max-w-7xl mx-auto space-y-8">
-            <Breadcrumb />
+            {/* Breadcrumb temporarily removed for debugging */}
             {children}
           </div>
         </main>
