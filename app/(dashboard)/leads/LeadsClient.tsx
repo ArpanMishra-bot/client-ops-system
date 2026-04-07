@@ -1,5 +1,6 @@
 "use client"
 
+import PipelineMiniChart from "@/components/modules/leads/PipelineMiniChart"
 import { useState } from "react"
 import Link from "next/link"
 import { Plus, TrendingUp, UserPlus, BarChart3 } from "lucide-react"
@@ -108,7 +109,11 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
           <LeadSourceAnalytics leads={leads} />
         </div>
       )}
-
+            {/* Pipeline Analytics Mini Chart */}
+<div className={showAnalytics ? "mt-6" : "mt-4"}>
+  <PipelineMiniChart leads={leads} />
+</div>
+      
       {/* Add Lead Button */}
       <div className="flex justify-end">
         <Link
