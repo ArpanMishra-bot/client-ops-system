@@ -21,8 +21,9 @@ export default function Breadcrumb() {
   // Skip breadcrumbs on dashboard root
   if (pathname === "/dashboard") return null
   
-  // Extract IDs from pathname and fetch names
+  // Extract IDs from pathname and fetch names - BUT only on server or after mount
   useEffect(() => {
+    // Don't fetch during client-side navigation if we already have the data
     async function fetchName(id: string, type: string) {
       try {
         const res = await fetch(`/api/${type}/${id}`)
@@ -58,7 +59,7 @@ export default function Breadcrumb() {
     if (invoiceMatch && !names[invoiceMatch[1]]) {
       fetchName(invoiceMatch[1], "invoices")
     }
-  }, [pathname, names])
+  }, [pathname]) // Remove names from dependency array to prevent infinite loop
   
   // Build breadcrumb items from pathname
   const segments = pathname.split("/").filter(segment => segment !== "" && segment !== "dashboard")
