@@ -6,24 +6,13 @@ import { ChevronRight, Home } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export default function Breadcrumb() {
-  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
   const [names, setNames] = useState<Record<string, string>>({})
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
-  
   // Skip breadcrumbs on dashboard root
   if (pathname === "/dashboard") return null
-  
-  // Extract IDs from pathname and fetch names - BUT only on server or after mount
+
   useEffect(() => {
-    // Don't fetch during client-side navigation if we already have the data
     async function fetchName(id: string, type: string) {
       try {
         const res = await fetch(`/api/${type}/${id}`)
@@ -59,8 +48,8 @@ export default function Breadcrumb() {
     if (invoiceMatch && !names[invoiceMatch[1]]) {
       fetchName(invoiceMatch[1], "invoices")
     }
-  }, [pathname]) // Remove names from dependency array to prevent infinite loop
-  
+  }, [pathname]) // ← ONLY pathname, NOT names
+
   // Build breadcrumb items from pathname
   const segments = pathname.split("/").filter(segment => segment !== "" && segment !== "dashboard")
   
@@ -70,7 +59,6 @@ export default function Breadcrumb() {
       const href = `/dashboard/${segments.slice(0, index + 1).join("/")}`
       let label = segment.charAt(0).toUpperCase() + segment.slice(1)
       
-      // Handle special cases
       if (segment === "clients") label = "Clients"
       else if (segment === "leads") label = "Leads"
       else if (segment === "projects") label = "Projects"
@@ -80,7 +68,6 @@ export default function Breadcrumb() {
       else if (segment === "new") label = "New"
       else if (segment === "edit") label = "Edit"
       else if (segment.match(/^[a-zA-Z0-9]+$/)) {
-        // This is an ID - try to get actual name
         label = names[segment] || "..."
       }
       
@@ -88,7 +75,6 @@ export default function Breadcrumb() {
     })
   ]
   
-  // Don't show breadcrumbs for root dashboard pages
   if (breadcrumbs.length === 1 && breadcrumbs[0].label === "Dashboard") return null
   
   return (
@@ -96,18 +82,11 @@ export default function Breadcrumb() {
       <ol className="flex items-center flex-wrap gap-1">
         {breadcrumbs.map((item, index) => (
           <li key={item.href} className="flex items-center">
-            {index > 0 && (
-              <ChevronRight className="h-3 w-3 text-gray-400 mx-1" />
-            )}
+            {index > 0 && <ChevronRight className="h-3 w-3 text-gray-400 mx-1" />}
             {index === breadcrumbs.length - 1 ? (
-              <span className="text-gray-600 font-medium">
-                {item.label}
-              </span>
+              <span className="text-gray-600 font-medium">{item.label}</span>
             ) : (
-              <Link
-                href={item.href}
-                className="text-gray-500 hover:text-indigo-600 transition-colors"
-              >
+              <Link href={item.href} className="text-gray-500 hover:text-indigo-600 transition-colors">
                 {index === 0 ? (
                   <span className="flex items-center gap-1">
                     <Home className="h-3 w-3" />
