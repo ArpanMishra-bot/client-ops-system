@@ -1,3 +1,4 @@
+// app/(dashboard)/invoices/new/NewInvoiceForm.tsx
 "use client"
 
 import { useState } from "react"
@@ -7,6 +8,7 @@ import { toast } from "sonner"
 import type { Client } from "@/modules/clients/types"
 import { Plus, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { addDays } from "date-fns"
 
 type LineItem = {
   description: string
@@ -38,6 +40,9 @@ export default function NewInvoiceForm({
   const [items, setItems] = useState<LineItem[]>([
     { description: "", quantity: 1, rate: 0 },
   ])
+
+  // Smart default: Due date = 30 days from today
+  const defaultDueDate = addDays(new Date(), 30).toISOString().split("T")[0]
 
   const subtotal = items.reduce((sum, item) => sum + item.quantity * item.rate, 0)
 
@@ -164,6 +169,7 @@ export default function NewInvoiceForm({
             <input 
               name="dueDate" 
               type="date" 
+              defaultValue={defaultDueDate}
               className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
                 errors.dueDate ? "border-red-500" : "border-gray-200"
               }`}
@@ -289,4 +295,4 @@ export default function NewInvoiceForm({
       </div>
     </form>
   )
-              }
+                  }
