@@ -1,6 +1,7 @@
+// app/(dashboard)/projects/new/NewProjectForm.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createProject } from "@/modules/projects/actions"
 import { toast } from "sonner"
@@ -17,6 +18,22 @@ export default function NewProjectForm({
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  
+  // Smart default: Status starts as PLANNING, but auto-updates based on start date
+  const [status, setStatus] = useState("PLANNING")
+  const [startDate, setStartDate] = useState("")
+
+  // Watch start date and auto-update status
+  useEffect(() => {
+    if (startDate) {
+      const today = new Date().toISOString().split("T")[0]
+      if (startDate <= today) {
+        setStatus("IN_PROGRESS")
+      } else {
+        setStatus("PLANNING")
+      }
+    }
+  }, [startDate])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -54,8 +71,8 @@ export default function NewProjectForm({
       clientId: clientId,
       name: name,
       description: formData.get("description") as string,
-      status: formData.get("status") as any || "PLANNING",
-      startDate: formData.get("startDate") as string,
+      status: status as any,
+      startDate: startDate,
       dueDate: formData.get("dueDate") as string,
       budget: budget ? Number(budget) : null,
       notes: formData.get("notes") as string,
@@ -108,14 +125,23 @@ export default function NewProjectForm({
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Status</label>
-          <select name="status"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+          <select 
+            name="status" 
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+          >
             <option value="PLANNING">Planning</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="REVIEW">Review</option>
             <option value="COMPLETED">Completed</option>
             <option value="ON_HOLD">On Hold</option>
           </select>
+          <p className="text-xs text-gray-400">
+            {status === "IN_PROGRESS" && startDate 
+              ? "✨ Auto-set to In Progress because start date is today or earlier"
+              : "Status will auto-update to In Progress when start date is today or earlier"}
+          </p>
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Budget ($)</label>
@@ -131,13 +157,21 @@ export default function NewProjectForm({
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Start Date</label>
-          <input name="startDate" type="date"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+          <input 
+            name="startDate" 
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" 
+          />
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Due Date</label>
-          <input name="dueDate" type="date"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+          <input 
+            name="dueDate" 
+            type="date"
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" 
+          />
         </div>
       </div>
       <div className="space-y-1.5">
