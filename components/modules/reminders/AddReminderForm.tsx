@@ -1,3 +1,4 @@
+// components/modules/reminders/AddReminderForm.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -6,6 +7,7 @@ import { getClients } from "@/modules/clients/actions"
 import { getLeads } from "@/modules/leads/actions"
 import { toast } from "sonner"
 import { Plus, X } from "lucide-react"
+import { addDays } from "date-fns"
 
 export default function AddReminderForm() {
   const [showForm, setShowForm] = useState(false)
@@ -13,6 +15,11 @@ export default function AddReminderForm() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [clients, setClients] = useState<any[]>([])
   const [leads, setLeads] = useState<any[]>([])
+
+  // Smart default: Due date = tomorrow at 9:00 AM
+  const defaultDueDate = addDays(new Date(), 1)
+  // Format for datetime-local: YYYY-MM-DDThh:mm
+  const defaultDueDateString = defaultDueDate.toISOString().slice(0, 16)
 
   useEffect(() => {
     if (showForm) {
@@ -121,11 +128,13 @@ export default function AddReminderForm() {
           <input 
             name="dueDate" 
             type="datetime-local"
+            defaultValue={defaultDueDateString}
             className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 ${
               errors.dueDate ? "border-red-500" : "border-gray-200"
             }`}
           />
           {errors.dueDate && <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>}
+          <p className="text-xs text-gray-400">Default: tomorrow at current time</p>
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Client</label>
