@@ -103,7 +103,7 @@ export async function createInvoice(input: any) {
     
     return { success: true, data: invoice, message: `✅ Invoice ${invoice.number} created successfully` }
   } catch (error) {
-    console.error("Create invoice error:", error)
+    
     return { success: false, error: "Failed to create invoice" }
   }
 }
@@ -135,7 +135,7 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
     
     return { success: true, data: invoice, message: `✅ Invoice ${invoice.number} status updated to ${status}` }
   } catch (error) {
-    console.error("Update invoice status error:", error)
+    
     return { success: false, error: "Failed to update invoice status" }
   }
 }
@@ -163,7 +163,7 @@ export async function deleteInvoice(id: string) {
     revalidatePath("/invoices")
     return { success: true, message: `✅ Invoice ${invoiceNumber} deleted successfully` }
   } catch (error) {
-    console.error("Delete invoice error:", error)
+    
     return { success: false, error: "Failed to delete invoice" }
   }
 }
@@ -223,7 +223,7 @@ export async function duplicateInvoice(id: string) {
     
     return { success: true, data: newInvoice, message: `✅ Invoice duplicated as ${newInvoice.number}` }
   } catch (error) {
-    console.error("Duplicate invoice error:", error)
+    
     return { success: false, error: "Failed to duplicate invoice" }
   }
 }
