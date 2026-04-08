@@ -124,15 +124,15 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
   if (filteredClients.length === 0 && search) {
     return (
       <div className="space-y-6">
-        {/* Search Bar */}
-        <div className="relative max-w-md">
+        {/* Search Bar - FIXED: Made it full width on mobile with min width */}
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search by name, email, or company..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200"
+            className="w-full min-w-[280px] pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200"
           />
         </div>
         
@@ -178,16 +178,16 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
 
   return (
     <div className="space-y-6">
-      {/* Search Bar and Bulk Actions Bar */}
+      {/* Search Bar and Bulk Actions Bar - FIXED: Search bar takes full width on mobile */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="relative max-w-md">
+        <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search by name, email, or company..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200"
+            className="w-full min-w-[280px] pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200"
           />
         </div>
 
@@ -222,9 +222,9 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
         )}
       </div>
 
-      {/* Desktop Table */}
-      <div className="hidden md:block bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <table className="w-full">
+      {/* Desktop Table - FIXED: Added min-w-full and proper column widths */}
+      <div className="hidden md:block bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
+        <table className="min-w-full">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="text-left px-6 py-3 w-10">
@@ -237,11 +237,11 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
                   )}
                 </button>
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Name</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Company</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">Email</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">Status</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -258,26 +258,29 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
                   </button>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-3 min-w-[0]">
+                    <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center shrink-0">
                       <span className="text-white text-xs font-medium">
                         {client.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <span className="text-sm font-medium text-gray-900">{client.name}</span>
+                    <span className="text-sm font-medium text-gray-900 truncate">{client.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">{client.company ?? "—"}</td>
-                <td className="px-6 py-4 text-sm text-gray-500">{client.email}</td>
+                <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-[200px]">{client.company ?? "—"}</td>
+                <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-[250px]">{client.email}</td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
                     client.isActive ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
                   }`}>
                     {client.isActive ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <Link href={`/clients/${client.id}`} className="text-sm text-gray-500 hover:text-gray-900 font-medium transition-colors">
+                  <Link 
+                    href={`/clients/${client.id}`} 
+                    className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900 font-medium transition-colors whitespace-nowrap"
+                  >
                     View →
                   </Link>
                 </td>
@@ -339,4 +342,4 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
       />
     </div>
   )
-      }
+}
