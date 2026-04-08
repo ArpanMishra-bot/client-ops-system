@@ -1,5 +1,6 @@
 import KeyboardShortcuts from "@/components/shared/KeyboardShortcuts"
 import FloatingActionButton from "@/components/shared/FloatingActionButton"
+import Breadcrumb from "@/components/shared/BreadcrumbSimple"
 import { UserButton } from "@clerk/nextjs"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
@@ -132,7 +133,7 @@ export default async function DashboardLayout({
         {/* Main Content */}
         <main className="p-6 md:p-8">
           <div className="max-w-7xl mx-auto space-y-8">
-            {/* Breadcrumb temporarily removed for debugging */}
+            <BreadcrumbSimple />
             {children}
           </div>
         </main>
