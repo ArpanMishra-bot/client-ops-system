@@ -1,6 +1,6 @@
 import KeyboardShortcuts from "@/components/shared/KeyboardShortcuts"
 import FloatingActionButton from "@/components/shared/FloatingActionButton"
-import Breadcrumb from "@/components/shared/BreadcrumbSimple"
+import BreadcrumbSimple from "@/components/shared/BreadcrumbSimple"
 import { UserButton } from "@clerk/nextjs"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
