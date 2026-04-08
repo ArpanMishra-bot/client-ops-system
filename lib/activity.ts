@@ -35,6 +35,6 @@ export async function logActivity({
       },
     })
   } catch (error) {
-    console.error("Failed to log activity:", error)
+    
   }
 }
