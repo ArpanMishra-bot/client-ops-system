@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 
+import MockPaymentButton from "@/components/modules/invoices/MockPaymentButton"
 import { getInvoiceById } from "@/modules/invoices/actions"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -36,6 +37,12 @@ export default async function InvoiceDetailPage({
           <DuplicateInvoiceButton invoiceId={invoice.id} />
           <InvoiceDownloadButton invoice={invoice} />
           <InvoiceStatusUpdater invoiceId={invoice.id} currentStatus={invoice.status} />
+          <MockPaymentButton 
+    invoiceId={invoice.id}
+    invoiceNumber={invoice.number}
+    amount={invoice.total}
+    currentStatus={invoice.status}
+  />
           <DeleteInvoiceButton invoiceId={invoice.id} invoiceNumber={invoice.number} />
         </div>
       </div>
