@@ -124,7 +124,7 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
   if (filteredClients.length === 0 && search) {
     return (
       <div className="space-y-6">
-        {/* Search Bar - FIXED: Made it full width on mobile with min width */}
+        {/* Search Bar */}
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
@@ -178,9 +178,9 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
 
   return (
     <div className="space-y-6">
-      {/* Search Bar and Bulk Actions Bar - FIXED: Search bar takes full width on mobile */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="relative w-full sm:max-w-md">
+      {/* Search Bar and Bulk Actions Bar - IMPROVED LAYOUT */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="relative w-full lg:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
@@ -191,29 +191,29 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
           />
         </div>
 
-        {/* Bulk Actions Bar - appears when items are selected */}
+        {/* Bulk Actions Bar - Now wraps properly on smaller screens */}
         {selectedCount > 0 && (
-          <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
-            <span className="text-sm text-gray-600">
+          <div className="flex flex-wrap items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+            <span className="text-sm text-gray-600 whitespace-nowrap">
               {selectedCount} selected
             </span>
             <button
               onClick={handleBulkExport}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors active:scale-95 whitespace-nowrap"
             >
               <Download className="h-4 w-4" />
               Export CSV
             </button>
             <button
               onClick={() => setShowDeleteDialog(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors active:scale-95"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors active:scale-95 whitespace-nowrap"
             >
               <Trash2 className="h-4 w-4" />
               Delete
             </button>
             <button
               onClick={clearSelection}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors whitespace-nowrap"
             >
               <X className="h-4 w-4" />
               Clear
@@ -222,7 +222,7 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
         )}
       </div>
 
-      {/* Desktop Table - FIXED: Added min-w-full and proper column widths */}
+      {/* Desktop Table - IMPROVED FOR BETTER SPACING */}
       <div className="hidden md:block bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
         <table className="min-w-full">
           <thead>
@@ -237,9 +237,9 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
                   )}
                 </button>
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Name</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Company</th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">Email</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">Name</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">Company</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[220px]">Email</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">Status</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">Actions</th>
             </tr>
@@ -267,8 +267,16 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
                     <span className="text-sm font-medium text-gray-900 truncate">{client.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-[200px]">{client.company ?? "—"}</td>
-                <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-[250px]">{client.email}</td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-500 block truncate max-w-[200px]">
+                    {client.company ?? "—"}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-500 block truncate max-w-[250px]">
+                    {client.email}
+                  </span>
+                </td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
                     client.isActive ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
