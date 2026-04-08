@@ -67,7 +67,7 @@ export async function createReminder(input: any) {
     
     return { success: true, data: reminder, message: `✅ Reminder "${reminder.title}" created successfully` }
   } catch (error) {
-    console.error("Create reminder error:", error)
+    
     return { success: false, error: "Failed to create reminder" }
   }
 }
@@ -111,7 +111,7 @@ export async function updateReminder(id: string, input: any) {
     
     return { success: true, data: reminder, message: `✅ Reminder updated successfully` }
   } catch (error) {
-    console.error("Update reminder error:", error)
+    
     return { success: false, error: "Failed to update reminder" }
   }
 }
@@ -138,7 +138,7 @@ export async function toggleReminder(id: string, isDone: boolean) {
     
     return { success: true, message: isDone ? "Reminder completed" : "Reminder marked as pending" }
   } catch (error) {
-    console.error("Toggle reminder error:", error)
+    
     return { success: false, error: "Failed to update reminder" }
   }
 }
@@ -164,7 +164,7 @@ export async function deleteReminder(id: string) {
     revalidatePath("/reminders")
     return { success: true, message: `✅ Reminder "${reminderTitle}" deleted successfully` }
   } catch (error) {
-    console.error("Delete reminder error:", error)
+    
     return { success: false, error: "Failed to delete reminder" }
   }
 }
