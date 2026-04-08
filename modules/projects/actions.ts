@@ -67,7 +67,7 @@ export async function createProject(input: any) {
     
     return { success: true, data: project, message: `✅ Project "${project.name}" created successfully` }
   } catch (error) {
-    console.error("Create project error:", error)
+    
     return { success: false, error: "Failed to create project" }
   }
 }
@@ -111,7 +111,7 @@ export async function updateProject(id: string, input: any) {
     
     return { success: true, data: project, message: `✅ Project "${project.name}" updated successfully` }
   } catch (error) {
-    console.error("Update project error:", error)
+    
     return { success: false, error: "Failed to update project" }
   }
 }
@@ -139,7 +139,7 @@ export async function updateProjectStatus(id: string, status: ProjectStatus) {
     
     return { success: true, data: project, message: `✅ Project "${project.name}" status updated to ${status}` }
   } catch (error) {
-    console.error("Update project status error:", error)
+    
     return { success: false, error: "Failed to update project status" }
   }
 }
@@ -167,7 +167,7 @@ export async function deleteProject(id: string) {
     revalidatePath("/projects")
     return { success: true, message: `✅ Project "${projectName}" deleted successfully` }
   } catch (error) {
-    console.error("Delete project error:", error)
+    
     return { success: false, error: "Failed to delete project" }
   }
 }
@@ -199,7 +199,7 @@ export async function createTask(input: any) {
     
     return { success: true, data: task, message: `✅ Task "${task.title}" created successfully` }
   } catch (error) {
-    console.error("Create task error:", error)
+    
     return { success: false, error: "Failed to create task" }
   }
 }
@@ -226,7 +226,7 @@ export async function updateTaskStatus(id: string, status: TaskStatus, projectId
     
     return { success: true, data: task, message: `✅ Task "${task.title}" status updated to ${status}` }
   } catch (error) {
-    console.error("Update task status error:", error)
+    
     return { success: false, error: "Failed to update task status" }
   }
 }
@@ -252,7 +252,7 @@ export async function deleteTask(id: string, projectId: string) {
     revalidatePath(`/projects/${projectId}`)
     return { success: true, message: `✅ Task "${taskTitle}" deleted successfully` }
   } catch (error) {
-    console.error("Delete task error:", error)
+    
     return { success: false, error: "Failed to delete task" }
   }
 }
@@ -283,7 +283,7 @@ export async function updateTaskTitle(id: string, title: string, projectId: stri
     
     return { success: true, data: task, message: `✅ Task updated successfully` }
   } catch (error) {
-    console.error("Update task title error:", error)
+    
     return { success: false, error: "Failed to update task title" }
   }
 }
