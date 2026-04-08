@@ -56,7 +56,7 @@ export async function createLead(input: any) {
     
     return { success: true, data: lead, message: `✅ Lead "${lead.name}" created successfully` }
   } catch (error) {
-    console.error("Create lead error:", error)
+    
     return { success: false, error: "Failed to create lead" }
   }
 }
@@ -91,7 +91,7 @@ export async function updateLead(id: string, input: any) {
     
     return { success: true, data: lead, message: `✅ Lead "${lead.name}" updated successfully` }
   } catch (error) {
-    console.error("Update lead error:", error)
+    
     return { success: false, error: "Failed to update lead" }
   }
 }
@@ -118,7 +118,7 @@ export async function updateLeadStatus(id: string, status: LeadStatus) {
     
     return { success: true, data: lead, message: `✅ Lead "${lead.name}" status updated to ${status}` }
   } catch (error) {
-    console.error("Update lead status error:", error)
+    
     return { success: false, error: "Failed to update lead status" }
   }
 }
