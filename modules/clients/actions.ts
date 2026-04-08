@@ -69,7 +69,7 @@ export async function createClient(input: CreateClientInput) {
     
     return { success: true, data: client, message: `✅ Client "${client.name}" created successfully` }
   } catch (error) {
-    console.error("Create client error:", error)
+    
     return { success: false, error: "Failed to create client" }
   }
 }
@@ -117,7 +117,7 @@ export async function updateClient(id: string, input: UpdateClientInput) {
     
     return { success: true, data: client, message: `✅ Client "${client.name}" updated successfully` }
   } catch (error) {
-    console.error("Update client error:", error)
+    
     return { success: false, error: "Failed to update client" }
   }
 }
@@ -145,7 +145,7 @@ export async function deleteClient(id: string) {
     revalidatePath("/clients")
     return { success: true, message: `✅ Client "${clientName}" deleted successfully` }
   } catch (error) {
-    console.error("Delete client error:", error)
+  
     return { success: false, error: "Failed to delete client" }
   }
 }
