@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { createInvoiceSchema, updateInvoiceSchema } from "./schemas"
 import type { InvoiceStatus } from "./types"
 import { logActivity } from "@/lib/activity"
+import { sendInvoiceSentEmail } from "@/lib/email"
 
 export async function getInvoices() {
   const { userId } = await auth()
@@ -93,7 +94,6 @@ export async function createInvoice(input: any) {
 
     revalidatePath("/invoices")
     
-    // Log activity
     await logActivity({
       type: "invoice",
       action: "created",
@@ -103,7 +103,6 @@ export async function createInvoice(input: any) {
     
     return { success: true, data: invoice, message: `✅ Invoice ${invoice.number} created successfully` }
   } catch (error) {
-    
     return { success: false, error: "Failed to create invoice" }
   }
 }
@@ -119,12 +118,26 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
     const invoice = await db.invoice.update({
       where: { id, userId },
       data,
+      include: { client: true },
     })
+
+    // Send email when invoice is marked as SENT
+    if (status === "SENT" && invoice.client?.email) {
+      const invoiceLink = `${process.env.NEXT_PUBLIC_APP_URL}/invoices/${invoice.id}`
+      
+      await sendInvoiceSentEmail({
+        clientName: invoice.client.name,
+        clientEmail: invoice.client.email,
+        invoiceNumber: invoice.number,
+        invoiceAmount: invoice.total,
+        dueDate: invoice.dueDate.toISOString(),
+        invoiceLink,
+      })
+    }
 
     revalidatePath("/invoices")
     revalidatePath(`/invoices/${id}`)
     
-    // Log activity
     await logActivity({
       type: "invoice",
       action: status === "PAID" ? "paid" : "updated",
@@ -135,7 +148,6 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
     
     return { success: true, data: invoice, message: `✅ Invoice ${invoice.number} status updated to ${status}` }
   } catch (error) {
-    
     return { success: false, error: "Failed to update invoice status" }
   }
 }
@@ -152,7 +164,6 @@ export async function deleteInvoice(id: string) {
       where: { id, userId },
     })
     
-    // Log activity
     await logActivity({
       type: "invoice",
       action: "deleted",
@@ -163,7 +174,6 @@ export async function deleteInvoice(id: string) {
     revalidatePath("/invoices")
     return { success: true, message: `✅ Invoice ${invoiceNumber} deleted successfully` }
   } catch (error) {
-    
     return { success: false, error: "Failed to delete invoice" }
   }
 }
@@ -200,7 +210,7 @@ export async function duplicateInvoice(id: string) {
         notes: original.notes,
         terms: original.terms,
         items: {
-          create: original.items.map((item) => ({
+          create: original.items.map((item: any) => ({
             description: item.description,
             quantity: item.quantity,
             rate: item.rate,
@@ -212,7 +222,6 @@ export async function duplicateInvoice(id: string) {
 
     revalidatePath("/invoices")
     
-    // Log activity
     await logActivity({
       type: "invoice",
       action: "created",
@@ -223,7 +232,6 @@ export async function duplicateInvoice(id: string) {
     
     return { success: true, data: newInvoice, message: `✅ Invoice duplicated as ${newInvoice.number}` }
   } catch (error) {
-    
     return { success: false, error: "Failed to duplicate invoice" }
   }
 }
