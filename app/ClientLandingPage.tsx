@@ -13,7 +13,6 @@ import {
   Bell, 
   LayoutDashboard, 
   CheckCircle, 
-  Star, 
   Play, 
   ChevronRight, 
   Zap, 
