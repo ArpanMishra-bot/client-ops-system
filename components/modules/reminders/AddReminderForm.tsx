@@ -22,6 +22,12 @@ export default function AddReminderForm() {
   const defaultDueDateString = defaultDueDate.toISOString().slice(0, 16)
 
   useEffect(() => {
+    const open = () => setShowForm(true)
+    window.addEventListener("open-reminder-form", open)
+    return () => window.removeEventListener("open-reminder-form", open)
+  }, [])
+
+  useEffect(() => {
     if (showForm) {
       // Load clients and leads when form opens
       getClients().then(setClients)
