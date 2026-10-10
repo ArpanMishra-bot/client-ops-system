@@ -23,3 +23,7 @@ export const updateInvoiceSchema = createInvoiceSchema.partial()
 
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>
 export type UpdateInvoiceInput = z.infer<typeof updateInvoiceSchema>
+
+// Input types (before defaults are applied) for action parameters
+export type InvoiceFormInput = z.input<typeof createInvoiceSchema>
+export type UpdateInvoiceFormInput = z.input<typeof updateInvoiceSchema>

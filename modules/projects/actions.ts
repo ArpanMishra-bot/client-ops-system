@@ -3,8 +3,10 @@
 
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
+import type { ProjectStatus as PrismaProjectStatus, TaskStatus as PrismaTaskStatus } from "@prisma/client"
 import { db } from "@/lib/db"
-import { createProjectSchema, updateProjectSchema } from "./schemas"
+import { createProjectSchema, updateProjectSchema, type ProjectFormInput, type UpdateProjectFormInput } from "./schemas"
+import { createTaskSchema, type TaskFormInput } from "../tasks/schemas"
 import type { ProjectStatus, TaskStatus } from "./types"
 import { logActivity } from "@/lib/activity"
 
@@ -29,7 +31,7 @@ export async function getProjectById(id: string) {
   })
 }
 
-export async function createProject(input: any) {
+export async function createProject(input: ProjectFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -48,7 +50,7 @@ export async function createProject(input: any) {
         name: validated.data.name,
         clientId: validated.data.clientId,
         description: validated.data.description,
-        status: validated.data.status as any,
+        status: validated.data.status as PrismaProjectStatus,
         startDate: validated.data.startDate ? new Date(validated.data.startDate) : null,
         dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : null,
         budget: validated.data.budget,
@@ -73,7 +75,7 @@ export async function createProject(input: any) {
   }
 }
 
-export async function updateProject(id: string, input: any) {
+export async function updateProject(id: string, input: UpdateProjectFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -93,7 +95,7 @@ export async function updateProject(id: string, input: any) {
         name: validated.data.name,
         clientId: validated.data.clientId,
         description: validated.data.description,
-        status: validated.data.status as any,
+        status: validated.data.status as PrismaProjectStatus,
         startDate: validated.data.startDate ? new Date(validated.data.startDate) : null,
         dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : null,
         budget: validated.data.budget,
@@ -124,7 +126,7 @@ export async function updateProjectStatus(id: string, status: ProjectStatus) {
   try {
     const project = await db.project.update({
       where: { id, userId },
-      data: { status: status as any },
+      data: { status: status as PrismaProjectStatus },
     })
     revalidatePath("/projects")
     revalidatePath(`/projects/${id}`)
@@ -174,21 +176,32 @@ export async function deleteProject(id: string) {
 }
 
 // Task actions
-export async function createTask(input: any) {
+export async function createTask(input: TaskFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
+
+  const validated = createTaskSchema.safeParse(input)
+  if (!validated.success) {
+    const errorMessage = validated.error.issues[0]?.message || "Validation failed"
+    return {
+      success: false,
+      error: errorMessage,
+      fieldErrors: validated.error.flatten().fieldErrors,
+    }
+  }
 
   try {
     const task = await db.task.create({
       data: {
-        title: input.title,
-        projectId: input.projectId,
-        status: input.status || "TODO",
-        dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        title: validated.data.title,
+        description: validated.data.description || null,
+        projectId: validated.data.projectId,
+        status: validated.data.status,
+        dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : null,
         userId,
       },
     })
-    revalidatePath(`/projects/${input.projectId}`)
+    revalidatePath(`/projects/${validated.data.projectId}`)
     
     // Log activity
     await logActivity({
@@ -212,7 +225,7 @@ export async function updateTaskStatus(id: string, status: TaskStatus, projectId
   try {
     const task = await db.task.update({
       where: { id, userId },
-      data: { status: status as any },
+      data: { status: status as PrismaTaskStatus },
     })
     revalidatePath(`/projects/${projectId}`)
     

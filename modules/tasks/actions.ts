@@ -2,8 +2,9 @@
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
+import type { TaskStatus } from "@prisma/client"
 import { db } from "@/lib/db"
-import { createTaskSchema, updateTaskSchema } from "./schemas"
+import { createTaskSchema, updateTaskSchema, type TaskFormInput } from "./schemas"
 
 export async function getPendingTasks() {
   const { userId } = await auth()
@@ -29,7 +30,7 @@ export async function getPendingTasks() {
   })
 }
 
-export async function createTask(input: any) {
+export async function createTask(input: TaskFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -74,7 +75,7 @@ export async function updateTaskStatus(id: string, status: string, projectId: st
   try {
     const task = await db.task.update({
       where: { id, userId },
-      data: { status: status as any },
+      data: { status: status as TaskStatus },
     })
     return { success: true, data: task, message: `✅ Task moved to ${status.replace("_", " ")}` }
   } catch (error) {

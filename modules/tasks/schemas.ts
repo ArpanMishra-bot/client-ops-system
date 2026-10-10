@@ -15,3 +15,7 @@ export const updateTaskSchema = createTaskSchema.partial()
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>
+
+// Input types (before defaults are applied) for action parameters
+export type TaskFormInput = z.input<typeof createTaskSchema>
+export type UpdateTaskFormInput = z.input<typeof updateTaskSchema>

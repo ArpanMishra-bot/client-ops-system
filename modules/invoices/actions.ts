@@ -3,8 +3,9 @@
 
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
+import type { InvoiceStatus as PrismaInvoiceStatus, Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
-import { createInvoiceSchema, updateInvoiceSchema } from "./schemas"
+import { createInvoiceSchema, updateInvoiceSchema, type InvoiceFormInput } from "./schemas"
 import type { InvoiceStatus } from "./types"
 import { logActivity } from "@/lib/activity"
 import { PAGE_SIZE, buildPaginated } from "@/lib/pagination"
@@ -84,7 +85,7 @@ export async function getInvoiceById(id: string) {
   return invoice
 }
 
-export async function createInvoice(input: any) {
+export async function createInvoice(input: InvoiceFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -152,7 +153,7 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
   if (!userId) throw new Error("Unauthorized")
 
   try {
-    const data: any = { status }
+    const data: Prisma.InvoiceUpdateInput = { status: status as PrismaInvoiceStatus }
     if (status === "PAID") data.paidAt = new Date()
 
     const invoice = await db.invoice.update({

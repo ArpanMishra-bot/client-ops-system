@@ -32,3 +32,7 @@ export const updateLeadSchema = createLeadSchema.partial()
 
 export type CreateLeadInput = z.infer<typeof createLeadSchema>
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>
+
+// Input types (before defaults are applied) for action parameters
+export type LeadFormInput = z.input<typeof createLeadSchema>
+export type UpdateLeadFormInput = z.input<typeof updateLeadSchema>

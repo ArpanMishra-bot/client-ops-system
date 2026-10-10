@@ -17,3 +17,7 @@ export const updateProjectSchema = createProjectSchema.partial()
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>
+
+// Input types (before defaults are applied) for action parameters
+export type ProjectFormInput = z.input<typeof createProjectSchema>
+export type UpdateProjectFormInput = z.input<typeof updateProjectSchema>
