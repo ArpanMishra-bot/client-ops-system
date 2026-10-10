@@ -1,20 +1,28 @@
-// components/shared/Sidebar.tsx
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import Logo from "@/components/shared/Logo"
 import {
-  LayoutDashboard,
-  Users,
-  TrendingUp,
-  FolderKanban,
-  FileText,
   Bell,
+  ClipboardList,
+  Ellipsis,
+  FileText,
+  FolderKanban,
+  LayoutDashboard,
   Settings,
+  TrendingUp,
+  Users,
 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import Logo from "@/components/shared/Logo"
+import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,110 +31,117 @@ const navItems = [
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/invoices", label: "Invoices", icon: FileText },
   { href: "/reminders", label: "Reminders", icon: Bell },
+  { href: "/tasks", label: "Tasks", icon: ClipboardList },
   { href: "/settings", label: "Settings", icon: Settings },
 ]
 
+const mobileTabs = navItems.filter((item) =>
+  ["/dashboard", "/clients", "/leads", "/invoices"].includes(item.href)
+)
+const moreItems = navItems.filter((item) => !mobileTabs.includes(item))
+
+function isCurrentPath(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
 export default function Sidebar() {
   const pathname = usePathname()
-  const [tooltip, setTooltip] = useState<string | null>(null)
-
-  const NavContent = () => (
-    <>
-      <div className="h-16 flex items-center px-6 border-b border-gray-200/40 backdrop-blur-sm bg-white/50">
-        <Logo size="md" />
-      </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onMouseEnter={() => setTooltip(item.label)}
-              onMouseLeave={() => setTooltip(null)}
-              className={cn(
-                "relative flex items-center gap-3 py-2 text-sm font-medium rounded-lg group",
-                "transition-all duration-200 ease-out",
-                // Active state with left border
-                isActive
-                  ? "bg-primary/10 text-primary border-l-2 border-primary pl-2.5 pr-3"
-                  : "text-gray-600 hover:bg-white/60 hover:text-gray-900 px-3",
-                "active:scale-[0.97] active:bg-indigo-100/80 active:text-indigo-800",
-                "cursor-pointer touch-manipulation",
-                "focus-visible:ring-2 focus-visible:ring-indigo-400"
-              )}
-            >
-              <Icon
-                className={cn(
-                  "h-4 w-4 shrink-0 transition-all duration-200",
-                  isActive ? "text-primary" : "text-gray-400 group-hover:text-indigo-400",
-                  "group-active:scale-95"
-                )}
-              />
-              <span className={cn(
-                "transition-all duration-200",
-                isActive ? "text-primary font-semibold" : ""
-              )}>
-                {item.label}
-              </span>
-
-              {/* Tooltip - desktop only */}
-              {tooltip === item.label && (
-                <div className="absolute left-full ml-2 px-2 py-1 rounded-md bg-white/90 backdrop-blur-sm border border-indigo-200 shadow-lg text-xs text-gray-700 hidden md:block">
-                  {item.label}
-                </div>
-              )}
-            </Link>
-          )
-        })}
-      </nav>
-      <div className="p-3 border-t border-gray-200/40 backdrop-blur-sm bg-white/50">
-        <p className="text-xs text-gray-400 px-3">ClientOps — v1.0</p>
-      </div>
-    </>
-  )
+  const isMoreActive = moreItems.some((item) => isCurrentPath(pathname, item.href))
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-52 h-screen glass-card flex-col fixed left-0 top-0">
-        <NavContent />
-      </div>
-
-      {/* Main content margin */}
-      <div className="md:ml-52">
-        {/* Mobile Bottom Nav */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 
-                        bg-white/95 backdrop-blur-md border-t border-gray-200 
-                        flex items-center justify-around z-30 rounded-t-2xl
-                        shadow-lg">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-background md:flex">
+        <div className="flex h-16 items-center border-b border-border px-6">
+          <Logo size="md" />
+        </div>
+        <nav aria-label="Main navigation" className="flex-1 space-y-1 px-3 py-4">
+          {navItems.map(({ href, label, icon: Icon }) => {
+            const active = isCurrentPath(pathname, href)
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center justify-center flex-1 py-2 rounded-lg",
-                  "transition-all duration-150 ease-out",
-                  "active:scale-90 active:bg-indigo-100/50 active:shadow-lg",
-                  "cursor-pointer touch-manipulation",
-                  isActive ? "text-indigo-600" : "text-gray-500 hover:text-gray-700"
+                  "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
+                  active
+                    ? "border-l-2 border-primary bg-primary/10 pl-2.5 text-primary"
+                    : "text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
                 )}
               >
-                <Icon className={cn(
-                  "h-5 w-5 transition-transform duration-150",
-                  isActive ? "drop-shadow-glow" : "",
-                  "active:scale-110"
-                )} />
-                <span className="text-[10px] font-medium mt-0.5">{item.label}</span>
+                <Icon aria-hidden="true" className="size-5 shrink-0" />
+                {label}
               </Link>
             )
           })}
-        </div>
-      </div>
+        </nav>
+      </aside>
+
+      <nav
+        aria-label="Mobile navigation"
+        className="fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-5 border-t border-border bg-background/95 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      >
+        {mobileTabs.map(({ href, label, icon: Icon }) => {
+          const active = isCurrentPath(pathname, href)
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "flex min-h-11 flex-col items-center justify-center gap-1 rounded-lg text-xs text-neutral-600",
+                active && "font-semibold text-primary"
+              )}
+            >
+              <Icon aria-hidden="true" className="size-5" />
+              <span>{label}</span>
+            </Link>
+          )
+        })}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              aria-label="More navigation options"
+              aria-current={isMoreActive ? "page" : undefined}
+              className={cn(
+                "h-full min-w-0 flex-col gap-1 rounded-lg px-1 text-xs font-normal text-neutral-600",
+                isMoreActive && "font-semibold text-primary"
+              )}
+            >
+              <Ellipsis aria-hidden="true" className="size-5" />
+              <span>More</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[min(20rem,85vw)]">
+            <SheetHeader className="border-b border-border px-5 py-5">
+              <SheetTitle>More</SheetTitle>
+            </SheetHeader>
+            <nav aria-label="More navigation" className="space-y-1 px-3">
+              {moreItems.map(({ href, label, icon: Icon }) => {
+                const active = isCurrentPath(pathname, href)
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-neutral-700 hover:bg-neutral-100"
+                    )}
+                  >
+                    <Icon aria-hidden="true" className="size-5" />
+                    {label}
+                  </Link>
+                )
+              })}
+            </nav>
+          </SheetContent>
+        </Sheet>
+      </nav>
     </>
   )
 }

@@ -3,6 +3,10 @@ import { getLeadsPage } from "@/modules/leads/actions"
 import Pagination from "@/components/shared/Pagination"
 import { parsePage } from "@/lib/pagination"
 import LeadsClient from "./LeadsClient"
+import PageHeader from "@/components/shared/PageHeader"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { Plus } from "lucide-react"
 
 export default async function LeadsPage({
   searchParams,
@@ -16,14 +20,20 @@ export default async function LeadsPage({
 
   return (
     <div className="space-y-6 h-full">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Leads Pipeline</h1>
-          <p className="text-sm text-gray-500 mt-1">Track and manage your sales pipeline</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Leads"
+        description="Track and manage your sales pipeline."
+        action={
+          <Button asChild size="lg">
+            <Link href="/leads/new">
+              <Plus aria-hidden="true" />
+              Add lead
+            </Link>
+          </Button>
+        }
+      />
 
-      <Suspense fallback={<div className="animate-pulse">Loading...</div>}>
+      <Suspense fallback={<div className="min-h-64 rounded-xl border border-border bg-card" aria-label="Loading leads" />}>
         <LeadsClient key={data.page} initialLeads={data.items} totalCount={data.total} />
       </Suspense>
 

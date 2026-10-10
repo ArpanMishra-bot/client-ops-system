@@ -7,6 +7,8 @@ import Link from "next/link"
 import Pagination from "@/components/shared/Pagination"
 import { parsePage } from "@/lib/pagination"
 import InvoicesSkeleton from "@/components/shared/InvoicesSkeleton"
+import PageHeader from "@/components/shared/PageHeader"
+import { Button } from "@/components/ui/button"
 
 async function InvoicesList({ page: requested }: { page: number }) {
   let data = await getInvoicesPage(requested)
@@ -135,19 +137,18 @@ export default async function InvoicesPage({
   const { page } = await searchParams
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Invoices</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage and track your invoices</p>
-        </div>
-        <Link
-  href="/invoices/new"
-  className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
->
-  <Plus className="h-4 w-4" />
-  <span className="hidden sm:inline">New Invoice</span>
-</Link>
-      </div>
+      <PageHeader
+        title="Invoices"
+        description="Manage and track your invoices."
+        action={
+          <Button asChild size="lg">
+            <Link href="/invoices/new">
+              <Plus aria-hidden="true" />
+              New invoice
+            </Link>
+          </Button>
+        }
+      />
 
       <Suspense fallback={<InvoicesSkeleton />}>
         <InvoicesList page={parsePage(page)} />

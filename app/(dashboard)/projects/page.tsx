@@ -4,6 +4,8 @@ import { PROJECT_STATUS_CONFIG } from "@/modules/projects/types"
 import { FolderKanban, Plus, Users, Briefcase } from "lucide-react"
 import Link from "next/link"
 import ProjectsSkeleton from "@/components/shared/ProjectsSkeleton"
+import PageHeader from "@/components/shared/PageHeader"
+import { Button } from "@/components/ui/button"
 
 async function ProjectsList() {
   const projects = await getProjects()
@@ -94,19 +96,18 @@ async function ProjectsList() {
 export default async function ProjectsPage() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your active projects</p>
-        </div>
-        <Link
-  href="/projects/new"
-  className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
->
-  <Plus className="h-4 w-4" />
-  New Project
-</Link>
-      </div>
+      <PageHeader
+        title="Projects"
+        description="Manage your active projects."
+        action={
+          <Button asChild size="lg">
+            <Link href="/projects/new">
+              <Plus aria-hidden="true" />
+              New project
+            </Link>
+          </Button>
+        }
+      />
 
       <Suspense fallback={<ProjectsSkeleton />}>
         <ProjectsList />
