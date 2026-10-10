@@ -24,7 +24,7 @@ export default async function DashboardLayout({
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50/30 via-purple-50/30 to-pink-50/30">
+    <div className="min-h-screen bg-neutral-50">
       <Sidebar />
       <div className="md:ml-64">
         {/* Premium Header */}
@@ -44,7 +44,7 @@ export default async function DashboardLayout({
                 <div className="flex items-baseline gap-2">
                   <span className="text-sm font-mono text-gray-400">✨</span>
                   <span className="text-sm font-medium text-gray-500">{greeting},</span>
-                  <span className="text-sm font-semibold gradient-text">{user?.firstName ?? "there"}</span>
+                  <span className="text-sm font-semibold text-primary">{user?.firstName ?? "there"}</span>
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">Let's make today productive</p>
               </div>

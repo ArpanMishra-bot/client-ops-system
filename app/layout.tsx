@@ -13,12 +13,21 @@ export const metadata: Metadata = {
   },
   description:
     "ClientOps brings clients, leads, projects, tasks, invoices and reminders into one simple workspace for freelancers and small agencies.",
+  openGraph: {
+    title: "ClientOps — Client operations workspace",
+    description:
+      "Manage clients, leads, projects, invoices, and reminders in one straightforward workspace.",
+    siteName: "ClientOps",
+    type: "website",
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 }
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 }
 
 export default function RootLayout({

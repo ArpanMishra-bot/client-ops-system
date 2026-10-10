@@ -50,7 +50,7 @@ export default function Sidebar() {
                 "transition-all duration-200 ease-out",
                 // Active state with left border
                 isActive
-                  ? "bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-700 shadow-inner border-l-2 border-indigo-500 pl-2.5 pr-3"
+                  ? "bg-primary/10 text-primary border-l-2 border-primary pl-2.5 pr-3"
                   : "text-gray-600 hover:bg-white/60 hover:text-gray-900 px-3",
                 "active:scale-[0.97] active:bg-indigo-100/80 active:text-indigo-800",
                 "cursor-pointer touch-manipulation",
@@ -60,13 +60,13 @@ export default function Sidebar() {
               <Icon
                 className={cn(
                   "h-4 w-4 shrink-0 transition-all duration-200",
-                  isActive ? "text-indigo-500 drop-shadow-glow" : "text-gray-400 group-hover:text-indigo-400",
+                  isActive ? "text-primary" : "text-gray-400 group-hover:text-indigo-400",
                   "group-active:scale-95"
                 )}
               />
               <span className={cn(
                 "transition-all duration-200",
-                isActive ? "gradient-text font-semibold" : ""
+                isActive ? "text-primary font-semibold" : ""
               )}>
                 {item.label}
               </span>
