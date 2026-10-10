@@ -43,7 +43,7 @@ export default function NewClientPage() {
       return
     }
 
-    const result = await createClient({
+    const payload = {
   name: name,
   email: email,
   phone: formData.get("phone") as string,
@@ -54,7 +54,19 @@ export default function NewClientPage() {
   website: website,
   notes: formData.get("notes") as string,
   isActive: true,
-})
+}
+
+    let result = await createClient(payload)
+
+    if (!result.success && "duplicateEmail" in result && result.duplicateEmail) {
+      const proceed = window.confirm(`${result.error}\n\nAdd this client anyway?`)
+      if (!proceed) {
+        setErrors({ email: "A client with this email already exists" })
+        setLoading(false)
+        return
+      }
+      result = await createClient(payload, { allowDuplicateEmail: true })
+    }
 
     if (result.success) {
       toast.success("Client created successfully")

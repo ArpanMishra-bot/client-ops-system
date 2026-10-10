@@ -240,6 +240,7 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">Name</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">Company</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[220px]">Email</th>
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">Phone</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">Status</th>
               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">Actions</th>
             </tr>
@@ -278,6 +279,9 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
                   </span>
                 </td>
                 <td className="px-6 py-4">
+                  <span className="text-sm text-gray-500 whitespace-nowrap">{client.phone || "—"}</span>
+                </td>
+                <td className="px-6 py-4">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
                     client.isActive ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
                   }`}>
@@ -298,42 +302,54 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
         </table>
       </div>
 
-      {/* Mobile Cards with Checkboxes */}
+      {/* Mobile stacked cards */}
       <div className="md:hidden space-y-3">
         {filteredClients.map((client) => (
           <div
             key={client.id}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition-all duration-200"
+            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3 hover:shadow-md transition-all duration-200"
           >
-            <button
-              onClick={() => toggleSelectClient(client.id)}
-              className="w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors"
-            >
-              {selectedClients.has(client.id) && (
-                <Check className="h-3 w-3 text-gray-900" />
-              )}
-            </button>
-            <Link
-              href={`/clients/${client.id}`}
-              className="flex-1 flex items-center gap-4 min-w-0"
-            >
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => toggleSelectClient(client.id)}
+                aria-label={`Select ${client.name}`}
+                className="w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors"
+              >
+                {selectedClients.has(client.id) && (
+                  <Check className="h-3 w-3 text-gray-900" />
+                )}
+              </button>
               <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center shrink-0">
                 <span className="text-white text-sm font-medium">
                   {client.name.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{client.name}</p>
-                <p className="text-xs text-gray-500 truncate">{client.email}</p>
-                {client.company && (
-                  <p className="text-xs text-gray-400 truncate">{client.company}</p>
-                )}
-              </div>
+              <p className="flex-1 min-w-0 text-sm font-medium text-gray-900 truncate">{client.name}</p>
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
                 client.isActive ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
               }`}>
                 {client.isActive ? "Active" : "Inactive"}
               </span>
+            </div>
+            <dl className="text-sm space-y-1">
+              <div className="flex gap-2">
+                <dt className="text-gray-400 w-16 shrink-0">Email</dt>
+                <dd className="text-gray-700 truncate">{client.email}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-gray-400 w-16 shrink-0">Phone</dt>
+                <dd className="text-gray-700 truncate">{client.phone || "—"}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-gray-400 w-16 shrink-0">Company</dt>
+                <dd className="text-gray-700 truncate">{client.company || "—"}</dd>
+              </div>
+            </dl>
+            <Link
+              href={`/clients/${client.id}`}
+              className="block text-center text-sm font-medium text-gray-700 border border-gray-200 rounded-lg py-2 hover:bg-gray-50 active:scale-[0.98] transition-all"
+            >
+              View client →
             </Link>
           </div>
         ))}

@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { createClientSchema, updateClientSchema } from "./schemas"
 import type { CreateClientInput, UpdateClientInput } from "./types"
 import { logActivity } from "@/lib/activity"
+import { PAGE_SIZE, buildPaginated } from "@/lib/pagination"
 
 export async function getClients() {
   const { userId } = await auth()
@@ -18,6 +19,22 @@ export async function getClients() {
   })
 }
 
+export async function getClientsPage(page: number) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  const [total, items] = await Promise.all([
+    db.client.count({ where: { userId } }),
+    db.client.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+  ])
+  return buildPaginated(items, total, page)
+}
+
 export async function getClientById(id: string) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
@@ -27,7 +44,7 @@ export async function getClientById(id: string) {
   })
 }
 
-export async function createClient(input: CreateClientInput) {
+export async function createClient(input: CreateClientInput, options?: { allowDuplicateEmail?: boolean }) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -38,6 +55,20 @@ export async function createClient(input: CreateClientInput) {
       success: false, 
       error: errorMessage,
       fieldErrors: validated.error.flatten().fieldErrors
+    }
+  }
+
+  if (!options?.allowDuplicateEmail) {
+    const existing = await db.client.findFirst({
+      where: { userId, email: { equals: validated.data.email, mode: "insensitive" } },
+      select: { name: true },
+    })
+    if (existing) {
+      return {
+        success: false,
+        duplicateEmail: true,
+        error: `A client with this email already exists (${existing.name}).`,
+      }
     }
   }
 
