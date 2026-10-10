@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { createInvoiceSchema, updateInvoiceSchema } from "./schemas"
 import type { InvoiceStatus } from "./types"
 import { logActivity } from "@/lib/activity"
+import { PAGE_SIZE, buildPaginated } from "@/lib/pagination"
 
 export async function getInvoices() {
   const { userId } = await auth()
@@ -25,6 +26,44 @@ export async function getInvoices() {
     }
     return invoice
   })
+}
+
+export async function getInvoicesPage(page: number) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  const [total, invoices, paid, outstanding] = await Promise.all([
+    db.invoice.count({ where: { userId } }),
+    db.invoice.findMany({
+      where: { userId },
+      include: { client: true, items: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.invoice.aggregate({ where: { userId, status: "PAID" }, _sum: { total: true } }),
+    db.invoice.aggregate({
+      where: {
+        userId,
+        status: { not: "PAID" },
+        OR: [{ status: { in: ["SENT", "VIEWED", "OVERDUE"] } }, { dueDate: { lt: new Date() } }],
+      },
+      _sum: { total: true },
+    }),
+  ])
+
+  const today = new Date()
+  const items = invoices.map((invoice) =>
+    invoice.status !== "PAID" && invoice.dueDate < today
+      ? { ...invoice, status: "OVERDUE" as InvoiceStatus }
+      : invoice
+  )
+
+  return {
+    ...buildPaginated(items, total, page),
+    totalRevenue: paid._sum.total ?? 0,
+    outstanding: outstanding._sum.total ?? 0,
+  }
 }
 
 export async function getInvoiceById(id: string) {

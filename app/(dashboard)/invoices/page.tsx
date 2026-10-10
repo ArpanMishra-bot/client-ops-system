@@ -1,23 +1,19 @@
 import { formatCurrency } from "@/lib/utils"
 import { Suspense } from "react"
-import { getInvoices } from "@/modules/invoices/actions"
+import { getInvoicesPage } from "@/modules/invoices/actions"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
 import { FileText, Plus, Receipt } from "lucide-react"
 import Link from "next/link"
+import Pagination from "@/components/shared/Pagination"
+import { parsePage } from "@/lib/pagination"
 import InvoicesSkeleton from "@/components/shared/InvoicesSkeleton"
 
-async function InvoicesList() {
-  const invoices = await getInvoices()
+async function InvoicesList({ page: requested }: { page: number }) {
+  let data = await getInvoicesPage(requested)
+  if (requested > data.totalPages) data = await getInvoicesPage(data.totalPages)
+  const { items: invoices, totalRevenue, outstanding } = data
 
-  const totalRevenue = invoices
-    .filter(i => i.status === "PAID")
-    .reduce((sum, i) => sum + i.total, 0)
-
-  const outstanding = invoices
-    .filter(i => ["SENT", "VIEWED", "OVERDUE"].includes(i.status))
-    .reduce((sum, i) => sum + i.total, 0)
-
-  if (invoices.length === 0) {
+  if (data.total === 0) {
     return (
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -57,7 +53,7 @@ async function InvoicesList() {
   <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
     <p className="text-sm font-medium text-gray-600">Total Invoices</p>
     <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mt-1">
-      {invoices.length}
+      {data.total}
     </p>
   </div>
 </div>
@@ -125,11 +121,18 @@ async function InvoicesList() {
           )
         })}
       </div>
+
+      <Pagination basePath="/invoices" page={data.page} totalPages={data.totalPages} total={data.total} pageSize={data.pageSize} />
     </>
   )
 }
 
-export default async function InvoicesPage() {
+export default async function InvoicesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string | string[] }>
+}) {
+  const { page } = await searchParams
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -147,7 +150,7 @@ export default async function InvoicesPage() {
       </div>
 
       <Suspense fallback={<InvoicesSkeleton />}>
-        <InvoicesList />
+        <InvoicesList page={parsePage(page)} />
       </Suspense>
     </div>
   )

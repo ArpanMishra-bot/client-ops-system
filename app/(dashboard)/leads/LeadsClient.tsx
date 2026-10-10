@@ -11,7 +11,7 @@ import LeadMobileList from "@/components/modules/leads/LeadMobileList"
 import BulkStatusUpdate from "@/components/modules/leads/BulkStatusUpdate"
 import LeadSourceAnalytics from "@/components/modules/leads/LeadSourceAnalytics"
 
-export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
+export default function LeadsClient({ initialLeads, totalCount }: { initialLeads: any[]; totalCount?: number }) {
   const [leads, setLeads] = useState(initialLeads)
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set())
   const [showAnalytics, setShowAnalytics] = useState(false)
@@ -62,14 +62,14 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
     <>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex gap-1 text-sm text-gray-500">
-          <span className="font-medium text-gray-900">{leads.length}</span>
+          <span className="font-medium text-gray-900">{totalCount ?? leads.length}</span>
           <span>total leads</span>
           <span className="mx-2">·</span>
           <span className="font-medium text-green-600">{wonCount}</span>
-          <span>won</span>
+          <span>won (this page)</span>
           <span className="mx-2">·</span>
           <span className="font-medium text-gray-900">{formatAmount(totalValue)}</span>
-          <span>pipeline value</span>
+          <span>pipeline value (this page)</span>
         </div>
         
         <div className="flex items-center gap-3">
