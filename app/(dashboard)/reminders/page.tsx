@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { getReminders } from "@/modules/reminders/actions"
-import { Bell, Calendar } from "lucide-react"
+import { Calendar } from "lucide-react"
 import AddFirstReminderButton from "@/components/modules/reminders/AddFirstReminderButton"
 import AddReminderForm from "@/components/modules/reminders/AddReminderForm"
 import ReminderItem from "@/components/modules/reminders/ReminderItem"

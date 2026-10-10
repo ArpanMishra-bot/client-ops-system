@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { getProjects } from "@/modules/projects/actions"
 import { PROJECT_STATUS_CONFIG } from "@/modules/projects/types"
-import { FolderKanban, Plus, Users, Briefcase } from "lucide-react"
+import { FolderKanban, Plus, Users } from "lucide-react"
 import Link from "next/link"
 import ProjectsSkeleton from "@/components/shared/ProjectsSkeleton"
 import PageHeader from "@/components/shared/PageHeader"
