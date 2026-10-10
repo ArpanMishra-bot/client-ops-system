@@ -8,7 +8,7 @@ import RevenueChart from "@/components/dashboard/RevenueChart"
 import PipelineChart from "@/components/dashboard/PipelineChart"
 import StatCard from "@/components/dashboard/StatCard"
 import BusinessHealthScore from "@/components/dashboard/BusinessHealthScore"
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 import Link from "next/link"
 import {
   Users,
@@ -296,7 +296,7 @@ async function ActivityFeed() {
                 {activity.displayText}
               </p>
               <p className="text-xs font-mono text-gray-400 mt-1">
-                {new Date(activity.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {formatDate(activity.timestamp)} at {new Date(activity.timestamp).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>
           </div>
@@ -341,7 +341,7 @@ async function RecentClients() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-mono text-gray-400">
-                  {new Date(client.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {formatDate(client.createdAt)}
                 </p>
               </div>
             </Link>

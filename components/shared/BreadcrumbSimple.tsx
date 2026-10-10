@@ -10,8 +10,7 @@ export default function BreadcrumbSimple() {
   // Don't show on dashboard root
   if (pathname === "/dashboard") return null
   
-  // Split pathname into segments, remove empty and "dashboard"
-  const segments = pathname.split("/").filter(segment => segment !== "" && segment !== "dashboard")
+  const segments = pathname.split("/").filter(Boolean)
   
   // Get display name for each segment
   const getDisplayName = (segment: string): string => {
@@ -22,6 +21,7 @@ export default function BreadcrumbSimple() {
     
     // Map known routes
     const routeMap: Record<string, string> = {
+      "dashboard": "Dashboard",
       "clients": "Clients",
       "leads": "Leads",
       "projects": "Projects",
@@ -38,7 +38,7 @@ export default function BreadcrumbSimple() {
   // Build href for each segment
   const buildHref = (index: number): string => {
     const relevantSegments = segments.slice(0, index + 1)
-    return `/dashboard/${relevantSegments.join("/")}`
+    return `/${relevantSegments.join("/")}`
   }
   
   return (
@@ -46,7 +46,11 @@ export default function BreadcrumbSimple() {
       <ol className="flex items-center flex-wrap gap-1">
         {/* Home link */}
         <li className="flex items-center">
-          <Link href="/dashboard" className="text-gray-500 hover:text-indigo-600 transition-colors">
+          <Link
+            href="/dashboard"
+            aria-label="Dashboard"
+            className="flex min-h-11 min-w-11 items-center justify-center text-gray-600 hover:text-primary"
+          >
             <Home className="h-3.5 w-3.5" />
           </Link>
         </li>

@@ -3,6 +3,8 @@
 
 import { useEffect } from "react"
 import Link from "next/link"
+import { AlertTriangle } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function ErrorFallback({
   error,
@@ -20,26 +22,20 @@ export default function ErrorFallback({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-      <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-        <span className="text-2xl">⚠️</span>
+      <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-amber-100 text-warning">
+        <AlertTriangle aria-hidden="true" className="size-7" />
       </div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
-      <p className="text-gray-500 mb-6 max-w-md">
-        {error.message || "An unexpected error occurred. Please try again."}
+      <h2 className="mb-2 text-xl font-semibold text-neutral-900">Something went wrong</h2>
+      <p className="mb-6 max-w-md text-neutral-600">
+        We couldn&apos;t load this page. Please try again.
       </p>
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          onClick={reset}
-          className="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors active:scale-95"
-        >
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button type="button" onClick={reset} size="lg">
           Try again
-        </button>
-        <Link
-          href="/dashboard"
-          className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors active:scale-95"
-        >
-          Go to Dashboard
-        </Link>
+        </Button>
+        <Button asChild variant="outline" size="lg">
+          <Link href="/dashboard">Go to dashboard</Link>
+        </Button>
       </div>
     </div>
   )

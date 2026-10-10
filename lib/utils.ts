@@ -8,6 +8,17 @@ export function cn(...inputs: ClassValue[]) {
 
 export const DEFAULT_CURRENCY = "INR"
 
+export function formatDate(value: Date | string | number): string {
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return "—"
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date)
+}
+
 const CURRENCY_LOCALES: Record<string, string> = {
   INR: "en-IN",
   USD: "en-US",

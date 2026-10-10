@@ -1,10 +1,11 @@
 import { Suspense } from "react"
 import { getReminders } from "@/modules/reminders/actions"
-import { Bell, Calendar } from "lucide-react"
+import { Calendar } from "lucide-react"
 import AddFirstReminderButton from "@/components/modules/reminders/AddFirstReminderButton"
 import AddReminderForm from "@/components/modules/reminders/AddReminderForm"
 import ReminderItem from "@/components/modules/reminders/ReminderItem"
 import RemindersSkeleton from "@/components/shared/RemindersSkeleton"
+import PageHeader from "@/components/shared/PageHeader"
 
 async function RemindersList() {
   const reminders = await getReminders()
@@ -76,12 +77,7 @@ async function RemindersList() {
 export default async function RemindersPage() {
   return (
     <div className="space-y-6 max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Reminders</h1>
-          <p className="text-sm text-gray-500 mt-1">Stay on top of your follow-ups</p>
-        </div>
-      </div>
+      <PageHeader title="Reminders" description="Stay on top of your follow-ups." />
 
       <Suspense fallback={<RemindersSkeleton />}>
         <RemindersList />

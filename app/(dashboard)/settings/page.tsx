@@ -1,16 +1,15 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { UserButton } from "@clerk/nextjs"
 import { User, Bell, Shield, CreditCard } from "lucide-react"
+import PageHeader from "@/components/shared/PageHeader"
+import { formatDate } from "@/lib/utils"
 
 export default async function SettingsPage() {
   const user = await currentUser()
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage your account and preferences</p>
-      </div>
+      <PageHeader title="Settings" description="Manage your account and preferences." />
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <div className="flex items-center gap-3 mb-6">
@@ -52,7 +51,7 @@ export default async function SettingsPage() {
               <p className="text-xs text-gray-400 mt-0.5">When you joined</p>
             </div>
             <p className="text-sm text-gray-500">
-              {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
+              {user?.createdAt ? formatDate(user.createdAt) : "—"}
             </p>
           </div>
           <div className="flex items-center justify-between py-3">

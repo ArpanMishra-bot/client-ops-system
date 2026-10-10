@@ -1,6 +1,6 @@
 "use client"
 
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from "@react-pdf/renderer"
 
 const styles = StyleSheet.create({
@@ -227,13 +227,13 @@ function InvoiceDocument({ invoice }: Props) {
           <View>
             <Text style={styles.dateLabel}>Issue Date</Text>
             <Text style={styles.dateValue}>
-              {new Date(invoice.issueDate).toLocaleDateString()}
+              {formatDate(invoice.issueDate)}
             </Text>
           </View>
           <View>
             <Text style={styles.dateLabel}>Due Date</Text>
             <Text style={styles.dateValue}>
-              {new Date(invoice.dueDate).toLocaleDateString()}
+              {formatDate(invoice.dueDate)}
             </Text>
           </View>
           <View>

@@ -1,467 +1,362 @@
-// app/ClientLandingPage.tsx
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState, type ReactNode } from "react"
 import Link from "next/link"
 import Logo from "@/components/shared/Logo"
-import { 
-  ArrowRight, 
-  Users, 
-  TrendingUp, 
-  FolderKanban, 
-  FileText, 
-  Bell, 
-  LayoutDashboard, 
-  CheckCircle, 
-  Play, 
-  ChevronRight, 
-  Zap, 
-  Minus, 
-  Plus,
-  Sparkles,
-  Shield,
-  Clock,
-  DollarSign,
-  BarChart3
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  ArrowRight,
+  Bell,
+  Check,
+  ChevronDown,
+  FileText,
+  FolderKanban,
+  LayoutDashboard,
+  Users,
+  Zap,
 } from "lucide-react"
-import { motion, useInView } from "framer-motion"
-
-// Consistent gradient classes (matching dashboard)
-const gradients = {
-  primary: "from-indigo-500 to-indigo-600",
-  secondary: "from-purple-500 to-purple-600",
-  hero: "from-indigo-500 to-purple-600",
-  card: "from-indigo-50 to-purple-50",
-}
-
-// Animated counter component
-function Counter({ target, suffix = "", prefix = "" }: { target: number; suffix?: string; prefix?: string }) {
-  const [count, setCount] = useState(0)
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true })
-
-  useEffect(() => {
-    if (isInView) {
-      let start = 0
-      const duration = 2000
-      const increment = target / (duration / 16)
-      const timer = setInterval(() => {
-        start += increment
-        if (start >= target) {
-          setCount(target)
-          clearInterval(timer)
-        } else {
-          setCount(Math.floor(start))
-        }
-      }, 16)
-      return () => clearInterval(timer)
-    }
-  }, [isInView, target])
-
-  return (
-    <span ref={ref}>
-      {prefix}{count.toLocaleString()}{suffix}
-    </span>
-  )
-}
-
-// Accordion component for FAQ
-function AccordionItem({ question, answer }: { question: string; answer: string }) {
-  const [isOpen, setIsOpen] = useState(false)
-
-  return (
-    <div className="glass-card overflow-hidden transition-all duration-200">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-indigo-50/30 transition-colors active:scale-[0.99]"
-      >
-        <span className="font-semibold text-gray-900">{question}</span>
-        {isOpen ? <Minus className="h-5 w-5 text-indigo-500" /> : <Plus className="h-5 w-5 text-indigo-500" />}
-      </button>
-      {isOpen && (
-        <div className="px-6 pb-4">
-          <p className="text-sm text-gray-500">{answer}</p>
-        </div>
-      )}
-    </div>
-  )
-}
 
 const features = [
-  { 
-    icon: LayoutDashboard, 
-    title: "Live Dashboard", 
-    description: "Real-time overview of your entire business", 
-    benefit: "Know exactly where your business stands at a glance",
-    details: ["Revenue tracking", "Active leads count", "Project progress", "Upcoming reminders"],
-    gradient: gradients.primary
+  {
+    icon: Users,
+    title: "Client management",
+    description: "Keep contact details, company information, status, and activity history together.",
   },
-  { 
-    icon: Users, 
-    title: "Client Management", 
-    description: "Keep all your client information organized", 
-    benefit: "Never lose client details again",
-    details: ["Full contact profiles", "Company details", "Activity history", "Status tracking"],
-    gradient: gradients.primary
+  {
+    icon: LayoutDashboard,
+    title: "Leads pipeline",
+    description: "Track opportunities through the sales stages and keep deal details in view.",
   },
-  { 
-    icon: TrendingUp, 
-    title: "Leads Pipeline", 
-    description: "Visual kanban pipeline to track every deal", 
-    benefit: "Close more deals with visual tracking",
-    details: ["7 pipeline stages", "Deal value tracking", "Priority levels", "Drag & drop"],
-    gradient: gradients.primary
+  {
+    icon: FolderKanban,
+    title: "Projects and tasks",
+    description: "Organize project work with task stages, progress, budgets, and due dates.",
   },
-  { 
-    icon: FolderKanban, 
-    title: "Projects & Tasks", 
-    description: "Manage projects with a full task board", 
-    benefit: "Deliver projects on time, every time",
-    details: ["4-stage task board", "Progress tracking", "Budget management", "Due dates"],
-    gradient: gradients.primary
+  {
+    icon: FileText,
+    title: "Invoicing",
+    description: "Create invoices with line items and track their status from one workspace.",
   },
-  { 
-    icon: FileText, 
-    title: "Invoicing", 
-    description: "Create professional invoices and get paid", 
-    benefit: "Get paid faster with professional invoices",
-    details: ["Line item builder", "Auto-numbering", "Status tracking", "Payment records"],
-    gradient: gradients.primary
+  {
+    icon: Bell,
+    title: "Reminders",
+    description: "Keep follow-ups, meetings, deadlines, and payment reminders visible.",
   },
-  { 
-    icon: Bell, 
-    title: "Reminders", 
-    description: "Never miss a follow-up or deadline", 
-    benefit: "Stay on top of everything that matters",
-    details: ["Follow-up alerts", "Meeting reminders", "Payment nudges", "Overdue tracking"],
-    gradient: gradients.primary
+  {
+    icon: LayoutDashboard,
+    title: "Business overview",
+    description: "See key client, lead, invoice, task, and reminder information on your dashboard.",
+  },
+]
+
+const steps = [
+  {
+    title: "Add your clients and leads",
+    description: "Keep contact records and potential work organized in one place.",
+  },
+  {
+    title: "Manage projects and follow-ups",
+    description: "Track project tasks and use reminders to stay on top of upcoming work.",
+  },
+  {
+    title: "Create and track invoices",
+    description: "Prepare invoices and follow their status alongside the rest of your work.",
   },
 ]
 
 const faqs = [
-  { q: "Is there a free trial?", a: "Yes! You can start for free and use all core features. No credit card required." },
-  { q: "Can I cancel anytime?", a: "Absolutely. You can cancel your subscription at any time with no hidden fees." },
-  { q: "Is my data secure?", a: "Your data is encrypted and stored securely. We take security seriously." },
-  { q: "Can I import my existing clients?", a: "Yes, you can import clients via CSV or add them manually." },
+  {
+    question: "What can I manage with ClientOps?",
+    answer:
+      "ClientOps includes client records, a leads pipeline, projects and tasks, invoices, reminders, and a business dashboard.",
+  },
+  {
+    question: "Can I create invoices?",
+    answer:
+      "Yes. You can create invoices with line items and track invoice statuses in the app.",
+  },
+  {
+    question: "How do reminders work?",
+    answer:
+      "You can keep follow-ups, meetings, deadlines, and payment reminders in the reminders area of your workspace.",
+  },
+  {
+    question: "Where can I find plan and pricing details?",
+    answer:
+      "Contact us for current information about availability and pricing.",
+  },
 ]
 
-const highlights = [
-  { title: "Clients & Leads", label: "One place for every contact and deal" },
-  { title: "Projects & Tasks", label: "Keep work organised and on schedule" },
-  { title: "Invoices", label: "Create and track invoices in ₹ or $" },
-  { title: "Reminders", label: "Never miss a follow-up" },
-]
+function FaqItem({
+  question,
+  answer,
+  panelId,
+}: {
+  question: string
+  answer: string
+  panelId: string
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <Card className="gap-0 py-0">
+      <h3>
+        <Button
+          type="button"
+          variant="ghost"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          className="min-h-14 w-full justify-between rounded-xl px-5 text-left whitespace-normal"
+          onClick={() => setIsOpen((open) => !open)}
+        >
+          <span>{question}</span>
+          <ChevronDown
+            aria-hidden="true"
+            className={`size-5 shrink-0 text-muted-foreground transition-transform duration-150 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </Button>
+      </h3>
+      <CardContent
+        id={panelId}
+        hidden={!isOpen}
+        className="px-5 pb-5 text-sm leading-6 text-muted-foreground"
+      >
+          {answer}
+      </CardContent>
+    </Card>
+  )
+}
+
+function ActionLink({
+  href,
+  children,
+  variant = "default",
+}: {
+  href: string
+  children: ReactNode
+  variant?: "default" | "outline"
+}) {
+  return (
+    <Button asChild variant={variant} size="lg" className="min-h-11">
+      <Link href={href}>{children}</Link>
+    </Button>
+  )
+}
 
 export default function ClientLandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header - Matching dashboard header style */}
-      <header className="border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-xl z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo href="/" size="md" variant="dark" />
-          <div className="flex items-center gap-3">
-            <Link 
-              href="/sign-in" 
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-100 transition-all active:scale-95"
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/sign-up" 
-              className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-indigo-600 hover:to-indigo-700 transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
-            >
-              Get Started <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
+          <nav aria-label="Main navigation" className="flex items-center gap-2 sm:gap-3">
+            <Button asChild variant="ghost" size="default">
+              <Link href="/sign-in">Sign in</Link>
+            </Button>
+            <ActionLink href="/sign-up">
+              Get started <ArrowRight aria-hidden="true" />
+            </ActionLink>
+          </nav>
         </div>
       </header>
 
-      {/* Hero Section - With glassmorphism */}
-      <section className="relative overflow-hidden">
-        {/* Animated background blobs */}
-        <motion.div
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 left-10 w-72 h-72 bg-indigo-100 rounded-full opacity-20 blur-3xl"
-        />
-        <motion.div
-          animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-100 rounded-full opacity-20 blur-3xl"
-        />
-        
-        <div className="max-w-6xl mx-auto px-6 py-20 relative">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-semibold mb-6">
-              <Zap className="h-3 w-3" />
-              Built for freelancers and small agencies
+      <main>
+        <section className="border-b border-border bg-neutral-50">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-14">
+            <div>
+              <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-sm font-medium text-neutral-700">
+                <Zap aria-hidden="true" className="size-4 text-primary" />
+                For freelancers and small agencies
+              </p>
+              <h1 className="max-w-xl text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
+                Keep your client work moving.
+              </h1>
+              <p className="mt-5 max-w-xl text-base leading-7 text-neutral-600 sm:text-lg">
+                Manage clients, leads, projects, invoices, and reminders in one straightforward workspace.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <ActionLink href="/sign-up">
+                  Create an account <ArrowRight aria-hidden="true" />
+                </ActionLink>
+                <ActionLink href="#features" variant="outline">
+                  Explore features
+                </ActionLink>
+              </div>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-              Run your entire{" "}
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                client business
-              </span>{" "}
-              in one place
-            </h1>
-            <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-              Manage clients, track leads, deliver projects, and get paid — all from a single, beautifully designed dashboard.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <Link 
-                href="/sign-up" 
-                className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-8 py-3 rounded-xl text-base font-semibold hover:from-indigo-600 hover:to-indigo-700 transition-all hover:scale-[1.02] active:scale-95 shadow-md"
-              >
-                Start for free <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link 
-                href="#demo" 
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-6 py-3 rounded-xl font-medium transition-all active:scale-95"
-              >
-                <Play className="h-4 w-4" />
-                Watch demo
-              </Link>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-              {["No credit card required", "Free forever plan", "Cancel anytime"].map((item) => (
-                <div key={item} className="flex items-center gap-1.5">
-                  <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />
-                  <span className="text-xs text-gray-500">{item}</span>
+
+            <div
+              aria-label="Illustrative preview of a ClientOps workspace"
+              className="rounded-2xl border border-border bg-background p-4 shadow-sm sm:p-6"
+            >
+              <div aria-hidden="true">
+                <div className="flex items-center gap-2 border-b border-border pb-4">
+                  <span className="size-2.5 rounded-full bg-neutral-300" />
+                  <span className="size-2.5 rounded-full bg-neutral-300" />
+                  <span className="size-2.5 rounded-full bg-neutral-300" />
+                  <div className="ml-2 h-8 flex-1 rounded-md bg-neutral-100" />
                 </div>
+                <p className="mt-5 text-sm font-semibold text-neutral-800">Your workspace</p>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  {["Clients", "Leads", "Projects", "Invoices"].map((label) => (
+                    <Card key={label} className="gap-3 p-4 shadow-none">
+                      <p className="text-sm font-medium text-neutral-700">{label}</p>
+                      <div className="h-2 w-3/4 rounded-full bg-neutral-200" />
+                      <div className="h-2 w-1/2 rounded-full bg-neutral-100" />
+                    </Card>
+                  ))}
+                </div>
+                <div className="mt-4 rounded-xl border border-border p-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                    <Check aria-hidden="true" className="size-4 text-success" />
+                    Work, all in one place
+                  </div>
+                  <div className="mt-3 h-2 w-full rounded-full bg-neutral-100" />
+                  <div className="mt-2 h-2 w-4/5 rounded-full bg-neutral-100" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold text-primary">Features</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+              The tools for everyday client work
+            </h2>
+            <p className="mt-4 text-base leading-7 text-neutral-600">
+              Keep the details, next steps, and progress of your work easy to find.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map(({ icon: Icon, title, description }) => (
+              <Card key={title} className="h-full p-5 shadow-none">
+                <CardHeader className="p-0">
+                  <span className="mb-1 flex size-11 items-center justify-center rounded-lg bg-indigo-50 text-primary">
+                    <Icon aria-hidden="true" className="size-5" />
+                  </span>
+                  <CardTitle className="text-base font-semibold text-neutral-900">{title}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 text-sm leading-6 text-neutral-600">
+                  {description}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section id="how-it-works" className="border-y border-border bg-neutral-50">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-sm font-semibold text-primary">How it works</p>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+                A clear place for your workflow
+              </h2>
+            </div>
+            <ol className="mt-10 grid gap-4 md:grid-cols-3">
+              {steps.map((step, index) => (
+                <li key={step.title}>
+                  <Card className="h-full p-5 shadow-none">
+                    <CardHeader className="p-0">
+                      <span className="flex size-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                        {index + 1}
+                      </span>
+                      <CardTitle className="pt-2 text-base font-semibold text-neutral-900">
+                        {step.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 text-sm leading-6 text-neutral-600">
+                      {step.description}
+                    </CardContent>
+                  </Card>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+          <Card className="mx-auto max-w-3xl border-primary/20 bg-neutral-50 p-6 text-center shadow-none sm:p-10">
+            <CardHeader className="p-0">
+              <p className="text-sm font-semibold text-primary">Plans and availability</p>
+              <CardTitle className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
+                Find the right fit for your work
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <p className="mx-auto max-w-xl text-sm leading-6 text-neutral-600 sm:text-base">
+                Contact us for current information about ClientOps availability and pricing.
+              </p>
+              <div className="mt-6">
+                <ActionLink href="mailto:hello@example.com">
+                  Contact us <ArrowRight aria-hidden="true" />
+                </ActionLink>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section id="faq" className="border-y border-border bg-neutral-50">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-sm font-semibold text-primary">FAQ</p>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+                Frequently asked questions
+              </h2>
+            </div>
+            <div className="mx-auto mt-8 max-w-3xl space-y-3">
+              {faqs.map((faq, index) => (
+                <FaqItem
+                  key={faq.question}
+                  question={faq.question}
+                  answer={faq.answer}
+                  panelId={`faq-answer-${index}`}
+                />
               ))}
             </div>
-          </motion.div>
-
-          {/* Dashboard Preview - Glass card style */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-16"
-          >
-            <div className="glass-card overflow-hidden shadow-2xl">
-              <div className="bg-gray-100 border-b border-gray-200 px-4 py-3 flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
-                <div className="flex-1 bg-white rounded-md px-3 py-1 text-xs text-gray-400 border border-gray-200 text-center">
-                  app.clientops.com/dashboard
-                </div>
-              </div>
-              <div className="bg-white p-6">
-                <div className="border border-gray-100 rounded-xl shadow-sm p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">Welcome back, Arpan 👋</p>
-                      <p className="text-xs text-gray-500">Here's what's happening with your business today.</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-gray-50 rounded-lg p-4 text-center hover:shadow-md transition-all active:scale-95">
-                      <p className="text-sm text-gray-500">Active Clients</p>
-                      <p className="text-2xl font-bold text-gray-900"><Counter target={12} /></p>
-                      <p className="text-xs text-gray-400">+3 this month</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center hover:shadow-md transition-all active:scale-95">
-                      <p className="text-sm text-gray-500">Active Leads</p>
-                      <p className="text-2xl font-bold text-gray-900"><Counter target={8} /></p>
-                      <p className="text-xs text-gray-400">In pipeline</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center hover:shadow-md transition-all active:scale-95">
-                      <p className="text-sm text-gray-500">Total Revenue</p>
-                      <p className="text-2xl font-bold text-gray-900"><Counter target={8420} prefix="₹" /></p>
-                      <p className="text-xs text-gray-400">This month</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    {/* Highlights Section - Glass cards */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {highlights.map((item, i) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              viewport={{ once: true }}
-              className="glass-card p-6 text-center hover:shadow-lg transition-all"
-            >
-              <p className="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {item.title}
-              </p>
-              <p className="text-sm text-gray-500 mt-1">{item.label}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features Section - Glass cards */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Everything you need to succeed</h2>
-          <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Built for freelancers and agencies who want to stay organized and professional.</p>
-        </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, i) => {
-            const Icon = feature.icon
-            return (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="glass-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-[0.98]"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${gradients.primary} flex items-center justify-center mb-4 shadow-md`}>
-                  <Icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
-                <p className="text-sm text-gray-500 mt-1">{feature.benefit}</p>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <ul className="space-y-2">
-                    {feature.details.map((detail) => (
-                      <li key={detail} className="flex items-center gap-2 text-sm text-gray-600">
-                        <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" />
-                        {detail}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* Pricing Section - Glass card */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Simple, transparent pricing</h2>
-          <p className="text-gray-500 mt-2">Start for free. No credit card required.</p>
-        </motion.div>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="max-w-md mx-auto"
-        >
-          <div className="glass-card p-8 text-center hover:shadow-xl transition-all">
-            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold mb-4">
-              Free Forever
-            </div>
-            <p className="text-5xl font-bold text-gray-900">₹0</p>
-            <p className="text-sm text-gray-500 mt-2">per month</p>
-            <ul className="mt-6 space-y-3 text-left">
-              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-emerald-500" /> All core features</li>
-              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-emerald-500" /> Unlimited clients & leads</li>
-              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-emerald-500" /> Unlimited invoices</li>
-              <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-emerald-500" /> 5 projects included</li>
-            </ul>
-            <Link 
-              href="/sign-up" 
-              className="mt-8 inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:from-indigo-600 hover:to-indigo-700 transition-all hover:scale-[1.02] active:scale-95 shadow-md"
-            >
-              Get Started Free <ArrowRight className="h-4 w-4" />
-            </Link>
           </div>
-        </motion.div>
-      </section>
+        </section>
 
-      {/* FAQ Section - Glass cards */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Frequently asked questions</h2>
-          <p className="text-gray-500 mt-2">Got questions? We've got answers</p>
-        </motion.div>
-        <div className="max-w-3xl mx-auto space-y-3">
-          {faqs.map((faq, i) => (
-            <motion.div
-              key={faq.q}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <AccordionItem question={faq.q} answer={faq.a} />
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section - Premium gradient */}
-      <section className="max-w-6xl mx-auto px-6 pb-16">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 p-12 text-center"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -ml-24 -mb-24" />
-          
-          <div className="relative">
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Ready to get organized?</h2>
-            <p className="text-indigo-100 mt-2 max-w-2xl mx-auto">
-              Manage clients, leads, projects, invoices and reminders with ClientOps.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <Link 
-                href="/sign-up" 
-                className="inline-flex items-center gap-2 bg-white text-indigo-600 px-8 py-3 rounded-xl text-base font-semibold hover:bg-gray-100 transition-all hover:scale-[1.02] active:scale-95 shadow-lg"
-              >
-                Start for free <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link 
-                href="/sign-in" 
-                className="text-sm text-indigo-100 hover:text-white transition-colors active:scale-95"
-              >
-                Already have an account? Sign in →
-              </Link>
-            </div>
-            <p className="text-xs text-indigo-200 mt-4">No credit card required. Free forever plan available.</p>
+        <section className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 sm:py-20">
+          <h2 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+            Bring your client work together
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-neutral-600">
+            Start organizing clients, projects, invoices, and follow-ups in ClientOps.
+          </p>
+          <div className="mt-7">
+            <ActionLink href="/sign-up">
+              Get started <ArrowRight aria-hidden="true" />
+            </ActionLink>
           </div>
-        </motion.div>
-      </section>
+        </section>
+      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 py-8 bg-white">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-border bg-background">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-6 sm:px-6 md:flex-row md:items-center md:justify-between">
           <Logo href="/" size="sm" variant="dark" />
-          <p className="text-xs text-gray-400">© {new Date().getFullYear()} ClientOps. All rights reserved.</p>
-          <div className="flex gap-4">
-            <Link href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors active:scale-95">Privacy</Link>
-            <Link href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors active:scale-95">Terms</Link>
-            <Link href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors active:scale-95">Contact</Link>
-          </div>
+          <p className="text-sm text-neutral-600">
+            © {new Date().getFullYear()} ClientOps. All rights reserved.
+          </p>
+          <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link className="text-sm text-neutral-700 underline-offset-4 hover:underline" href="/privacy">
+              Privacy
+            </Link>
+            <Link className="text-sm text-neutral-700 underline-offset-4 hover:underline" href="/terms">
+              Terms
+            </Link>
+            <Link
+              className="text-sm text-neutral-700 underline-offset-4 hover:underline"
+              href="mailto:hello@example.com"
+            >
+              hello@example.com
+            </Link>
+          </nav>
         </div>
       </footer>
     </div>
   )
-      }
+}

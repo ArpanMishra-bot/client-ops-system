@@ -7,6 +7,7 @@ import { Users, UserPlus, Search, Trash2, Download, Check, X } from "lucide-reac
 import { toast } from "sonner"
 import { deleteClient } from "@/modules/clients/actions"
 import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog"
+import { formatDate } from "@/lib/utils"
 
 export default function ClientsList({ initialClients }: { initialClients: any[] }) {
   const [search, setSearch] = useState("")
@@ -95,7 +96,7 @@ export default function ClientsList({ initialClients }: { initialClients: any[] 
       client.city || "",
       client.country || "",
       client.isActive ? "Active" : "Inactive",
-      new Date(client.createdAt).toLocaleDateString(),
+      formatDate(client.createdAt),
     ])
     
     // Build CSV content

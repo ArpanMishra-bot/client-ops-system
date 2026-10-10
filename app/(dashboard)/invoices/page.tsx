@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 import { Suspense } from "react"
 import { getInvoicesPage } from "@/modules/invoices/actions"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
@@ -7,6 +7,8 @@ import Link from "next/link"
 import Pagination from "@/components/shared/Pagination"
 import { parsePage } from "@/lib/pagination"
 import InvoicesSkeleton from "@/components/shared/InvoicesSkeleton"
+import PageHeader from "@/components/shared/PageHeader"
+import { Button } from "@/components/ui/button"
 
 async function InvoicesList({ page: requested }: { page: number }) {
   let data = await getInvoicesPage(requested)
@@ -78,7 +80,7 @@ async function InvoicesList({ page: requested }: { page: number }) {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{invoice.number}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{invoice.client.name}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500">{formatDate(invoice.dueDate)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
                       {statusConfig.label}
@@ -115,7 +117,7 @@ async function InvoicesList({ page: requested }: { page: number }) {
               <p className="text-xs text-gray-500 mt-1">{invoice.client.name}</p>
               <div className="flex items-center justify-between mt-2">
                 <p className="text-base font-semibold text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</p>
-                <p className="text-xs text-gray-400">Due {new Date(invoice.dueDate).toLocaleDateString()}</p>
+                <p className="text-xs text-gray-600">Due {formatDate(invoice.dueDate)}</p>
               </div>
             </Link>
           )
@@ -135,19 +137,18 @@ export default async function InvoicesPage({
   const { page } = await searchParams
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Invoices</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage and track your invoices</p>
-        </div>
-        <Link
-  href="/invoices/new"
-  className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] active:shadow-lg transition-all duration-200"
->
-  <Plus className="h-4 w-4" />
-  <span className="hidden sm:inline">New Invoice</span>
-</Link>
-      </div>
+      <PageHeader
+        title="Invoices"
+        description="Manage and track your invoices."
+        action={
+          <Button asChild size="lg">
+            <Link href="/invoices/new">
+              <Plus aria-hidden="true" />
+              New invoice
+            </Link>
+          </Button>
+        }
+      />
 
       <Suspense fallback={<InvoicesSkeleton />}>
         <InvoicesList page={parsePage(page)} />
