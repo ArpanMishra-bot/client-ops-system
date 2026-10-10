@@ -78,6 +78,17 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+button:not([data-slot]),
+input:not([data-slot]),
+select:not([data-slot]),
+textarea:not([data-slot]) {
+  min-height: 2.75rem;
+}
+
+button:not([data-slot]) {
+  min-width: 2.75rem;
+}
+
 @layer components {
   .glass-card {
     border: 1px solid var(--neutral-200);
