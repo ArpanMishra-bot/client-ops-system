@@ -1,8 +1,9 @@
 export const dynamic = "force-dynamic"
 
+import { formatAmount } from "@/lib/utils"
 import { getProjectById } from "@/modules/projects/actions"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Plus, Calendar, DollarSign, Pencil, FileText } from "lucide-react"
+import { ArrowLeft, Plus, Calendar, IndianRupee, Pencil, FileText } from "lucide-react"
 import Link from "next/link"
 import { PROJECT_STATUS_CONFIG, TASK_STATUS_CONFIG } from "@/modules/projects/types"
 import TaskItem from "@/components/modules/leads/TaskItem"
@@ -84,7 +85,7 @@ export default async function ProjectDetailPage({
           {project.budget && (
             <div>
               <p className="text-xs text-gray-400">Budget</p>
-              <p className="text-lg font-semibold text-gray-900">${project.budget.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-gray-900">{formatAmount(project.budget)}</p>
             </div>
           )}
           {project.dueDate && (

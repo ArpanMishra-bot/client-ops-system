@@ -18,3 +18,7 @@ export const updateReminderSchema = createReminderSchema.partial()
 
 export type CreateReminderInput = z.infer<typeof createReminderSchema>
 export type UpdateReminderInput = z.infer<typeof updateReminderSchema>
+
+// Input types (before defaults are applied) for action parameters
+export type ReminderFormInput = z.input<typeof createReminderSchema>
+export type UpdateReminderFormInput = z.input<typeof updateReminderSchema>

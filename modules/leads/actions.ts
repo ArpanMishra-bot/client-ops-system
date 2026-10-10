@@ -4,9 +4,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
-import { createLeadSchema, updateLeadSchema } from "./schemas"
+import { createLeadSchema, updateLeadSchema, type LeadFormInput, type UpdateLeadFormInput } from "./schemas"
 import type { LeadStatus } from "./types"
 import { logActivity } from "@/lib/activity"
+import { PAGE_SIZE, buildPaginated } from "@/lib/pagination"
 
 export async function getLeads() {
   const { userId } = await auth()
@@ -18,6 +19,22 @@ export async function getLeads() {
   })
 }
 
+export async function getLeadsPage(page: number) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  const [total, items] = await Promise.all([
+    db.lead.count({ where: { userId } }),
+    db.lead.findMany({
+      where: { userId },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+  ])
+  return buildPaginated(items, total, page)
+}
+
 export async function getLeadById(id: string) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
@@ -27,7 +44,7 @@ export async function getLeadById(id: string) {
   })
 }
 
-export async function createLead(input: any) {
+export async function createLead(input: LeadFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -61,7 +78,7 @@ export async function createLead(input: any) {
   }
 }
 
-export async function updateLead(id: string, input: any) {
+export async function updateLead(id: string, input: UpdateLeadFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 

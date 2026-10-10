@@ -7,8 +7,12 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Client Ops System",
-  description: "Premium client operations management platform",
+  title: {
+    default: "ClientOps – CRM for freelancers and small agencies",
+    template: "%s | ClientOps",
+  },
+  description:
+    "ClientOps brings clients, leads, projects, tasks, invoices and reminders into one simple workspace for freelancers and small agencies.",
 }
 
 export const viewport: Viewport = {

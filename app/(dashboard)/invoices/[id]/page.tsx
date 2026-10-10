@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 
+import { formatCurrency } from "@/lib/utils"
 import MockPaymentButton from "@/components/modules/invoices/MockPaymentButton"
 import { getInvoiceById } from "@/modules/invoices/actions"
 import { notFound } from "next/navigation"
@@ -41,6 +42,7 @@ export default async function InvoiceDetailPage({
     invoiceId={invoice.id}
     invoiceNumber={invoice.number}
     amount={invoice.total}
+    currency={invoice.currency}
     currentStatus={invoice.status}
   />
           <DeleteInvoiceButton invoiceId={invoice.id} invoiceNumber={invoice.number} />
@@ -56,7 +58,7 @@ export default async function InvoiceDetailPage({
             </span>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold text-gray-900">${invoice.total.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</p>
             <p className="text-sm text-gray-500 mt-1">{invoice.currency}</p>
           </div>
         </div>
@@ -99,8 +101,8 @@ export default async function InvoiceDetailPage({
                 <tr key={item.id || index}>
                   <td className="py-3 text-sm text-gray-900">{item.description}</td>
                   <td className="py-3 text-sm text-gray-500 text-right">{item.quantity}</td>
-                  <td className="py-3 text-sm text-gray-500 text-right">${item.rate?.toLocaleString() || 0}</td>
-                  <td className="py-3 text-sm font-medium text-gray-900 text-right">${item.amount?.toLocaleString() || 0}</td>
+                  <td className="py-3 text-sm text-gray-500 text-right">{formatCurrency(item.rate ?? 0, invoice.currency)}</td>
+                  <td className="py-3 text-sm font-medium text-gray-900 text-right">{formatCurrency(item.amount ?? 0, invoice.currency)}</td>
                 </tr>
               ))}
             </tbody>
@@ -110,11 +112,11 @@ export default async function InvoiceDetailPage({
             <div className="space-y-2 w-48">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Subtotal</span>
-                <span className="text-sm text-gray-900">${invoice.subtotal?.toLocaleString() || 0}</span>
+                <span className="text-sm text-gray-900">{formatCurrency(invoice.subtotal ?? 0, invoice.currency)}</span>
               </div>
               <div className="flex justify-between border-t border-gray-100 pt-2">
                 <span className="text-base font-semibold text-gray-900">Total</span>
-                <span className="text-base font-semibold text-gray-900">${invoice.total?.toLocaleString() || 0}</span>
+                <span className="text-base font-semibold text-gray-900">{formatCurrency(invoice.total ?? 0, invoice.currency)}</span>
               </div>
             </div>
           </div>

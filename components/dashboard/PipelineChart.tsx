@@ -184,7 +184,7 @@ export default function PipelineChart({ data }: PipelineChartProps) {
               }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={view === "value" ? formatCompactCurrency : (value) => `${value}%`}
+              tickFormatter={view === "value" ? (value: number) => formatCompactCurrency(value) : (value) => `${value}%`}
               width={45}
             />
             

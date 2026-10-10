@@ -1,6 +1,7 @@
 // app/(dashboard)/invoices/new/NewInvoiceForm.tsx
 "use client"
 
+import { formatCurrency } from "@/lib/utils"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createInvoice } from "@/modules/invoices/actions"
@@ -36,6 +37,7 @@ export default function NewInvoiceForm({
 }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [currency, setCurrency] = useState<"INR" | "USD">("INR")
   const [errors, setErrors] = useState<FormErrors>({})
   const [items, setItems] = useState<LineItem[]>([
     { description: "", quantity: 1, rate: 0 },
@@ -122,7 +124,7 @@ export default function NewInvoiceForm({
       clientId: formData.get("clientId") as string,
       number: invoiceNumber,
       dueDate: formData.get("dueDate") as string,
-      currency: "USD",
+      currency,
       notes: formData.get("notes") as string,
       terms: formData.get("terms") as string,
       items: items.filter(item => item.description.trim() && item.quantity > 0 && item.rate > 0),
@@ -176,6 +178,18 @@ export default function NewInvoiceForm({
             />
             {errors.dueDate && <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>}
           </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">Currency</label>
+            <select
+              name="currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value as "INR" | "USD")}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+            >
+              <option value="INR">INR (₹)</option>
+              <option value="USD">USD ($)</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -227,7 +241,7 @@ export default function NewInvoiceForm({
                 </div>
                 <div className="col-span-2 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-900">
-                    ${(item.quantity * item.rate).toLocaleString()}
+                    {formatCurrency(item.quantity * item.rate, currency)}
                   </span>
                   {items.length > 1 && (
                     <button type="button" onClick={() => removeItem(index)}
@@ -257,11 +271,11 @@ export default function NewInvoiceForm({
           <div className="space-y-1 text-right">
             <div className="flex items-center gap-8">
               <span className="text-sm text-gray-500">Subtotal</span>
-              <span className="text-sm font-medium text-gray-900">${subtotal.toLocaleString()}</span>
+              <span className="text-sm font-medium text-gray-900">{formatCurrency(subtotal, currency)}</span>
             </div>
             <div className="flex items-center gap-8">
               <span className="text-base font-semibold text-gray-900">Total</span>
-              <span className="text-base font-semibold text-gray-900">${subtotal.toLocaleString()}</span>
+              <span className="text-base font-semibold text-gray-900">{formatCurrency(subtotal, currency)}</span>
             </div>
           </div>
         </div>

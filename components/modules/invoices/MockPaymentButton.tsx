@@ -1,5 +1,6 @@
 "use client"
 
+import { formatCurrency } from "@/lib/utils"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -9,6 +10,7 @@ interface MockPaymentButtonProps {
   invoiceId: string
   invoiceNumber: string
   amount: number
+  currency?: string
   currentStatus: string
 }
 
@@ -16,6 +18,7 @@ export default function MockPaymentButton({
   invoiceId, 
   invoiceNumber, 
   amount, 
+  currency,
   currentStatus 
 }: MockPaymentButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -92,7 +95,7 @@ export default function MockPaymentButton({
 
             <div className="mb-4 text-center">
               <p className="text-sm text-gray-500">Amount to pay</p>
-              <p className="text-2xl font-bold text-gray-900">${amount.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(amount, currency)}</p>
               <p className="text-xs text-gray-400">Invoice: {invoiceNumber}</p>
             </div>
 
@@ -145,7 +148,7 @@ export default function MockPaymentButton({
                     Processing...
                   </span>
                 ) : (
-                  `Pay $${amount.toLocaleString()} (Demo)`
+                  `Pay ${formatCurrency(amount, currency)} (Demo)`
                 )}
               </button>
             </form>

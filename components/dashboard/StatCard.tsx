@@ -31,8 +31,7 @@ export default function StatCard({
 
   // Case 1: No trend data available (never had data)
   if (trend === undefined || trend === null) {
-    displayText = "No prior data"
-    displayColor = "text-gray-400"
+    displayText = ""
   }
   // Case 2: Dropped to zero (had data last month, zero this month)
   else if (trend === -100) {
@@ -103,12 +102,14 @@ export default function StatCard({
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
 
         {/* Trend Indicator */}
-        <div className="mt-3 flex items-center gap-1.5">
-          {displayIcon}
-          <span className={cn("text-xs font-mono font-medium", displayColor)}>
-            {displayText}
-          </span>
-        </div>
+        {displayText && (
+          <div className="mt-3 flex items-center gap-1.5">
+            {displayIcon}
+            <span className={cn("text-xs font-mono font-medium", displayColor)}>
+              {displayText}
+            </span>
+          </div>
+        )}
       </div>
     </Link>
   )

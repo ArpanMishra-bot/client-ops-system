@@ -13,7 +13,6 @@ import {
   Bell, 
   LayoutDashboard, 
   CheckCircle, 
-  Star, 
   Play, 
   ChevronRight, 
   Zap, 
@@ -139,12 +138,6 @@ const features = [
   },
 ]
 
-const testimonials = [
-  { name: "Sarah Johnson", role: "Freelance Designer", content: "ClientOps has completely transformed how I manage my business. I've saved 10+ hours a week and my clients love the professional invoices.", rating: 5, avatar: "S" },
-  { name: "Michael Chen", role: "Digital Agency Owner", content: "The leads pipeline alone is worth the price. I can now track every deal and never miss a follow-up. Best investment I've made.", rating: 5, avatar: "M" },
-  { name: "Emily Rodriguez", role: "Marketing Consultant", content: "Finally, one tool that does everything. No more switching between 5 different apps. ClientOps is a game-changer.", rating: 5, avatar: "E" },
-]
-
 const faqs = [
   { q: "Is there a free trial?", a: "Yes! You can start for free and use all core features. No credit card required." },
   { q: "Can I cancel anytime?", a: "Absolutely. You can cancel your subscription at any time with no hidden fees." },
@@ -152,11 +145,11 @@ const faqs = [
   { q: "Can I import my existing clients?", a: "Yes, you can import clients via CSV or add them manually." },
 ]
 
-const stats = [
-  { value: 5000, suffix: "+", label: "Active Users", prefix: "" },
-  { value: 98, suffix: "%", label: "Satisfaction Rate", prefix: "" },
-  { value: 10, suffix: "k+", label: "Hours Saved", prefix: "" },
-  { value: 4.9, suffix: "", label: "User Rating", prefix: "" },
+const highlights = [
+  { title: "Clients & Leads", label: "One place for every contact and deal" },
+  { title: "Projects & Tasks", label: "Keep work organised and on schedule" },
+  { title: "Invoices", label: "Create and track invoices in ₹ or $" },
+  { title: "Reminders", label: "Never miss a follow-up" },
 ]
 
 export default function ClientLandingPage() {
@@ -206,7 +199,7 @@ export default function ClientLandingPage() {
           >
             <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-semibold mb-6">
               <Zap className="h-3 w-3" />
-              Trusted by 5,000+ freelancers
+              Built for freelancers and small agencies
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
               Run your entire{" "}
@@ -282,7 +275,7 @@ export default function ClientLandingPage() {
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4 text-center hover:shadow-md transition-all active:scale-95">
                       <p className="text-sm text-gray-500">Total Revenue</p>
-                      <p className="text-2xl font-bold text-gray-900"><Counter target={8420} prefix="$" /></p>
+                      <p className="text-2xl font-bold text-gray-900"><Counter target={8420} prefix="₹" /></p>
                       <p className="text-xs text-gray-400">This month</p>
                     </div>
                   </div>
@@ -292,22 +285,22 @@ export default function ClientLandingPage() {
           </motion.div>
         </div>
       </section>
-    {/* Stats Section - Glass cards */}
+    {/* Highlights Section - Glass cards */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {stats.map((stat, i) => (
+          {highlights.map((item, i) => (
             <motion.div
-              key={stat.label}
+              key={item.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
               className="glass-card p-6 text-center hover:shadow-lg transition-all"
             >
-              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                <Counter target={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
+              <p className="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {item.title}
               </p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+              <p className="text-sm text-gray-500 mt-1">{item.label}</p>
             </motion.div>
           ))}
         </div>
@@ -378,7 +371,7 @@ export default function ClientLandingPage() {
             <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold mb-4">
               Free Forever
             </div>
-            <p className="text-5xl font-bold text-gray-900">$0</p>
+            <p className="text-5xl font-bold text-gray-900">₹0</p>
             <p className="text-sm text-gray-500 mt-2">per month</p>
             <ul className="mt-6 space-y-3 text-left">
               <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-emerald-500" /> All core features</li>
@@ -394,49 +387,6 @@ export default function ClientLandingPage() {
             </Link>
           </div>
         </motion.div>
-      </section>
-
-      {/* Testimonials Section - Glass cards */}
-      <section className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Loved by freelancers worldwide</h2>
-            <p className="text-gray-500 mt-2">Join thousands of satisfied users</p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, i) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="glass-card p-6 hover:shadow-xl transition-all"
-              >
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed">"{testimonial.content}"</p>
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
-                    <span className="text-white text-sm font-medium">{testimonial.avatar}</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-xs text-gray-500">{testimonial.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* FAQ Section - Glass cards */}
@@ -479,7 +429,7 @@ export default function ClientLandingPage() {
           <div className="relative">
             <h2 className="text-3xl md:text-4xl font-bold text-white">Ready to get organized?</h2>
             <p className="text-indigo-100 mt-2 max-w-2xl mx-auto">
-              Join 5,000+ freelancers and agencies managing their business with ClientOps.
+              Manage clients, leads, projects, invoices and reminders with ClientOps.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
               <Link 
@@ -504,7 +454,7 @@ export default function ClientLandingPage() {
       <footer className="border-t border-gray-100 py-8 bg-white">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <Logo href="/" size="sm" variant="dark" />
-          <p className="text-xs text-gray-400">© 2024 ClientOps. All rights reserved.</p>
+          <p className="text-xs text-gray-400">© {new Date().getFullYear()} ClientOps. All rights reserved.</p>
           <div className="flex gap-4">
             <Link href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors active:scale-95">Privacy</Link>
             <Link href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors active:scale-95">Terms</Link>

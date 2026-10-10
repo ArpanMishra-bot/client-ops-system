@@ -119,7 +119,7 @@ export default function NewLeadPage() {
               placeholder="Acme Inc." />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Deal Value ($)</label>
+            <label className="text-sm font-medium text-gray-700">Deal Value (₹)</label>
             <input 
               name="value" 
               type="number"

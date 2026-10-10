@@ -4,7 +4,12 @@
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
-import { createReminderSchema, updateReminderSchema } from "./schemas"
+import {
+  createReminderSchema,
+  updateReminderSchema,
+  type ReminderFormInput,
+  type UpdateReminderFormInput,
+} from "./schemas"
 import { logActivity } from "@/lib/activity"
 
 export async function getReminders() {
@@ -28,7 +33,7 @@ export async function getReminderById(id: string) {
   })
 }
 
-export async function createReminder(input: any) {
+export async function createReminder(input: ReminderFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -47,7 +52,7 @@ export async function createReminder(input: any) {
         userId,
         title: validated.data.title,
         description: validated.data.description || null,
-        type: validated.data.type as any,
+        type: validated.data.type,
         dueDate: new Date(validated.data.dueDate),
         clientId: validated.data.clientId || null,
         leadId: validated.data.leadId || null,
@@ -72,7 +77,7 @@ export async function createReminder(input: any) {
   }
 }
 
-export async function updateReminder(id: string, input: any) {
+export async function updateReminder(id: string, input: UpdateReminderFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -91,7 +96,7 @@ export async function updateReminder(id: string, input: any) {
       data: {
         title: validated.data.title,
         description: validated.data.description,
-        type: validated.data.type as any,
+        type: validated.data.type,
         dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : undefined,
         clientId: validated.data.clientId,
         leadId: validated.data.leadId,

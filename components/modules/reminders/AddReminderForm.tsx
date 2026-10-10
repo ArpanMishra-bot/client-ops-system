@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { createReminder } from "@/modules/reminders/actions"
 import { getClients } from "@/modules/clients/actions"
 import { getLeads } from "@/modules/leads/actions"
+import type { ReminderType } from "@/modules/reminders/types"
 import { toast } from "sonner"
 import { Plus, X } from "lucide-react"
 import { addDays } from "date-fns"
@@ -20,6 +21,12 @@ export default function AddReminderForm() {
   const defaultDueDate = addDays(new Date(), 1)
   // Format for datetime-local: YYYY-MM-DDThh:mm
   const defaultDueDateString = defaultDueDate.toISOString().slice(0, 16)
+
+  useEffect(() => {
+    const open = () => setShowForm(true)
+    window.addEventListener("open-reminder-form", open)
+    return () => window.removeEventListener("open-reminder-form", open)
+  }, [])
 
   useEffect(() => {
     if (showForm) {
@@ -59,7 +66,7 @@ export default function AddReminderForm() {
     const result = await createReminder({
       title: title.trim(),
       description: formData.get("description") as string,
-      type: formData.get("type") as string,
+      type: formData.get("type") as ReminderType,
       dueDate: dueDate,
       clientId: formData.get("clientId") as string || null,
       leadId: formData.get("leadId") as string || null,

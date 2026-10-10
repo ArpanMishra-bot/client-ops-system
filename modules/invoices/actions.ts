@@ -3,10 +3,12 @@
 
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
+import type { InvoiceStatus as PrismaInvoiceStatus, Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
-import { createInvoiceSchema, updateInvoiceSchema } from "./schemas"
+import { createInvoiceSchema, updateInvoiceSchema, type InvoiceFormInput } from "./schemas"
 import type { InvoiceStatus } from "./types"
 import { logActivity } from "@/lib/activity"
+import { PAGE_SIZE, buildPaginated } from "@/lib/pagination"
 
 export async function getInvoices() {
   const { userId } = await auth()
@@ -27,6 +29,44 @@ export async function getInvoices() {
   })
 }
 
+export async function getInvoicesPage(page: number) {
+  const { userId } = await auth()
+  if (!userId) throw new Error("Unauthorized")
+
+  const [total, invoices, paid, outstanding] = await Promise.all([
+    db.invoice.count({ where: { userId } }),
+    db.invoice.findMany({
+      where: { userId },
+      include: { client: true, items: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.invoice.aggregate({ where: { userId, status: "PAID" }, _sum: { total: true } }),
+    db.invoice.aggregate({
+      where: {
+        userId,
+        status: { not: "PAID" },
+        OR: [{ status: { in: ["SENT", "VIEWED", "OVERDUE"] } }, { dueDate: { lt: new Date() } }],
+      },
+      _sum: { total: true },
+    }),
+  ])
+
+  const today = new Date()
+  const items = invoices.map((invoice) =>
+    invoice.status !== "PAID" && invoice.dueDate < today
+      ? { ...invoice, status: "OVERDUE" as InvoiceStatus }
+      : invoice
+  )
+
+  return {
+    ...buildPaginated(items, total, page),
+    totalRevenue: paid._sum.total ?? 0,
+    outstanding: outstanding._sum.total ?? 0,
+  }
+}
+
 export async function getInvoiceById(id: string) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
@@ -45,7 +85,7 @@ export async function getInvoiceById(id: string) {
   return invoice
 }
 
-export async function createInvoice(input: any) {
+export async function createInvoice(input: InvoiceFormInput) {
   const { userId } = await auth()
   if (!userId) throw new Error("Unauthorized")
 
@@ -77,7 +117,7 @@ export async function createInvoice(input: any) {
         tax: 0,
         discount: 0,
         total,
-        currency: validated.data.currency || "USD",
+        currency: validated.data.currency || "INR",
         notes: validated.data.notes || null,
         terms: validated.data.terms || null,
         items: {
@@ -113,7 +153,7 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
   if (!userId) throw new Error("Unauthorized")
 
   try {
-    const data: any = { status }
+    const data: Prisma.InvoiceUpdateInput = { status: status as PrismaInvoiceStatus }
     if (status === "PAID") data.paidAt = new Date()
 
     const invoice = await db.invoice.update({

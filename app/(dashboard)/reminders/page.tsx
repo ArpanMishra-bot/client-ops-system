@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { getReminders } from "@/modules/reminders/actions"
 import { Bell, Calendar } from "lucide-react"
+import AddFirstReminderButton from "@/components/modules/reminders/AddFirstReminderButton"
 import AddReminderForm from "@/components/modules/reminders/AddReminderForm"
 import ReminderItem from "@/components/modules/reminders/ReminderItem"
 import RemindersSkeleton from "@/components/shared/RemindersSkeleton"
@@ -40,8 +41,9 @@ async function RemindersList() {
           </div>
           <h3 className="text-lg font-semibold text-gray-900">No reminders yet</h3>
           <p className="text-sm text-gray-500 mt-2 max-w-sm">
-            Click the button above to add your first reminder.
+            Set a reminder to follow up with a client or lead.
           </p>
+          <AddFirstReminderButton />
         </div>
       ) : (
         <div className="space-y-4">

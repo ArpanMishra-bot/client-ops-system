@@ -1,5 +1,6 @@
 "use client"
 
+import { formatCurrency } from "@/lib/utils"
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from "@react-pdf/renderer"
 
 const styles = StyleSheet.create({
@@ -252,32 +253,32 @@ function InvoiceDocument({ invoice }: Props) {
           <View key={item.id} style={styles.tableRow}>
             <Text style={[styles.cellText, styles.col1]}>{item.description}</Text>
             <Text style={[styles.cellText, styles.col2]}>{item.quantity}</Text>
-            <Text style={[styles.cellText, styles.col3]}>${item.rate.toLocaleString()}</Text>
-            <Text style={[styles.cellText, styles.col4]}>${item.amount.toLocaleString()}</Text>
+            <Text style={[styles.cellText, styles.col3]}>{formatCurrency(item.rate, invoice.currency, "code")}</Text>
+            <Text style={[styles.cellText, styles.col4]}>{formatCurrency(item.amount, invoice.currency, "code")}</Text>
           </View>
         ))}
 
         <View style={styles.totalsSection}>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Subtotal</Text>
-            <Text style={styles.totalValue}>${invoice.subtotal.toLocaleString()}</Text>
+            <Text style={styles.totalValue}>{formatCurrency(invoice.subtotal, invoice.currency, "code")}</Text>
           </View>
           {invoice.tax > 0 && (
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Tax</Text>
-              <Text style={styles.totalValue}>${invoice.tax.toLocaleString()}</Text>
+              <Text style={styles.totalValue}>{formatCurrency(invoice.tax, invoice.currency, "code")}</Text>
             </View>
           )}
           {invoice.discount > 0 && (
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Discount</Text>
-              <Text style={styles.totalValue}>-${invoice.discount.toLocaleString()}</Text>
+              <Text style={styles.totalValue}>-{formatCurrency(invoice.discount, invoice.currency, "code")}</Text>
             </View>
           )}
           <View style={styles.grandTotalRow}>
             <Text style={styles.grandTotalLabel}>Total</Text>
             <Text style={styles.grandTotalValue}>
-              {invoice.currency} ${invoice.total.toLocaleString()}
+              {formatCurrency(invoice.total, invoice.currency, "code")}
             </Text>
           </View>
         </View>
