@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 
+import { formatAmount } from "@/lib/utils"
 import { db } from "@/lib/db"
 import { auth } from "@clerk/nextjs/server"
 import { notFound } from "next/navigation"
@@ -134,7 +135,7 @@ export default async function LeadDetailPage({
               <DollarSign className="h-4 w-4 text-gray-400" />
               <div>
                 <p className="text-xs text-gray-400">Deal Value</p>
-                <p className="text-sm text-gray-900">${lead.value.toLocaleString()}</p>
+                <p className="text-sm text-gray-900">{formatAmount(lead.value)}</p>
               </div>
             </div>
           )}

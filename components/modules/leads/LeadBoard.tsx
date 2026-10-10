@@ -1,5 +1,6 @@
 "use client"
 
+import { formatAmount } from "@/lib/utils"
 import { useState } from "react"
 import { updateLeadStatus } from "@/modules/leads/actions"
 import type { Lead, LeadStatus } from "@/modules/leads/types"
@@ -76,7 +77,7 @@ export default function LeadBoard({ leads, stages, selectedLeads, onToggleSelect
                 </div>
                 {totalValue > 0 && (
                   <span className="text-xs font-medium text-gray-500">
-                    ${totalValue.toLocaleString()}
+                    {formatAmount(totalValue)}
                   </span>
                 )}
               </div>

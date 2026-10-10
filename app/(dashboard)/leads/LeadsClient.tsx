@@ -1,5 +1,6 @@
 "use client"
 
+import { formatAmount } from "@/lib/utils"
 import PipelineMiniChart from "@/components/modules/leads/PipelineMiniChart"
 import { useState } from "react"
 import Link from "next/link"
@@ -67,7 +68,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: any[] }) {
           <span className="font-medium text-green-600">{wonCount}</span>
           <span>won</span>
           <span className="mx-2">·</span>
-          <span className="font-medium text-gray-900">${totalValue.toLocaleString()}</span>
+          <span className="font-medium text-gray-900">{formatAmount(totalValue)}</span>
           <span>pipeline value</span>
         </div>
         

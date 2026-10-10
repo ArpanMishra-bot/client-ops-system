@@ -371,7 +371,7 @@ export default function ClientLandingPage() {
             <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold mb-4">
               Free Forever
             </div>
-            <p className="text-5xl font-bold text-gray-900">$0</p>
+            <p className="text-5xl font-bold text-gray-900">₹0</p>
             <p className="text-sm text-gray-500 mt-2">per month</p>
             <ul className="mt-6 space-y-3 text-left">
               <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle className="h-4 w-4 text-emerald-500" /> All core features</li>

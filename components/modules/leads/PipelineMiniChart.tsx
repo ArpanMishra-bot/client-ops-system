@@ -1,6 +1,7 @@
 // components/modules/leads/PipelineMiniChart.tsx
 "use client"
 
+import { formatAmount } from "@/lib/utils"
 import { LEAD_STAGES } from "@/modules/leads/types"
 
 interface PipelineMiniChartProps {
@@ -57,7 +58,7 @@ export default function PipelineMiniChart({ leads }: PipelineMiniChartProps) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-semibold text-gray-900">Pipeline Value by Stage</h3>
-          <p className="text-xs text-gray-500 mt-0.5">Total: ${totalValue.toLocaleString()}</p>
+          <p className="text-xs text-gray-500 mt-0.5">Total: {formatAmount(totalValue)}</p>
         </div>
         <div className="text-xs text-gray-400 font-mono">
           {stageValues.filter(s => s.value > 0).length} active stages
@@ -78,7 +79,7 @@ export default function PipelineMiniChart({ leads }: PipelineMiniChartProps) {
                   <span className={`text-xs font-medium ${stage.textColor}`}>
                     {stage.stage}
                   </span>
-                  <span className="text-xs text-gray-400">${stage.value.toLocaleString()}</span>
+                  <span className="text-xs text-gray-400">{formatAmount(stage.value)}</span>
                 </div>
                 <span className="text-xs text-gray-400 font-mono">
                   {widthPercentage.toFixed(1)}%

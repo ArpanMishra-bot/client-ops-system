@@ -52,6 +52,7 @@ export async function createProject(input: any) {
         startDate: validated.data.startDate ? new Date(validated.data.startDate) : null,
         dueDate: validated.data.dueDate ? new Date(validated.data.dueDate) : null,
         budget: validated.data.budget,
+        currency: "INR",
         userId,
       },
     })

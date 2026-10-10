@@ -1,3 +1,4 @@
+import { formatCurrency } from "@/lib/utils"
 import { Suspense } from "react"
 import { getInvoices } from "@/modules/invoices/actions"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
@@ -44,13 +45,13 @@ async function InvoicesList() {
   <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
     <p className="text-sm font-medium text-gray-600">Revenue</p>
     <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mt-1">
-      ${totalRevenue.toLocaleString()}
+      {formatCurrency(totalRevenue)}
     </p>
   </div>
   <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
     <p className="text-sm font-medium text-gray-600">Outstanding</p>
     <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 mt-1">
-      ${outstanding.toLocaleString()}
+      {formatCurrency(outstanding)}
     </p>
   </div>
   <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
@@ -80,7 +81,7 @@ async function InvoicesList() {
                 <tr key={invoice.id} className="hover:bg-gray-50 transition-colors duration-100">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{invoice.number}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{invoice.client.name}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">${invoice.total.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{new Date(invoice.dueDate).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
@@ -117,7 +118,7 @@ async function InvoicesList() {
               </div>
               <p className="text-xs text-gray-500 mt-1">{invoice.client.name}</p>
               <div className="flex items-center justify-between mt-2">
-                <p className="text-base font-semibold text-gray-900">${invoice.total.toLocaleString()}</p>
+                <p className="text-base font-semibold text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</p>
                 <p className="text-xs text-gray-400">Due {new Date(invoice.dueDate).toLocaleDateString()}</p>
               </div>
             </Link>

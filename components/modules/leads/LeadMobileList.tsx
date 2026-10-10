@@ -1,5 +1,6 @@
 "use client"
 
+import { formatAmount } from "@/lib/utils"
 import { useState } from "react"
 import type { Lead, LeadStatus } from "@/modules/leads/types"
 import { updateLeadStatus } from "@/modules/leads/actions"
@@ -99,7 +100,7 @@ function MobileLeadCard({
             {lead.value && (
               <div className="flex items-center gap-1">
                 <DollarSign className="h-3 w-3 text-gray-400" />
-                <span className="text-xs font-medium text-gray-700">${lead.value.toLocaleString()}</span>
+                <span className="text-xs font-medium text-gray-700">{formatAmount(lead.value)}</span>
               </div>
             )}
           </div>

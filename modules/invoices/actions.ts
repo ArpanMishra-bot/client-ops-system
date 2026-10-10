@@ -77,7 +77,7 @@ export async function createInvoice(input: any) {
         tax: 0,
         discount: 0,
         total,
-        currency: validated.data.currency || "USD",
+        currency: validated.data.currency || "INR",
         notes: validated.data.notes || null,
         terms: validated.data.terms || null,
         items: {

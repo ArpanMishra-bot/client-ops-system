@@ -109,7 +109,7 @@ export default function EditProjectForm({ project, clients }: { project: Project
           </select>
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-gray-700">Budget ($)</label>
+          <label className="text-sm font-medium text-gray-700">Budget (₹)</label>
           <input 
             name="budget" 
             type="number"
