@@ -6,6 +6,7 @@ import Link from "next/link"
 import ProjectsSkeleton from "@/components/shared/ProjectsSkeleton"
 import PageHeader from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
+import { formatDate } from "@/lib/utils"
 
 async function ProjectsList() {
   const projects = await getProjects()
@@ -82,7 +83,7 @@ async function ProjectsList() {
             {project.dueDate && (
               <div className="mt-3 pt-3 border-t border-gray-50">
                 <p className="text-xs text-gray-400">
-                  Due {new Date(project.dueDate).toLocaleDateString()}
+                  Due {formatDate(project.dueDate)}
                 </p>
               </div>
             )}

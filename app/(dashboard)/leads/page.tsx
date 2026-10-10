@@ -7,6 +7,7 @@ import PageHeader from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Plus } from "lucide-react"
+import LeadsSkeleton from "@/components/shared/LeadsSkeleton"
 
 export default async function LeadsPage({
   searchParams,
@@ -33,7 +34,7 @@ export default async function LeadsPage({
         }
       />
 
-      <Suspense fallback={<div className="min-h-64 rounded-xl border border-border bg-card" aria-label="Loading leads" />}>
+      <Suspense fallback={<LeadsSkeleton />}>
         <LeadsClient key={data.page} initialLeads={data.items} totalCount={data.total} />
       </Suspense>
 

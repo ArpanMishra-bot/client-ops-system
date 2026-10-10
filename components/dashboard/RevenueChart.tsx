@@ -2,7 +2,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { formatCurrency, formatCompactCurrency } from "@/lib/utils"
+import { formatCurrency, formatCompactCurrency, formatDate } from "@/lib/utils"
 
 interface CustomRevenueChartProps {
   data: { month: string; revenue: number }[]
@@ -69,11 +69,7 @@ export default function CustomRevenueChart({ data }: CustomRevenueChartProps) {
   const metrics = calculateMetrics()
 
   // Format date for footer
-  const formattedDate = new Date().toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric' 
-  })
+  const formattedDate = formatDate(new Date())
 
   // Draw chart when data or period changes
   useEffect(() => {

@@ -7,6 +7,7 @@ import type { Task, TaskStatus } from "@/modules/projects/types"
 import { TASK_STATUS_CONFIG } from "@/modules/projects/types"
 import { Trash2, ChevronRight, Pencil } from "lucide-react"
 import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog"
+import { formatDate } from "@/lib/utils"
 
 type Props = {
   task: Task
@@ -75,7 +76,7 @@ export default function TaskItem({ task, projectId }: Props) {
             </p>
             {task.dueDate && (
               <p className="text-xs text-gray-400 mt-1">
-                Due: {new Date(task.dueDate).toLocaleDateString()}
+                Due: {formatDate(task.dueDate)}
               </p>
             )}
           </div>

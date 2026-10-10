@@ -1,8 +1,11 @@
 import { Suspense } from "react"
 import { getPendingTasks } from "@/modules/tasks/actions"
-import { ArrowLeft, CheckCircle2, Calendar, ClipboardList } from "lucide-react"
+import { ArrowLeft, Calendar, ClipboardList } from "lucide-react"
 import Link from "next/link"
 import TasksSkeleton from "@/components/shared/TasksSkeleton"
+import PageHeader from "@/components/shared/PageHeader"
+import { Button } from "@/components/ui/button"
+import { formatDate } from "@/lib/utils"
 
 async function TasksList() {
   const tasks = await getPendingTasks()
@@ -58,7 +61,7 @@ async function TasksList() {
                     {task.dueDate && (
                       <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
                         <Calendar className="h-3 w-3" />
-                        <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+                        <span>Due: {formatDate(task.dueDate)}</span>
                       </div>
                     )}
                   </div>
@@ -78,19 +81,18 @@ async function TasksList() {
 export default async function TasksPage() {
   return (
     <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard" className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
-        </Link>
-      </div>
-
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Pending Tasks</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Tasks that need your attention
-        </p>
-      </div>
+      <PageHeader
+        title="Pending tasks"
+        description="Tasks that need your attention."
+        action={
+          <Button asChild variant="outline" size="lg">
+            <Link href="/projects">
+              <ArrowLeft aria-hidden="true" />
+              View projects
+            </Link>
+          </Button>
+        }
+      />
 
       <Suspense fallback={<TasksSkeleton />}>
         <TasksList />

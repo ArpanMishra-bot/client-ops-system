@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 import { Suspense } from "react"
 import { getInvoicesPage } from "@/modules/invoices/actions"
 import { INVOICE_STATUS_CONFIG } from "@/modules/invoices/types"
@@ -80,7 +80,7 @@ async function InvoicesList({ page: requested }: { page: number }) {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{invoice.number}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{invoice.client.name}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500">{formatDate(invoice.dueDate)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
                       {statusConfig.label}
@@ -117,7 +117,7 @@ async function InvoicesList({ page: requested }: { page: number }) {
               <p className="text-xs text-gray-500 mt-1">{invoice.client.name}</p>
               <div className="flex items-center justify-between mt-2">
                 <p className="text-base font-semibold text-gray-900">{formatCurrency(invoice.total, invoice.currency)}</p>
-                <p className="text-xs text-gray-400">Due {new Date(invoice.dueDate).toLocaleDateString()}</p>
+                <p className="text-xs text-gray-600">Due {formatDate(invoice.dueDate)}</p>
               </div>
             </Link>
           )

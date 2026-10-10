@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic"
 
-import { formatAmount } from "@/lib/utils"
+import { formatAmount, formatDate } from "@/lib/utils"
 import { getProjectById } from "@/modules/projects/actions"
 import { notFound } from "next/navigation"
 import { ArrowLeft, Plus, Calendar, IndianRupee, Pencil, FileText } from "lucide-react"
@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({
           {project.dueDate && (
             <div>
               <p className="text-xs text-gray-400">Due Date</p>
-              <p className="text-lg font-semibold text-gray-900">{new Date(project.dueDate).toLocaleDateString()}</p>
+              <p className="text-lg font-semibold text-gray-900">{formatDate(project.dueDate)}</p>
             </div>
           )}
         </div>
