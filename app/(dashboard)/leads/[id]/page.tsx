@@ -4,7 +4,7 @@ import { formatAmount } from "@/lib/utils"
 import { db } from "@/lib/db"
 import { auth } from "@clerk/nextjs/server"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Mail, Phone, Building, DollarSign, Pencil, Clock, FileText } from "lucide-react"
+import { ArrowLeft, Mail, Phone, Building, IndianRupee, Pencil, Clock, FileText } from "lucide-react"
 import Link from "next/link"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import ConvertToClientButton from "@/components/modules/leads/ConvertToClientButton"
@@ -132,7 +132,7 @@ export default async function LeadDetailPage({
           )}
           {lead.value && (
             <div className="flex items-center gap-3">
-              <DollarSign className="h-4 w-4 text-gray-400" />
+              <IndianRupee className="h-4 w-4 text-gray-400" />
               <div>
                 <p className="text-xs text-gray-400">Deal Value</p>
                 <p className="text-sm text-gray-900">{formatAmount(lead.value)}</p>

@@ -15,7 +15,7 @@ import {
   TrendingUp,
   FolderKanban,
   FileText,
-  DollarSign,
+  IndianRupee,
   Clock,
   Zap,
   UserPlus,
@@ -155,7 +155,7 @@ async function DashboardStats() {
     { 
       label: "Total Revenue", 
       value: formatCurrency(stats.totalRevenue),
-      icon: <DollarSign className="h-5 w-5 text-white" />, 
+      icon: <IndianRupee className="h-5 w-5 text-white" />, 
       href: "/invoices", 
       sub: "From paid invoices", 
       trend: stats.revenueTrend 
@@ -214,7 +214,7 @@ async function DashboardStats() {
 async function DashboardRevenueChart() {
   const stats = await getDashboardStats()
   return (
-    <CollapsibleCard title="Revenue Overview" icon={<DollarSign className="h-4 w-4" />} defaultOpen>
+    <CollapsibleCard title="Revenue Overview" icon={<IndianRupee className="h-4 w-4" />} defaultOpen>
       <RevenueChart data={stats.revenueChartData} />
     </CollapsibleCard>
   )

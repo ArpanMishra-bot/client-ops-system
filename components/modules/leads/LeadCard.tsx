@@ -5,7 +5,7 @@ import { useState } from "react"
 import type { Lead, LeadStatus } from "@/modules/leads/types"
 import { LEAD_STAGES } from "@/modules/leads/types"
 import { updateLeadStatus } from "@/modules/leads/actions"
-import { Building, DollarSign, ChevronRight, Check } from "lucide-react"
+import { Building, IndianRupee, ChevronRight, Check } from "lucide-react"
 import Link from "next/link"
 
 type Props = {
@@ -81,7 +81,7 @@ export default function LeadCard({ lead, onDragStart, isSelected, onToggleSelect
 
       {lead.value && (
         <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-50 ml-5">
-          <DollarSign className="h-3 w-3 text-gray-400" />
+          <IndianRupee className="h-3 w-3 text-gray-400" />
           <span className="text-xs font-medium text-gray-700">
             {formatAmount(lead.value)}
           </span>

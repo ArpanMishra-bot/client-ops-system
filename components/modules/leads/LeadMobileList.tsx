@@ -5,7 +5,7 @@ import { useState } from "react"
 import type { Lead, LeadStatus } from "@/modules/leads/types"
 import { updateLeadStatus } from "@/modules/leads/actions"
 import { LEAD_STAGES } from "@/modules/leads/types"
-import { Building, DollarSign, ChevronDown, Check } from "lucide-react"
+import { Building, IndianRupee, ChevronDown, Check } from "lucide-react"
 import Link from "next/link"
 
 type Stage = {
@@ -99,7 +99,7 @@ function MobileLeadCard({
             )}
             {lead.value && (
               <div className="flex items-center gap-1">
-                <DollarSign className="h-3 w-3 text-gray-400" />
+                <IndianRupee className="h-3 w-3 text-gray-400" />
                 <span className="text-xs font-medium text-gray-700">{formatAmount(lead.value)}</span>
               </div>
             )}
